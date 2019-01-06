@@ -18,13 +18,27 @@ public class Robot extends TimedRobot {
   TalonSRX testTalon;
   AHRS navx;
 
+  TalonSRX driveLA   = new TalonSRX( 0) {{ setNeutralMode(NeutralMode.Brake); }};
+  TalonSRX driveLB   = new TalonSRX(15) {{ setNeutralMode(NeutralMode.Brake); }};
+  TalonSRX driveRA   = new TalonSRX( 1) {{ setNeutralMode(NeutralMode.Brake); }};
+  TalonSRX driveRB   = new TalonSRX(14) {{ setNeutralMode(NeutralMode.Brake); }};
+
+
+    AHRS         navX       = new AHRS(SPI.Port.kMXP, (byte) 50);
+    Encoder      encoderL  = new Encoder(0, 1, true, EncodingType.k1X);
+    Encoder      encoderR  = new Encoder(2, 3, true, EncodingType.k1X);
+
+    private Joystick driveStick = new Joystick(0);
 
   @Override
   public void robotInit() {
+      driveRA.setInverted(true);
+      driveRB.setInverted(true);
   }
 
   @Override
   public void robotPeriodic() {
+      statusMessage = "Everything is good!";
   }
 
   @Override
@@ -33,6 +47,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+      if (driveStick.getRawButton(2)) {
+          resetEncoders();
+          navX.zeroYaw();
+      }
   }
 
   @Override
@@ -49,6 +67,22 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+      double yJoy = -driveStick.getY();
+      double xJoy = driveStick.getX();
+
+
+      void driveRobot(double leftPower, double rightPower) {
+          driveOutputLeft = leftPower;
+          driveOutputRight = rightPower;
+          driveLA.set(ControlMode.PercentOutput, leftPower);
+          driveLB.set(ControlMode.PercentOutput, leftPower);
+          driveRA.set(ControlMode.PercentOutput, rightPower);
+          driveRB.set(ControlMode.PercentOutput, rightPower);
+      }
+      public void resetEncoders() {
+          encoderL.reset();
+          encoderR.reset();
+      }
   }
 
   @Override
