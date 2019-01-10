@@ -1,26 +1,46 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.Joystick;
+
+import static com.sun.tools.doclint.Entity.cap;
+
 public class CaMOElot extends GenericRobot {
 
-    Joystick leftJoystick = new Joystick(0);
 
+    private TalonSRX leftMotorA = new TalonSRX(12);
+    private TalonSRX leftMotorB = new TalonSRX(13);
+    private TalonSRX leftMotorC = new TalonSRX(14);
 
-    TalonSRX leftMotorA = new TalonSRX(12);
-    TalonSRX leftMotorB = new TalonSRX(13);
-    TalonSRX leftMotorC = new TalonSRX(14);
+    private TalonSRX rightMotorA = new TalonSRX(1);
+    private TalonSRX rightMotorB = new TalonSRX(2);
+    private TalonSRX rightMotorC = new TalonSRX(3);
 
-    TalonSRX rightMotorA = new TalonSRX(1);
-    TalonSRX rightMotorB = new TalonSRX(2);
-    TalonSRX rightMotorC = new TalonSRX(3);
+    private TalonSRX collector = new TalonSRX(0);
 
-    TalonSRX collector = new TalonSRX(0);
+    private TalonSRX shootMotorA = new TalonSRX(10);
+    private TalonSRX shootMotorB = new TalonSRX(11);
 
-    TalonSRX shootMotorA = new TalonSRX(10);
-    TalonSRX shootMotorB = new TalonSRX(11);
+    {
+        rightMotorA.setInverted(true);
+        rightMotorB.setInverted(true);
+        rightMotorC.setInverted(true);
+    }
 }
 
     @Override
     public void setDrivePower(double leftMotor, double rightMotor) {
+        //must cap the power to <=1.0 or >= -1.0
+        if(leftMotor > 1.0)
+            leftMotor = 1.0;
+        if(leftMotor < -1.0)
+            leftMotor = -1.0;
+        if(rightMotor > 1.0)
+            rightMotor = 1.0;
+        if(rightMotor < -1.0)
+            rightMotor = -1.0;
+
         leftMotorA.set(ControlMode.PercentOutput, leftMotor);
         leftMotorB.set(ControlMode.PercentOutput, leftMotor);
         leftMotorC.set(ControlMode.PercentOutput, leftMotor);
@@ -42,30 +62,30 @@ public class CaMOElot extends GenericRobot {
 
     @Override
     public void turnLeft(double motorPower) {
-        setDrivePower(-motorPower, motorPower);
+    setDrivePower(-motorPower, motorPower);
     }
 
     @Override
     public void turnRight(double motorPower) {
-        setDrivePower(motorPower, -motorPower);
+    setDrivePower(motorPower, -motorPower);
     }
 
     @Override
     public double getDistance() {
-        return 0;
+    return 0;
     }
 
     @Override
     public double getDegrees() {
-        return 0;
+    return 0;
     }
 
     @Override
     public void stopEverything() {
-        setDrivePower(0,0);
+    setDrivePower(0,0);
     }
 
     @Override
     public void stopMotors() {
-        setDrivePower(0,0);
+    setDrivePower(0,0);
     }
