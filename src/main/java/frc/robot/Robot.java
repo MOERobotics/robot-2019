@@ -52,10 +52,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if (leftJoystick.getRawButton(2)) {
-      robotHardware.moveForward(.5); /*(0,4)*/
+      robotHardware.moveForward(.2); /*(0,4)*/
     } else if (leftJoystick.getRawButton(3)) {
-      robotHardware.moveBackward(.5); /*(0,4)*/
-    } else {00
+      robotHardware.moveBackward(.2); /*(0,4)*/
+    } else {
       double driveJoyStickX = leftJoystick.getX();
       double driveJoyStickY = -leftJoystick.getY();
 
