@@ -1,12 +1,23 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.CounterBase;
+import edu.wpi.first.wpilibj.Encoder;
 
+public class MOErio extends GenericRobot{
+    TalonSRX driveLA = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveLB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveRA = new TalonSRX(1) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveRB = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX elevator = new TalonSRX(2) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollLeft = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollRight = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX wrist = new TalonSRX(4) {{setNeutralMode(NeutralMode.Brake);}};
 
-public class CaMOElot extends GenericRobot {
-
+    Encoder encoderL = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
+    Encoder encoderR = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
 
     private TalonSRX leftMotorA = new TalonSRX(12);
     private TalonSRX leftMotorB = new TalonSRX(13);
@@ -22,24 +33,13 @@ public class CaMOElot extends GenericRobot {
     private TalonSRX shootMotorB = new TalonSRX(11);
 
     {
-        rightMotorA.setInverted(true);
-        rightMotorB.setInverted(true);
-        rightMotorC.setInverted(true);
+        driveRA.setInverted(true);
+        driveRB.setInverted(true);
+        rollLeft.setInverted(true);
     }
-
 
     @Override
     public void setDrivePower(double leftMotor, double rightMotor) {
-        //must cap the power to <=1.0 or >= -1.0
-        if(leftMotor > 1.0)
-            leftMotor = 1.0;
-        if(leftMotor < -1.0)
-            leftMotor = -1.0;
-        if(rightMotor > 1.0)
-            rightMotor = 1.0;
-        if(rightMotor < -1.0)
-            rightMotor = -1.0;
-
         leftMotorA.set(ControlMode.PercentOutput, leftMotor);
         leftMotorB.set(ControlMode.PercentOutput, leftMotor);
         leftMotorC.set(ControlMode.PercentOutput, leftMotor);
@@ -51,41 +51,41 @@ public class CaMOElot extends GenericRobot {
 
     @Override
     public void moveForward(double motorPower) {
-        setDrivePower(motorPower, motorPower);
+        setDrivePower(motorPower,motorPower);
     }
 
     @Override
     public void moveBackward(double motorPower) {
-        setDrivePower(-motorPower, -motorPower);
+        setDrivePower(-motorPower,-motorPower);
     }
 
     @Override
     public void turnLeft(double motorPower) {
-    setDrivePower(-motorPower, motorPower);
+        setDrivePower(-motorPower, motorPower);
     }
 
     @Override
     public void turnRight(double motorPower) {
-    setDrivePower(motorPower, -motorPower);
+        setDrivePower(motorPower, -motorPower);
     }
 
     @Override
     public double getDistance() {
-    return 0;
+        return 0;
     }
 
     @Override
     public double getDegrees() {
-    return 0;
+        return 0;
     }
 
     @Override
     public void stopEverything() {
-    setDrivePower(0,0);
+
     }
 
     @Override
     public void stopMotors() {
-    setDrivePower(0,0);
+
     }
 }
