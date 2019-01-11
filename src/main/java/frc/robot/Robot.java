@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.*;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.kauailabs.navx.frc.*;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends TimedRobot {
@@ -52,9 +52,17 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if (leftJoystick.getRawButton(2)) {
-      robotHardware.moveForward(.2); /*(0,4)*/
+      robotHardware.moveForward(.4); /*(0,4)*/
     } else if (leftJoystick.getRawButton(3)) {
-      robotHardware.moveBackward(.2); /*(0,4)*/
+      robotHardware.moveBackward(.4); /*(0,4)*/
+    } else if(leftJoystick.getRawButton(4)) {
+      robotHardware.turnLeft(.4);
+    } else if(leftJoystick.getRawButton(5)) {
+      robotHardware.turnRight(.4);
+    } else if(leftJoystick.getRawButton(6)) {
+      SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistance());
+    } else if(leftJoystick.getRawButton(7)) {
+      SmartDashboard.putNumber("Yaw: ",robotHardware.getDegrees());
     } else {
       double driveJoyStickX = leftJoystick.getX();
       double driveJoyStickY = -leftJoystick.getY();
