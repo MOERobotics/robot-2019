@@ -15,12 +15,14 @@ import com.kauailabs.navx.frc.*;
 
 
 public class Robot extends TimedRobot {
-  TalonSRX testTalon;
-  AHRS navx;
+
+  GenericRobot robotHardware = new CaMOElot();
+  Joystick leftJoystick = new Joystick(0);
 
 
   @Override
   public void robotInit() {
+
   }
 
   @Override
@@ -49,6 +51,19 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    if (leftJoystick.getRawButton(2)) {
+      robotHardware.moveForward(.5); /*(0,4)*/
+    } else if (leftJoystick.getRawButton(3)) {
+      robotHardware.moveBackward(.5); /*(0,4)*/
+    } else {00
+      double driveJoyStickX = leftJoystick.getX();
+      double driveJoyStickY = -leftJoystick.getY();
+
+      double drivePowerLeft = driveJoyStickY + driveJoyStickX;
+      double drivePowerRight = driveJoyStickY - driveJoyStickX;
+
+      robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+    }
   }
 
   @Override
