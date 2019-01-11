@@ -51,6 +51,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("Yaw: ",robotHardware.getDegrees());
+    SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistance());
+
     if (leftJoystick.getRawButton(2)) {
       robotHardware.moveForward(.4); /*(0,4)*/
     } else if (leftJoystick.getRawButton(3)) {
@@ -59,10 +62,6 @@ public class Robot extends TimedRobot {
       robotHardware.turnLeft(.4);
     } else if(leftJoystick.getRawButton(5)) {
       robotHardware.turnRight(.4);
-    } else if(leftJoystick.getRawButton(6)) {
-      SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistance());
-    } else if(leftJoystick.getRawButton(7)) {
-      SmartDashboard.putNumber("Yaw: ",robotHardware.getDegrees());
     } else {
       double driveJoyStickX = leftJoystick.getX();
       double driveJoyStickY = -leftJoystick.getY();
