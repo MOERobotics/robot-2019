@@ -3,7 +3,9 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
-
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.kauailabs.navx.frc.AHRS;
 
 public class CaMOElot extends GenericRobot {
 
@@ -20,6 +22,16 @@ public class CaMOElot extends GenericRobot {
 
     private TalonSRX shootMotorA = new TalonSRX(10);
     private TalonSRX shootMotorB = new TalonSRX(11);
+
+    TalonSRX collector   = new TalonSRX( 0);
+
+    TalonSRX shootMotorA = new TalonSRX(10);
+    TalonSRX shootMotorB = new TalonSRX(11);
+
+    Encoder  encoderL    = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
+    Encoder  encoderR    = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
+
+    AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
     {
         rightMotorA.setInverted(true);
@@ -71,17 +83,17 @@ public class CaMOElot extends GenericRobot {
 
     @Override
     public double getDistance() {
-    return 0;
+        return encoderL.getRaw();
     }
 
     @Override
     public double getDegrees() {
-    return 0;
+        return navx.getYaw();
     }
 
     @Override
     public void stopEverything() {
-    setDrivePower(0,0);
+        setDrivePower(0,0);
     }
 
     @Override
