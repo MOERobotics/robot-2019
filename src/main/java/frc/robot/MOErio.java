@@ -70,17 +70,32 @@ public class MOErio extends GenericRobot{
     }
 
     @Override
-    public double getDistance() {
+    public double getDistanceLeftInches() {
         return 0;
     }
 
     @Override
-    public double getDegrees() {
+    public double getDistanceRightInches() {
+        return 0;
+    }
+
+    @Override
+    public double getHeadingDegrees() {
         return 0;
     }
 
     @Override
     public void stopEverything() {
+
+    }
+
+    @Override
+        public void resetDistance() {
+
+    }
+
+    @Override
+    public void resetDegrees() {
 
     }
 

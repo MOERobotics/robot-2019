@@ -9,6 +9,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class CaMOElot extends GenericRobot {
 
+    final double TICKS_TO_INCHES = 112.08;
+    final double TICKS_TO_FEET = TICKS_TO_INCHES * 12;
 
     private TalonSRX leftMotorA = new TalonSRX(12);
     private TalonSRX leftMotorB = new TalonSRX(13);
@@ -22,11 +24,6 @@ public class CaMOElot extends GenericRobot {
 
     private TalonSRX shootMotorA = new TalonSRX(10);
     private TalonSRX shootMotorB = new TalonSRX(11);
-
-    TalonSRX collector   = new TalonSRX( 0);
-
-    TalonSRX shootMotorA = new TalonSRX(10);
-    TalonSRX shootMotorB = new TalonSRX(11);
 
     Encoder  encoderL    = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
     Encoder  encoderR    = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
@@ -82,14 +79,30 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
-    public double getDistance() {
-        return encoderL.getRaw();
+    public double getDistanceLeftInches() {
+        return encoderL.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
-    public double getDegrees() {
+    public double getDistanceRightInches() {
+        return encoderL.getRaw() / TICKS_TO_INCHES;
+    }
+
+    @Override
+    public double getHeadingDegrees() {
         return navx.getYaw();
     }
+
+    @Override
+    public void resetDistance() {
+        encoderL.reset();
+    }
+
+    @Override
+    public void resetDegrees() {
+        navx.reset();
+    }
+
 
     @Override
     public void stopEverything() {
