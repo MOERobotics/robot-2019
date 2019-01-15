@@ -52,9 +52,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-SmartDashboard.putNumber("LeftEncoder", distanceL.getDistance());
+    SmartDashboard.putNumber("LeftEncoder", distanceL.getDistance());
     SmartDashboard.putNumber("RightEncoder", distanceR.getDistance());
     SmartDashboard.putNumber("NavX  x distance value", navX.getDisplacementX());
+    SmartDashboard.putNumber("NavX Y distance value", navX.getDisplacementY());
+    SmartDashboard.putNumber("NavX Yaw", navX.getYaw());
   }
 
   @Override
@@ -67,6 +69,7 @@ SmartDashboard.putNumber("LeftEncoder", distanceL.getDistance());
     if (driveStick.getRawButton(2)) {
       resetEncoders();
       navX.zeroYaw();
+      navX.resetDisplacement();
     }
   }
 
@@ -76,19 +79,13 @@ SmartDashboard.putNumber("LeftEncoder", distanceL.getDistance());
   }
 
   @Override
-
   public void autonomousPeriodic() {
-
     if (driveStick.getRawButton(4)) {
-    }
-        driveRobot(0.5, 0.5);
-        if (distanceL.getDistance() >= 13440){
-
-          driveRobot(0,0);
+      driveRobot(0.5, 0.5);
+      if (distanceL.getDistance() >= 13440) {
+        driveRobot(0, 0);
       }
-
-     SmartDashboard.putNumber("NavX  x distance value", navX.getDisplacementX());
-
+    }
   }
 
 
@@ -96,7 +93,7 @@ SmartDashboard.putNumber("LeftEncoder", distanceL.getDistance());
 
   @Override
   public void teleopInit() {
-
+    navX.resetDisplacement();
   }
 
   @Override
