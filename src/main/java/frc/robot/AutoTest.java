@@ -1,5 +1,7 @@
 package frc.robot;
 
+import frc.robot.genericrobot.GenericRobot;
+
 public class AutoTest {
     public static int autoStep = 0;
     public static long endTime;
@@ -24,7 +26,7 @@ public class AutoTest {
                 break;
                 //case 1 stops for one second
             case 1:
-                Robot.stopMotors();
+                Robot.stopDriveMotors();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 2;
                     Robot.resetDistance();
@@ -41,7 +43,7 @@ public class AutoTest {
                 break;
             //case 3 stops for one second
             case 3:
-                Robot.stopMotors();
+                Robot.stopDriveMotors();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 4;
                     Robot.resetDegrees();
@@ -58,13 +60,13 @@ public class AutoTest {
                 break;
                 //case 5 stops for one second
             case 5:
-                Robot.stopMotors();
+                Robot.stopDriveMotors();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 6;
                     Robot.resetDegrees();
                 }
                 break;
-                //case 6 turns right 180 degrees
+                //case 6 turns right 180 degrees it's broken right now but dw
             case 6:
                 Robot.turnRight(0.3);
                 if (Robot.getHeadingDegrees() >= 180) {
@@ -75,7 +77,7 @@ public class AutoTest {
                 break;
                 //case 7 stops for one second
             case 7:
-                Robot.stopMotors();
+                Robot.stopDriveMotors();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 7;
                     Robot.resetDegrees();
