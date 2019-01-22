@@ -12,17 +12,17 @@ public class AutoTest {
         autoStep = -1;
     }
     public static void run(GenericRobot Robot) {
-        MOEmove.reset();
-        MOEmove.update(Robot);
         switch (autoStep) {
             //case 0 move forward 2 feet
             case -1:
 
                 Robot.resetDistance();
                 Robot.resetDegrees();
+                MOEmove.reset();
                 autoStep = 0;
             case 0:
                 Robot.moveForward(0.25);
+                MOEmove.update(Robot);
                 if (Robot.getDistanceLeftInches() >= 24) {
                     autoStep = 1;
                     long startTime = System.currentTimeMillis();
