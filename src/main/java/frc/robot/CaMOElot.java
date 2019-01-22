@@ -30,6 +30,7 @@ public class CaMOElot extends GenericRobot {
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
+
     {
         rightMotorA.setInverted(true);
         rightMotorB.setInverted(true);
@@ -57,6 +58,15 @@ public class CaMOElot extends GenericRobot {
         rightMotorB.set(ControlMode.PercentOutput, rightMotor);
         rightMotorC.set(ControlMode.PercentOutput, rightMotor);
     }
+
+    @Override
+    public double getAccelX() {return navx.getWorldLinearAccelX(); }
+
+    @Override
+    public double getAccelY() {return navx.getWorldLinearAccelY(); }
+
+    @Override
+    public double getAccelZ() {return navx.getWorldLinearAccelZ(); }
 
     @Override
     public void moveForward(double motorPower) {

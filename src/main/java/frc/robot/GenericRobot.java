@@ -15,5 +15,9 @@ public abstract class GenericRobot {
     public abstract void resetDegrees();
     public abstract void stopEverything();
     public abstract void stopMotors();
+
+    public abstract double getAccelX();
+    public abstract double getAccelY();
+    public abstract double getAccelZ();
 }
 

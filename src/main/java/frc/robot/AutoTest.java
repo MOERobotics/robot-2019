@@ -1,12 +1,19 @@
 package frc.robot;
 
+
 public class AutoTest {
     public static int autoStep = 0;
     public static long endTime;
+
+    static Accel2Pos MOEmove = new Accel2Pos();
+
+
     public static void init() {
         autoStep = -1;
     }
     public static void run(GenericRobot Robot) {
+        MOEmove.reset();
+        MOEmove.update(Robot);
         switch (autoStep) {
             //case 0 move forward 2 feet
             case -1:
