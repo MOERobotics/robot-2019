@@ -9,13 +9,16 @@ public class AutoTest {
         autoStep = -1;
     }
     public static void run(GenericRobot Robot) {
+
+        public Accel2Pos MOEmeasure = new Accel2Pos();
+
         switch (autoStep) {
             //case 0 move forward 2 feet
             case -1:
-
                 Robot.resetDistance();
                 Robot.resetDegrees();
                 autoStep = 0;
+                MOEmeasure.update(Robot);
             case 0:
                 Robot.moveForward(0.25);
                 if (Robot.getDistanceLeftInches() >= 24) {

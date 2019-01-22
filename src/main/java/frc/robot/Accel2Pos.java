@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.genericrobot.GenericRobot;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -19,12 +20,11 @@ public class Accel2Pos {
         MeasPts = 0;
     }
 
-    public void update(AHRS navX) {
+    public void update(GenericRobot Robot) {
         if (MeasPts < MaxPts) {
-            ax[MeasPts] = navX.getWorldLinearAccelX();
-            ay[MeasPts] = navX.getWorldLinearAccelY();
-            az[MeasPts] = navX.getWorldLinearAccelZ();
-
+            ax[MeasPts] = Robot.getAccelX();
+            ay[MeasPts] = Robot.getAccelY();
+            az[MeasPts] = Robot.getAccelZ();
             MeasPts += 1;
         }
     }

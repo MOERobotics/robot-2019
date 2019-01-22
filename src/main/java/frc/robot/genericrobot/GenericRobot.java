@@ -78,5 +78,9 @@ public abstract class GenericRobot {
     public final void stopEverything(){
         stopDriveMotors();
     }
+
+    public abstract double getAccelX();
+    public abstract double getAccelY();
+    public abstract double getAccelZ();
 }
 

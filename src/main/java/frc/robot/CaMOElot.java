@@ -28,7 +28,7 @@ public class CaMOElot extends GenericRobot {
     Encoder  encoderL    = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
     Encoder  encoderR    = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
 
-    AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
+    public AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
     {
         rightMotorA.setInverted(true);
@@ -36,6 +36,10 @@ public class CaMOElot extends GenericRobot {
         rightMotorC.setInverted(true);
     }
 
+    @Override
+    public double getAccelX(){
+        return navx.getWorldLinearAccelX();
+    }
 
     @Override
     public void setDrivePower(double leftMotor, double rightMotor) {
