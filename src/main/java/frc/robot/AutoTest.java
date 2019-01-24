@@ -2,23 +2,22 @@ package frc.robot;
 
 import frc.robot.genericrobot.GenericRobot;
 
-public class AutoTest {
-    public static int autoStep = 0;
+public class AutoTest extends GenericAuto{
     public static long endTime;
-    public static void init() {
+    public void init() {
         autoStep = -1;
     }
-    public static void run(GenericRobot Robot) {
+    public void run() {
         switch (autoStep) {
             //case 0 move forward 2 feet
             case -1:
 
-                Robot.resetDriveEncoder();
-                Robot.resetYaw();
+                robot.resetDriveEncoder();
+                robot.resetYaw();
                 autoStep = 0;
             case 0:
-                Robot.moveForward(0.25);
-                if (Robot.getDistanceLeftInches() >= 24) {
+                robot.moveForward(0.25);
+                if (robot.getDistanceLeftInches() >= 24) {
                     autoStep = 1;
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;
@@ -26,16 +25,16 @@ public class AutoTest {
                 break;
                 //case 1 stops for one second
             case 1:
-                Robot.stopDriving();
+                robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 2;
-                    Robot.resetDriveEncoder();
+                    robot.resetDriveEncoder();
                 }
                 break;
                 //case 2 moves backwards 2 feet
             case 2:
-                Robot.moveBackward(0.25);
-                if (Robot.getDistanceLeftInches() <= -24) {
+                robot.moveBackward(0.25);
+                if (robot.getDistanceLeftInches() <= -24) {
                     autoStep = 3;
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;
@@ -43,16 +42,16 @@ public class AutoTest {
                 break;
             //case 3 stops for one second
             case 3:
-                Robot.stopDriving();
+                robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 4;
-                    Robot.resetYaw();
+                    robot.resetYaw();
                 }
                 break;
                 //case 4 turns left 90 degrees
             case 4:
-                Robot.turnLeftInplace(0.3);
-                if (Robot.getHeadingDegrees() <= -90) {
+                robot.turnLeftInplace(0.3);
+                if (robot.getHeadingDegrees() <= -90) {
                     autoStep = 5;
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;
@@ -60,16 +59,16 @@ public class AutoTest {
                 break;
                 //case 5 stops for one second
             case 5:
-                Robot.stopDriving();
+                robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 6;
-                    Robot.resetYaw();
+                    robot.resetYaw();
                 }
                 break;
                 //case 6 turns right 180 degrees
             case 6:
-                Robot.turnRightInplace(0.3);
-                if (Robot.getHeadingDegrees() >= 180) {
+                robot.turnRightInplace(0.3);
+                if (robot.getHeadingDegrees() >= 180) {
                     autoStep = 7;
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;
@@ -77,23 +76,23 @@ public class AutoTest {
                 break;
                 //case 7 stops for one second
             case 7:
-                Robot.stopDriving();
+                robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 7;
-                    Robot.resetYaw();
+                    robot.resetYaw();
                 }
                 break;
                 //case 8 turns 90 degrees
             case 8:
-                Robot.turnLeftInplace(0.3);
-                if (Robot.getHeadingDegrees() <= -90) {
+                robot.turnLeftInplace(0.3);
+                if (robot.getHeadingDegrees() <= -90) {
                     autoStep = 9;
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;
                 }
                 break;
             case 9:
-                Robot.stopEverything();
+                robot.stopEverything();
         }
     }
 }
