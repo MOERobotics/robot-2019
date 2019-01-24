@@ -1,6 +1,8 @@
 package frc.robot;
 
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class AutoTest {
     public static int autoStep = 0;
     public static long endTime;
@@ -28,6 +30,8 @@ public class AutoTest {
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;
                 }
+
+
                 break;
                 //case 1 stops for one second
             case 1:
@@ -74,7 +78,7 @@ public class AutoTest {
                 //case 6 turns right 180 degrees
             case 6:
                 Robot.turnRight(0.3);
-                if (Robot.getHeadingDegrees() >= 180) {
+                if (Robot.getHeadingDegrees() >= 179) {
                     autoStep = 7;
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;

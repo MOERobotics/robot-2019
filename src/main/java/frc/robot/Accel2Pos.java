@@ -1,7 +1,10 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+
 public class Accel2Pos {
-    static int MaxPts  = 500;
+    static final int MaxPts  = 500;
     int MeasPts = 0;
 
     double[] ax = new double[MaxPts];
@@ -14,6 +17,10 @@ public class Accel2Pos {
 
     public void reset() {
         MeasPts = 0;
+    }
+
+    public int getMeasPts() {
+        return MeasPts;
     }
 
     public void update(GenericRobot robot) {
@@ -32,9 +39,7 @@ public class Accel2Pos {
         double[] v = new double[MaxPts];
         double[] p = new double[MaxPts];
         double cumsum;
-
         v[0] = 0;
-
         for (j=1; j<MeasPts; ++j)
         {
             v[j] = v[j-1] + 0.5*(ax[j-1]+ax[j])*TimeStep;
@@ -45,7 +50,7 @@ public class Accel2Pos {
         {
             p[j] = p[j-1] + 0.5*(v[j-1]+v[j])*TimeStep;
         }
-        return p[MeasPts];
+        return p[MeasPts-1];
     }
 
     public double getDisplacementY()
@@ -67,7 +72,7 @@ public class Accel2Pos {
         {
             p[j] = p[j-1] + 0.5*(v[j-1]+v[j])*TimeStep;
         }
-        return p[MeasPts];
+        return p[MeasPts - 1];
     }
 
     public double getDisplacementZ()
@@ -89,6 +94,6 @@ public class Accel2Pos {
         {
             p[j] = p[j-1] + 0.5*(v[j-1]+v[j])*TimeStep;
         }
-        return p[MeasPts];
+        return p[MeasPts-1];
     }
 }
