@@ -1,11 +1,10 @@
-package frc.robot;
+package frc.robot.genericrobot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.kauailabs.navx.frc.AHRS;
+import frc.robot.genericrobot.GenericRobot;
 
 public class CaMOElot extends GenericRobot {
 
@@ -38,7 +37,7 @@ public class CaMOElot extends GenericRobot {
 
 
     @Override
-    public void setDrivePower(double leftMotor, double rightMotor) {
+    public void setDrivePowerInternal(double leftMotor, double rightMotor) {
         //must cap the power to <=1.0 or >= -1.0
         if(leftMotor > 1.0)
             leftMotor = 1.0;
@@ -55,27 +54,7 @@ public class CaMOElot extends GenericRobot {
 
         rightMotorA.set(ControlMode.PercentOutput, rightMotor);
         rightMotorB.set(ControlMode.PercentOutput, rightMotor);
-        rightMotorC.set(ControlMode.PercentOutput, rightMotor);
-    }
-
-    @Override
-    public void moveForward(double motorPower) {
-        setDrivePower(motorPower, motorPower);
-    }
-
-    @Override
-    public void moveBackward(double motorPower) {
-        setDrivePower(-motorPower, -motorPower);
-    }
-
-    @Override
-    public void turnLeft(double motorPower) {
-    setDrivePower(-motorPower, motorPower);
-    }
-
-    @Override
-    public void turnRight(double motorPower) {
-    setDrivePower(motorPower, -motorPower);
+       rightMotorC.set(ControlMode.PercentOutput, rightMotor);
     }
 
     @Override
@@ -94,12 +73,13 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
-    public void resetDistance() {
+    public void resetDriveEncoder() {
         encoderL.reset();
+        encoderR.reset();
     }
 
     @Override
-    public void resetDegrees() {
+    public void resetYaw() {
         navx.reset();
     }
 
@@ -110,7 +90,7 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
-    public void stopMotors() {
+    public void stopDriving() {
     setDrivePower(0,0);
     }
 }
