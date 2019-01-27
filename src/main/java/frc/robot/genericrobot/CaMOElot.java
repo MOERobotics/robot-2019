@@ -1,6 +1,7 @@
 package frc.robot.genericrobot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.*;
 import com.kauailabs.navx.frc.AHRS;
@@ -30,6 +31,12 @@ public class CaMOElot extends GenericRobot {
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
     {
+        leftMotorA.setNeutralMode(NeutralMode.Brake);
+        leftMotorB.setNeutralMode(NeutralMode.Brake);
+        leftMotorC.setNeutralMode(NeutralMode.Brake);
+        rightMotorA.setNeutralMode(NeutralMode.Brake);
+        rightMotorB.setNeutralMode(NeutralMode.Brake);
+        rightMotorC.setNeutralMode(NeutralMode.Brake);
         rightMotorA.setInverted(true);
         rightMotorB.setInverted(true);
         rightMotorC.setInverted(true);

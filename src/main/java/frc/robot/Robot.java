@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.CaMOElot;
 import frc.robot.genericrobot.GenericRobot;
+import frc.robot.genericrobot.PIDModule;
 
 
 public class Robot extends TimedRobot {
@@ -18,7 +19,9 @@ public class Robot extends TimedRobot {
   GenericRobot robotHardware = new CaMOElot();
   Joystick leftJoystick = new Joystick(0);
 
-  GenericAuto autoProgram = new AutoTest();
+  GenericAuto autoProgram = new PIDTesting();
+
+  PIDModule straightPID = new PIDModule(0.1,0.008,0);
 
   @Override
   public void robotInit() {
@@ -29,8 +32,10 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     SmartDashboard.putNumber("Yaw: ",robotHardware.getHeadingDegrees());
     SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistanceLeftInches());
-    SmartDashboard.putNumber("autostep: ",autoProgram.autoStep);
-
+    SmartDashboard.putNumber("Right Encoder: ",robotHardware.getDistanceRightInches());
+    SmartDashboard.putNumber("Autostep: ",autoProgram.autoStep);
+    SmartDashboard.putNumber("Left Motor Power: ", robotHardware.getLeftDrivePower());
+    SmartDashboard.putNumber("Right Motor Power: ", robotHardware.getRightDrivePower());
   }
 
   @Override
@@ -39,6 +44,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    if (leftJoystick.getRawButton(2)) {
+      robotHardware.resetYaw();
+    }
   }
 
   @Override
