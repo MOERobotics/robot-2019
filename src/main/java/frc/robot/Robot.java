@@ -8,23 +8,26 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.*;
-import com.kauailabs.navx.frc.*;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends TimedRobot {
-  TalonSRX testTalon;
-  AHRS navx;
+
+  GenericRobot robotHardware = new CaMOElot();
+  Joystick leftJoystick = new Joystick(0);
 
 
   @Override
   public void robotInit() {
+
   }
 
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("Yaw: ",robotHardware.getHeadingDegrees());
+    SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistanceLeftInches());
+    SmartDashboard.putNumber("autostep: ",AutoTest.autoStep);
+
   }
 
   @Override
@@ -37,10 +40,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    AutoTest.init();
   }
 
   @Override
   public void autonomousPeriodic() {
+    AutoTest.run(robotHardware);
   }
 
   @Override
@@ -49,6 +54,24 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+
+    if (leftJoystick.getRawButton(2)) {
+      robotHardware.moveForward(.2); /*(0,4)*/
+    } else if (leftJoystick.getRawButton(3)) {
+      robotHardware.moveBackward(.2); /*(0,4)*/
+    } else if(leftJoystick.getRawButton(4)) {
+      robotHardware.turnLeft(.2);
+    } else if(leftJoystick.getRawButton(5)) {
+      robotHardware.turnRight(.2);
+    } else {
+      double driveJoyStickX = leftJoystick.getX();
+      double driveJoyStickY = -leftJoystick.getY();
+
+      double drivePowerLeft = driveJoyStickY + driveJoyStickX;
+      double drivePowerRight = driveJoyStickY - driveJoyStickX;
+
+      robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+    }
   }
 
   @Override
