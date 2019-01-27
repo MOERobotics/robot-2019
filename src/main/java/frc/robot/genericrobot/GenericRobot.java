@@ -32,13 +32,8 @@ public abstract class GenericRobot {
     public abstract double getDistanceRightInches();
     public abstract double getHeadingDegrees();
 
-    public double getLeftDrivePower () {
-        return leftPower;
-    }
-
-    public double getRightDrivePower() {
-        return rightPower;
-    }
+    public double getLeftDrivePower () { return leftPower; }
+    public double getRightDrivePower() { return rightPower; }
 
     //stopping and resetting
     public abstract void resetDriveEncoder();
