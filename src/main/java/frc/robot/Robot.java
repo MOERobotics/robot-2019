@@ -18,7 +18,10 @@ public class Robot extends TimedRobot {
   GenericRobot robotHardware = new CaMOElot();
   Joystick leftJoystick = new Joystick(0);
 
-  GenericAuto autoProgram = new AutoTest();
+  GenericAuto autoProgram = new DriveStraightAuto();
+
+  /* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
+
 
   @Override
   public void robotInit() {
@@ -27,9 +30,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("Yaw: ",robotHardware.getHeadingDegrees());
-    SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistanceLeftInches());
-    SmartDashboard.putNumber("autostep: ",autoProgram.autoStep);
+      SmartDashboard.putNumber("Yaw: ",robotHardware.getHeadingDegrees());
+      SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistanceLeftInches());
+      SmartDashboard.putNumber("Right Encoder: ",robotHardware.getDistanceRightInches());
+      SmartDashboard.putNumber("Left Drive Power: ",robotHardware.getLeftDrivePower());
+      SmartDashboard.putNumber("Right Drive Power: ",robotHardware.getRightDrivePower());
+      SmartDashboard.putNumber("autostep: ",autoProgram.autoStep);
 
   }
 
@@ -39,6 +45,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    if(leftJoystick.getRawButton(2)){
+      robotHardware.resetYaw();
+    }
   }
 
   @Override
