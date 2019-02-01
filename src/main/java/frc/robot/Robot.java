@@ -9,6 +9,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.genericrobot.CaMOElot;
+import frc.robot.genericrobot.GenericRobot;
 
 
 public class Robot extends TimedRobot {
@@ -40,12 +42,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    AutoTest.init();
+
+    //AutoTest.init();
   }
 
   @Override
   public void autonomousPeriodic() {
-    AutoTest.run(robotHardware);
+
+    //AutoTest.run(robotHardware);
   }
 
   @Override
@@ -60,9 +64,9 @@ public class Robot extends TimedRobot {
     } else if (leftJoystick.getRawButton(3)) {
       robotHardware.moveBackward(.2); /*(0,4)*/
     } else if(leftJoystick.getRawButton(4)) {
-      robotHardware.turnLeft(.2);
+      robotHardware.turnLeftInplace(.2);
     } else if(leftJoystick.getRawButton(5)) {
-      robotHardware.turnRight(.2);
+      robotHardware.turnRightInplace(.2);
     } else {
       double driveJoyStickX = leftJoystick.getX();
       double driveJoyStickY = -leftJoystick.getY();

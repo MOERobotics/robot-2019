@@ -13,8 +13,8 @@ public class AutoTest {
             //case 0 move forward 2 feet
             case -1:
 
-                Robot.resetDistance();
-                Robot.resetDegrees();
+                Robot.resetDriveEncoder();
+                Robot.resetYaw();
                 autoStep = 0;
             case 0:
                 Robot.moveForward(0.25);
@@ -26,10 +26,10 @@ public class AutoTest {
                 break;
                 //case 1 stops for one second
             case 1:
-                Robot.stopDriveMotors();
+                Robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 2;
-                    Robot.resetDistance();
+                    Robot.resetDriveEncoder();
                 }
                 break;
                 //case 2 moves backwards 2 feet
@@ -43,15 +43,15 @@ public class AutoTest {
                 break;
             //case 3 stops for one second
             case 3:
-                Robot.stopDriveMotors();
+                Robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 4;
-                    Robot.resetDegrees();
+                    Robot.resetYaw();
                 }
                 break;
                 //case 4 turns left 90 degrees
             case 4:
-                Robot.turnLeft(0.3);
+                Robot.turnLeftInplace(0.3);
                 if (Robot.getHeadingDegrees() <= -90) {
                     autoStep = 5;
                     long startTime = System.currentTimeMillis();
@@ -60,15 +60,15 @@ public class AutoTest {
                 break;
                 //case 5 stops for one second
             case 5:
-                Robot.stopDriveMotors();
+                Robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 6;
-                    Robot.resetDegrees();
+                    Robot.resetYaw();
                 }
                 break;
-                //case 6 turns right 180 degrees it's broken right now but dw
+                //case 6 turns right 180 degrees
             case 6:
-                Robot.turnRight(0.3);
+                Robot.turnRightInplace(0.3);
                 if (Robot.getHeadingDegrees() >= 180) {
                     autoStep = 7;
                     long startTime = System.currentTimeMillis();
@@ -77,15 +77,15 @@ public class AutoTest {
                 break;
                 //case 7 stops for one second
             case 7:
-                Robot.stopDriveMotors();
+                Robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 7;
-                    Robot.resetDegrees();
+                    Robot.resetYaw();
                 }
                 break;
                 //case 8 turns 90 degrees
             case 8:
-                Robot.turnLeft(0.3);
+                Robot.turnLeftInplace(0.3);
                 if (Robot.getHeadingDegrees() <= -90) {
                     autoStep = 9;
                     long startTime = System.currentTimeMillis();
