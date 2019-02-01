@@ -18,17 +18,18 @@ public class Robot extends TimedRobot {
   GenericRobot robotHardware = new CaMOElot();
   Joystick leftJoystick = new Joystick(0);
 
+  GenericAuto autoProgram = new AutoTest();
 
   @Override
   public void robotInit() {
-
+    autoProgram.robot = robotHardware;
   }
 
   @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("Yaw: ",robotHardware.getHeadingDegrees());
     SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistanceLeftInches());
-    SmartDashboard.putNumber("autostep: ",AutoTest.autoStep);
+    SmartDashboard.putNumber("autostep: ",autoProgram.autoStep);
 
   }
 
@@ -42,13 +43,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-
+    autoProgram.init();
     //AutoTest.init();
   }
 
   @Override
   public void autonomousPeriodic() {
-
+    autoProgram.run();
     //AutoTest.run(robotHardware);
   }
 
