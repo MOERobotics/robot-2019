@@ -11,8 +11,12 @@ import edu.wpi.first.wpilibj.*;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.kauailabs.navx.frc.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import io.github.pseudoresonance.pixy2api.Pixy2;
+import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import io.github.pseudoresonance.pixy2api.links.SPILink;
+
+import java.util.Vector;
 
 
 public class Robot extends TimedRobot {
@@ -32,13 +36,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         updateNum++;
-        if (updateNum % 180 < 90) {
-            pixyCam.setLamp((byte)126, (byte)126);
-        } else {
-            pixyCam.setLamp((byte)0, (byte)0);
-        }
-
-        pixyCam.setLED((int)(updateNum / 2) % 255, 0, 0);
+        //pixyCam.setLED((int)(updateNum % 255), (int)(255 -(updateNum % 255)), 0);
+        var vec = pixyCam.getLine().getVectors();
+        System.out.println(updateNum);
+        System.out.println(vec[0].toString());
     }
 
     @Override
