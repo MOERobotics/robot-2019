@@ -68,7 +68,7 @@ public class AutoTest extends GenericAuto{
                 //case 6 turns right 180 degrees
             case 6:
                 robot.turnRightInplace(0.3);
-                if (robot.getHeadingDegrees() >= 180) {
+                if (robot.getHeadingDegrees() >= 170) {
                     autoStep = 7;
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;
@@ -78,7 +78,7 @@ public class AutoTest extends GenericAuto{
             case 7:
                 robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
-                    autoStep = 7;
+                    autoStep = 8;
                     robot.resetYaw();
                 }
                 break;

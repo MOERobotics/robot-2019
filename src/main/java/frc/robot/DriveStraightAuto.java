@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveStraightAuto extends GenericAuto {
 
     PIDModule straightPid = new PIDModule(0.06, 0.001,0.0);
+    long startTime = 0;
 
     @Override
     public void init() {
@@ -13,6 +14,7 @@ public class DriveStraightAuto extends GenericAuto {
         autoStep = 0;
         robot.resetDriveEncoder();
         robot.resetYaw();
+        startTime = System.currentTimeMillis();
 
     }
 
@@ -25,12 +27,13 @@ public class DriveStraightAuto extends GenericAuto {
         SmartDashboard.putNumber("kD", straightPid.pidController.getD());
         switch (autoStep) {
             case 0:
+                long now = System.currentTimeMillis();
                 straightPid.setHeading(robot.getHeadingDegrees());
                 double correction = straightPid.getCorrection();
-                //correction negative, left motor increase decrease. correction positive, left motor power increase.
+                //correction negative, left motor decrease. correction positive, left motor power increase.
                 robot.setDrivePower(0.6*(1 + correction),0.6*(1 - correction));
-                if(robot.getDistanceLeftInches() > 120) {
-                    autoStep++;
+                if(now - startTime > 2000) {
+                    autoStep = 1;
                 } else {
                     break;
                 }

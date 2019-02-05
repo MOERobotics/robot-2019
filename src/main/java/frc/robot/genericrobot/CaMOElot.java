@@ -26,7 +26,7 @@ public class CaMOElot extends GenericRobot {
     private TalonSRX shootMotorB = new TalonSRX(11);
 
     Encoder  encoderL    = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
-    Encoder  encoderR    = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
+    Encoder  encoderR    = new Encoder(4, 5, false, CounterBase.EncodingType.k1X);
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
@@ -71,7 +71,7 @@ public class CaMOElot extends GenericRobot {
 
     @Override
     public double getDistanceRightInches() {
-        return encoderL.getRaw() / TICKS_TO_INCHES;
+        return encoderR.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override

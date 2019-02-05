@@ -19,8 +19,10 @@ public class MOErio extends GenericRobot {
     TalonSRX rollRight = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX wrist = new TalonSRX(4) {{setNeutralMode(NeutralMode.Brake);}};
 
-    Encoder encoderL = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
-    Encoder encoderR = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
+    Encoder encoderL = new Encoder(0, 1, true, CounterBase.EncodingType.k1X);
+    Encoder encoderR = new Encoder(2, 3, true, CounterBase.EncodingType.k1X);
+
+    final double TICKS_TO_INCHES = 112.08; /*this is for caMOElot but it's here for testing purposes*/
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
@@ -41,12 +43,12 @@ public class MOErio extends GenericRobot {
 
     @Override
     public double getDistanceLeftInches() {
-        return encoderL.getRaw();
+        return encoderL.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
     public double getDistanceRightInches() {
-        return encoderR.getRaw();
+        return encoderR.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
@@ -56,7 +58,7 @@ public class MOErio extends GenericRobot {
 
     @Override
     public void stopEverything() {
-
+        stopDriving();
     }
 
     @Override
@@ -72,6 +74,6 @@ public class MOErio extends GenericRobot {
 
     @Override
     public void stopDriving() {
-
+        setDrivePowerInternal(0,0);
     }
 }
