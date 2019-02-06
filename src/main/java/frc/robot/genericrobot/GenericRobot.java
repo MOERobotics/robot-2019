@@ -42,10 +42,9 @@ public abstract class GenericRobot {
     public abstract void stopDriving();
 
     //moving the elevator
-    //public abstract void elevatorUp();
-    //public abstract void elevatorDown();
-    //public abstract void elevatorTurnLeft();
-    //public abstract void elevatorTurnRight();
+//    public abstract void elevatorUp(double power);
+//    public abstract void elevatorDown(double power);
+
 
     //moving the wrist
 
