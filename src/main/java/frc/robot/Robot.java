@@ -8,20 +8,15 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.*;
-import com.kauailabs.navx.frc.*;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import io.github.pseudoresonance.pixy2api.Pixy2;
+
 import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import io.github.pseudoresonance.pixy2api.links.SPILink;
 
-import java.util.Vector;
 
 
 public class Robot extends TimedRobot {
-    TalonSRX testTalon;
-    AHRS navx;
+
     //pixy line-detection camera
     private SPILink pixySPI = new SPILink();
     private Pixy2 pixyCam = Pixy2.createInstance(pixySPI);
@@ -35,11 +30,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        updateNum++;
-        //pixyCam.setLED((int)(updateNum % 255), (int)(255 -(updateNum % 255)), 0);
-        var vec = pixyCam.getLine().getVectors();
-        System.out.println(updateNum);
-        System.out.println(vec[0].toString());
+
     }
 
     @Override
@@ -64,6 +55,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        updateNum++;
+
+        pixyCam.getLine().getAllFeatures();
+        Pixy2Line.Vector[] vec = pixyCam.getLine().getVectors();
+
+        if(vec == null){ return; }
+        for(int i=0;i<vec.length;i++){
+            System.out.println(vec[i].toString());
+        }
     }
 
     @Override
