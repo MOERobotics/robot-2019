@@ -12,6 +12,8 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+
 public class SuperMOEva extends GenericRobot {
 
     //Drive
@@ -43,7 +45,10 @@ public class SuperMOEva extends GenericRobot {
     //DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
     //DigitalInput elevatorTopLimitSwitch = new DigitalInput(7);
 
-    //Cargo/Hatch?
+    //Cargo/Hatch
+    TalonSRX rollLeft = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollRight = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
+    Solenoid hatchGrabber = new Solenoid(2);
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
