@@ -48,6 +48,7 @@ public abstract class GenericRobot {
     //public abstract void elevatorTurnRight();
 
     //moving the wrist
+    //public abstract void gripperUp();
 
 
     //moving the collector

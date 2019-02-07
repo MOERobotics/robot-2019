@@ -13,12 +13,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.CaMOElot;
 import frc.robot.genericrobot.GenericRobot;
 import frc.robot.genericrobot.MOErio;
+import frc.robot.genericrobot.SuperMOEva;
 
-import com.revrobotics.*
+import com.revrobotics.*;
 
 public class Robot extends TimedRobot {
 
-  GenericRobot robotHardware = new MOErio();
+  GenericRobot robotHardware = new SuperMOEva();
   Joystick leftJoystick = new Joystick(0);
 
   GenericAuto autoProgram = new DriveStraightAuto();
@@ -48,93 +49,92 @@ public class Robot extends TimedRobot {
     autoProgram.robot = robotHardware;
 
     //opening serial port
-    if( !PortOpen ) {
+    if (!PortOpen) {
       PortOpen = true;
 
       try {
-        Blinky = new SerialPort(9600, SerialPort.Port.kMXP,8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
+        Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
         SmartDashboard.putString("Open serial port: ", "Success!");
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         String exception = e + "";
         SmartDashboard.putString("I caught: ", exception);
         PortOpen = false;
       }
 
     }
-
-  @Override
-  public void robotPeriodic() {
-      SmartDashboard.putNumber("Yaw: ",robotHardware.getHeadingDegrees());
-      SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistanceLeftInches());
-      SmartDashboard.putNumber("Right Encoder: ",robotHardware.getDistanceRightInches());
-      SmartDashboard.putNumber("Left Drive Power: ",robotHardware.getLeftDrivePower());
-      SmartDashboard.putNumber("Right Drive Power: ",robotHardware.getRightDrivePower());
-      SmartDashboard.putNumber("autostep: ",autoProgram.autoStep);
-
   }
 
-  @Override
-  public void disabledInit() {
-  }
+    @Override
+    public void robotPeriodic () {
+      SmartDashboard.putNumber("Yaw: ", robotHardware.getHeadingDegrees());
+      SmartDashboard.putNumber("Left Encoder: ", robotHardware.getDistanceLeftInches());
+      SmartDashboard.putNumber("Right Encoder: ", robotHardware.getDistanceRightInches());
+      SmartDashboard.putNumber("Left Drive Power: ", robotHardware.getLeftDrivePower());
+      SmartDashboard.putNumber("Right Drive Power: ", robotHardware.getRightDrivePower());
+      SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
 
-  @Override
-  public void disabledPeriodic() {
-    if(leftJoystick.getRawButton(2)){
-      robotHardware.resetYaw();
     }
-  }
 
-  @Override
-  public void autonomousInit() {
-    autoProgram.init();
-    //AutoTest.init();
-    Lidar.init(Blinky);
-  }
+    @Override
+    public void disabledInit () {
+    }
 
-  @Override
-  public void autonomousPeriodic() {
-    autoProgram.run();
-    //AutoTest.run(robotHardware);
+    @Override
+    public void disabledPeriodic () {
+      if (leftJoystick.getRawButton(2)) {
+        robotHardware.resetYaw();
+      }
+    }
+
+    @Override
+    public void autonomousInit () {
+      autoProgram.init();
+      //AutoTest.init();
+      Lidar.init(Blinky);
+    }
+
+    @Override
+    public void autonomousPeriodic () {
+      autoProgram.run();
+      //AutoTest.run(robotHardware);
       Lidar.getLidar(this, Blinky);
-  }
+    }
 
-  @Override
-  public void teleopInit() {
-    Lidar.init(Blinky);
-  }
+    @Override
+    public void teleopInit () {
+      Lidar.init(Blinky);
+    }
 
-  @Override
-  public void teleopPeriodic() {
+    @Override
+    public void teleopPeriodic () {
       Lidar.getLidar(this, Blinky);
 
       if (leftJoystick.getRawButton(2)) {
-      robotHardware.moveForward(.2); /*(0,4)*/
-    } else if (leftJoystick.getRawButton(3)) {
-      robotHardware.moveBackward(.2); /*(0,4)*/
-    } else if(leftJoystick.getRawButton(4)) {
-      robotHardware.turnLeftInplace(.2);
-    } else if(leftJoystick.getRawButton(5)) {
-      robotHardware.turnRightInplace(.2);
-    } else {
-      double driveJoyStickX = leftJoystick.getX();
-      double driveJoyStickY = -leftJoystick.getY();
+        robotHardware.moveForward(.2); /*(0,4)*/
+      } else if (leftJoystick.getRawButton(3)) {
+        robotHardware.moveBackward(.2); /*(0,4)*/
+      } else if (leftJoystick.getRawButton(4)) {
+        robotHardware.turnLeftInplace(.2);
+      } else if (leftJoystick.getRawButton(5)) {
+        robotHardware.turnRightInplace(.2);
+      } else {
+        double driveJoyStickX = leftJoystick.getX();
+        double driveJoyStickY = -leftJoystick.getY();
 
-      double drivePowerLeft = driveJoyStickY + driveJoyStickX;
-      double drivePowerRight = driveJoyStickY - driveJoyStickX;
+        double drivePowerLeft = driveJoyStickY + driveJoyStickX;
+        double drivePowerRight = driveJoyStickY - driveJoyStickX;
 
-      robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+        robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+      }
     }
-  }
 
-  @Override
-  public void testInit() {
-  }
+    @Override
+    public void testInit () {
+    }
 
-  @Override
-  public void testPeriodic() {
-  }
-
+    @Override
+    public void testPeriodic () {
+    }
 
 
 }
