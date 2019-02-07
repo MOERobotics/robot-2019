@@ -24,12 +24,11 @@ public class Robot extends TimedRobot {
 
   GenericAuto autoProgram = new DriveStraightAuto();
 
-  public static int numSensors = 2;
-  public static int[] lidar = new int[numSensors];
-
   //lidar
   SerialPort Blinky;
   boolean PortOpen = false;
+  public static int numSensors = 8;
+  public static int[] lidar = new int[numSensors];
 
   //neo
   CANSparkMax azimuth = new CANSparkMax(19, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -72,7 +71,6 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Left Drive Power: ", robotHardware.getLeftDrivePower());
       SmartDashboard.putNumber("Right Drive Power: ", robotHardware.getRightDrivePower());
       SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
-
     }
 
     @Override
@@ -117,6 +115,8 @@ public class Robot extends TimedRobot {
         robotHardware.turnLeftInplace(.2);
       } else if (leftJoystick.getRawButton(5)) {
         robotHardware.turnRightInplace(.2);
+      } else if (leftJoystick.getTrigger()) {
+
       } else {
         double driveJoyStickX = leftJoystick.getX();
         double driveJoyStickY = -leftJoystick.getY();

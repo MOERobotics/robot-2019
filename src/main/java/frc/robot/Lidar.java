@@ -28,7 +28,6 @@ public class Lidar {
         //reading string from Blinky
         try {
             lidarString = new String(Blinky.readString());
-            //SmartDashboard.putString("straight from blinky: ", lidarString);
             System.out.println(lidarString + ". ");
             SmartDashboard.putString("We caught an error on reading the port", "");
         } catch (Exception e) {
@@ -66,11 +65,65 @@ public class Lidar {
                 SmartDashboard.putString("Lidar 1 parsing error: ", exception);
             }
 
+            /*try {
+                l[2] = Integer.parseInt(lString[1]);
+            } catch (Exception e) {
+                exception = "ERROR " + e;
+                SmartDashboard.putString("Lidar 1 parsing error: ", exception);
+            }
+
+            try {
+                l[3] = Integer.parseInt(lString[1]);
+            } catch (Exception e) {
+                exception = "ERROR " + e;
+                SmartDashboard.putString("Lidar 1 parsing error: ", exception);
+            }
+
+            try {
+                l[4] = Integer.parseInt(lString[1]);
+            } catch (Exception e) {
+                exception = "ERROR " + e;
+                SmartDashboard.putString("Lidar 1 parsing error: ", exception);
+            }
+
+            try {
+                l[5] = Integer.parseInt(lString[1]);
+            } catch (Exception e) {
+                exception = "ERROR " + e;
+                SmartDashboard.putString("Lidar 1 parsing error: ", exception);
+            }
+
+            try {
+                l[6] = Integer.parseInt(lString[1]);
+            } catch (Exception e) {
+                exception = "ERROR " + e;
+                SmartDashboard.putString("Lidar 1 parsing error: ", exception);
+            }
+
+            try {
+                l[7] = Integer.parseInt(lString[1]);
+            } catch (Exception e) {
+                exception = "ERROR " + e;
+                SmartDashboard.putString("Lidar 1 parsing error: ", exception);
+            }*/
+
             SmartDashboard.putNumber("Lidar 0: ", l[0]);
             SmartDashboard.putNumber("Lidar 1: ", l[1]);
+            /*SmartDashboard.putNumber("Lidar 2: ", l[2]);
+            SmartDashboard.putNumber("Lidar 3: ", l[3]);
+            SmartDashboard.putNumber("Lidar 4: ", l[4]);
+            SmartDashboard.putNumber("Lidar 5: ", l[5]);
+            SmartDashboard.putNumber("Lidar 6: ", l[6]);
+            SmartDashboard.putNumber("Lidar 7: ", l[7]);*/
 
             us.lidar[0] = l[0];
             us.lidar[1] = l[1];
+            /*us.lidar[2] = l[2];
+            us.lidar[3] = l[3];
+            us.lidar[4] = l[4];
+            us.lidar[5] = l[5];
+            us.lidar[6] = l[6];
+            us.lidar[7] = l[7];*/
 
         }
     }

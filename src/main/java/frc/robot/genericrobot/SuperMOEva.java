@@ -28,10 +28,10 @@ public class SuperMOEva extends GenericRobot {
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k1X);
     Encoder encoderR = new Encoder(2, 3, true, EncodingType.k1X);
 
-    {
+    /*{
         driveRA.setInverted(true);
         driveRB.setInverted(true);
-    }
+    }*/
 
     //Turret
     CANSparkMax turret = new CANSparkMax(19, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -48,7 +48,8 @@ public class SuperMOEva extends GenericRobot {
     //Cargo/Hatch
     TalonSRX rollLeft = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX rollRight = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
-    Solenoid hatchGrabber = new Solenoid(2);
+    Solenoid hatchGrabberA = new Solenoid(2);
+    Solenoid hatchGrabberB = new Solenoid(3);
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -56,10 +57,9 @@ public class SuperMOEva extends GenericRobot {
     CANSparkMax froggerRA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax froggerRB = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    CANEncoder frogLAencoder = new CANEncoder(turret);
-    CANEncoder frogLBencoder = new CANEncoder(turret);
-    CANEncoder frogRAencoder = new CANEncoder(turret);
-    CANEncoder frogRBencoder = new CANEncoder(turret);
+    CANEncoder encoderFrog = new CANEncoder(froggerLA); //since froggers are running together, need only one encoder
+
+    Solenoid flappyBoi = new Solenoid(3);
 
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
@@ -70,6 +70,16 @@ public class SuperMOEva extends GenericRobot {
         driveRA.set(ControlMode.PercentOutput, rightMotor);
         driveRB.set(ControlMode.PercentOutput, rightMotor);
         //driveRC.set(ControlMode.PercentOutput, leftMotor);
+    }
+
+    public void driveStraight(double motor) {
+        driveLA.set(ControlMode.PercentOutput, motor);
+        driveLB.set(ControlMode.PercentOutput, motor);
+        //driveLC.set(ControlMode.PercentOutput, motor);
+
+        driveRA.set(ControlMode.PercentOutput, motor);
+        driveRB.set(ControlMode.PercentOutput, motor);
+        //driveRC.set(ControlMode.PercentOutput, motor);
     }
 
     @Override
@@ -131,6 +141,26 @@ public class SuperMOEva extends GenericRobot {
         elevator.set(power);
     }
 
+    @Override
+    public void elevatorUp(double power) {
+        driveElevator(power);
+    }
+
+    @Override
+    public void elevatorDown(double power) {
+        driveElevator(-power);
+    }
+
+    @Override
+    public void turretRight(double power) {
+        driveTurret(power);
+    }
+
+    @Override
+    public void turretLeft(double power) {
+        driveTurret(-power);
+    }
+
     public void driveArm(double power) {
         if(power > 1.0) power = 1.0;
         if(power < -1.0) power = -1.0;
@@ -146,7 +176,13 @@ public class SuperMOEva extends GenericRobot {
 
     //Hab Climb
     public void climb() {
-
+        if (encoderFrog.getPosition() < 100){//not sure how to limit this
+            //neos MUST be at full power for this to work
+            froggerLA.set(1);
+            froggerLB.set(1);
+            froggerRA.set(1);
+            froggerRB.set(1);
+        }
     }
 
 

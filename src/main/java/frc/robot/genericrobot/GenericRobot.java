@@ -8,6 +8,9 @@ public abstract class GenericRobot {
     double leftPower;
     double rightPower;
 
+    //public static int numSensors = 2;
+    //public static int[] lidar = new int[numSensors];
+
     public void moveForward(double motorPower) {
         setDrivePower(motorPower, motorPower);
     }
@@ -42,10 +45,10 @@ public abstract class GenericRobot {
     public abstract void stopDriving();
 
     //moving the elevator
-    //public abstract void elevatorUp();
-    //public abstract void elevatorDown();
-    //public abstract void elevatorTurnLeft();
-    //public abstract void elevatorTurnRight();
+    public abstract void elevatorUp(double power);
+    public abstract void elevatorDown(double power);
+    public abstract void turretLeft(double power);
+    public abstract void turretRight(double power);
 
     //moving the wrist
     //public abstract void gripperUp();
