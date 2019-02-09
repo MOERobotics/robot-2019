@@ -30,15 +30,6 @@ public class Robot extends TimedRobot {
   public static int numSensors = 8;
   public static int[] lidar = new int[numSensors];
 
-  //neo
-  CANSparkMax azimuth = new CANSparkMax(19, CANSparkMaxLowLevel.MotorType.kBrushless);
-  CANSparkMax elevation = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
-  CANSparkMax elevator = new CANSparkMax(21, CANSparkMaxLowLevel.MotorType.kBrushless);
-
-  CANEncoder azimuthEncoder = new CANEncoder(azimuth);
-  CANEncoder elevationEncoder = new CANEncoder(elevation);
-  CANEncoder elevatorEncoder = new CANEncoder(elevator);
-
 
   /* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 

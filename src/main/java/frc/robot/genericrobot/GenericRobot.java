@@ -11,9 +11,6 @@ public abstract class GenericRobot {
     double turretPower;
     double armPower;
 
-    //public static int numSensors = 2;
-    //public static int[] lidar = new int[numSensors];
-
     public void moveForward(double motorPower) {
         setDrivePower(motorPower, motorPower);
     }

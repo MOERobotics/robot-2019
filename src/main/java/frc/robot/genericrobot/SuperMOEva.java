@@ -17,18 +17,21 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 public class SuperMOEva extends GenericRobot {
 
     //Drive
-    TalonSRX driveLA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveLB = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveRA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveRB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveFreeA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveFreeB = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveSupportA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
+
+    //TalonSRX accumulatorA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    //TalonSRX accumulatorB = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
 
     AHRS navX = new AHRS(SPI.Port.kMXP, (byte) 50);
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k1X);
     Encoder encoderR = new Encoder(2, 3, true, EncodingType.k1X);
 
-    {
-        driveRA.setInverted(true);
-        driveRB.setInverted(true);
+    {//not sure which side is inverted
+        driveFreeA.setInverted(true);
+        driveFreeB.setInverted(true);
     }
 
     //Turret
@@ -65,11 +68,11 @@ public class SuperMOEva extends GenericRobot {
 
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
-        driveLA.set(ControlMode.PercentOutput, leftMotor);
-        driveLB.set(ControlMode.PercentOutput, leftMotor);
+        driveSupportA.set(ControlMode.PercentOutput, leftMotor);
+        driveSupportB.set(ControlMode.PercentOutput, leftMotor);
 
-        driveRA.set(ControlMode.PercentOutput, rightMotor);
-        driveRB.set(ControlMode.PercentOutput, rightMotor);
+        driveFreeA.set(ControlMode.PercentOutput, rightMotor);
+        driveFreeB.set(ControlMode.PercentOutput, rightMotor);
     }
 
     @Override
