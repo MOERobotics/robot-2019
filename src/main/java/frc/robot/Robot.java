@@ -10,9 +10,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.genericrobot.CaMOElot;
 import frc.robot.genericrobot.GenericRobot;
-import frc.robot.genericrobot.MOErio;
+//import frc.robot.genericrobot.CaMOElot;
+//import frc.robot.genericrobot.MOErio;
 import frc.robot.genericrobot.SuperMOEva;
 
 import com.revrobotics.*;
@@ -81,6 +81,7 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic () {
       if (leftJoystick.getRawButton(2)) {
         robotHardware.resetYaw();
+        robotHardware.resetDriveEncoders();
       }
     }
 
@@ -93,6 +94,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic () {
+      robotHardware.checkSafety();
       autoProgram.run();
       //AutoTest.run(robotHardware);
       Lidar.getLidar(this, Blinky);

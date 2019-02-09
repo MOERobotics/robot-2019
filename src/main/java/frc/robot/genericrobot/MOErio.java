@@ -40,6 +40,21 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
+    void setElevatorInternal(double power) {
+        elevator.set(ControlMode.PercentOutput, power);
+    }
+
+    @Override
+    void setTurretInternal(double power) {
+        //no turret!
+    }
+
+    @Override
+    void setArmInternal(double power) {
+        wrist.set(ControlMode.PercentOutput, power);
+    }
+
+    @Override
     public double getDistanceLeftInches() {
         return encoderL.getRaw();
     }
@@ -60,7 +75,7 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
-        public void resetDriveEncoder() {
+        public void resetDriveEncoders() {
         encoderL.reset();
         encoderR.reset();
     }
@@ -72,6 +87,11 @@ public class MOErio extends GenericRobot {
 
     @Override
     public void stopDriving() {
+
+    }
+
+    @Override
+    public void checkSafety() {
 
     }
 }
