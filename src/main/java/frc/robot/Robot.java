@@ -14,6 +14,7 @@ import frc.robot.genericrobot.GenericRobot;
 //import frc.robot.genericrobot.CaMOElot;
 //import frc.robot.genericrobot.MOErio;
 import frc.robot.genericrobot.SuperMOEva;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 import com.revrobotics.*;
 
@@ -21,6 +22,7 @@ public class Robot extends TimedRobot {
 
   GenericRobot robotHardware = new SuperMOEva();
   Joystick leftJoystick = new Joystick(0);
+  private XboxController functionStick = new XboxController(1);
 
   GenericAuto autoProgram = new DriveStraightAuto();
 
@@ -30,6 +32,9 @@ public class Robot extends TimedRobot {
   public static int numSensors = 8;
   public static int[] lidar = new int[numSensors];
 
+  //drive elevator
+  static final double upperElevator = 1;
+  static final double bottomElevator = -0.6;
 
   /* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
@@ -100,6 +105,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic () {
       Lidar.getLidar(this, Blinky);
 
+      //driving
       if (leftJoystick.getRawButton(2)) {
         robotHardware.moveForward(.2); /*(0,4)*/
       } else if (leftJoystick.getRawButton(3)) {
@@ -118,6 +124,32 @@ public class Robot extends TimedRobot {
         double drivePowerRight = driveJoyStickY - driveJoyStickX;
 
         robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+      }
+
+      //roller
+      if(functionStick.getAButton()) robotHardware.rollIn();
+      else if(functionStick.getBButton()) robotHardware.rollOut();
+      else robotHardware.driveRoll(0);
+
+      //hatch grab
+      if(functionStick.getXButton()) robotHardware.grabHatch();
+      else if(functionStick.getYButton()) robotHardware.grabHatch();//heh no
+
+      //arm
+      if(functionStick.getBumper(Hand.kLeft)) robotHardware.driveArm(0.8);
+      else if(functionStick.getBumper(Hand.kRight)) robotHardware.driveArm(-0.4);
+
+      //turret
+      if(functionStick.getStickButton(Hand.kRight)) robotHardware.driveTurret(0.5);
+      else if (functionStick.getStickButton(Hand.kLeft)) robotHardware.driveTurret(-0.5);
+      else robotHardware.driveTurret(0);
+
+      //elevator
+      if(functionStick.getTriggerAxis(Hand.kLeft) > functionStick.getTriggerAxis(Hand.kRight)) {
+        robotHardware.driveElevator((bottomElevator * functionStick.getTriggerAxis(Hand.kLeft)));
+      }
+      else {
+        robotHardware.driveElevator((upperElevator * functionStick.getTriggerAxis(Hand.kRight)));
       }
     }
 

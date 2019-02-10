@@ -11,7 +11,7 @@ public class DriveStraightAuto extends GenericAuto {
         straightPid.resetError();
         straightPid.setHeading(0);
         autoStep = 0;
-        robot.resetDriveEncoder();
+        robot.resetDriveEncoders();
         robot.resetYaw();
 
     }

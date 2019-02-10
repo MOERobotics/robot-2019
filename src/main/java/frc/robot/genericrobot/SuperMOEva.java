@@ -22,9 +22,6 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX driveSupportA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
 
-    //TalonSRX accumulatorA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
-    //TalonSRX accumulatorB = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
-
     AHRS navX = new AHRS(SPI.Port.kMXP, (byte) 50);
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k1X);
     Encoder encoderR = new Encoder(2, 3, true, EncodingType.k1X);
@@ -47,8 +44,9 @@ public class SuperMOEva extends GenericRobot {
     //DigitalInput elevatorTopLimitSwitch = new DigitalInput(7);
 
     //Cargo/Hatch
-    TalonSRX rollL = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollL = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
     TalonSRX rollR = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
+
     DoubleSolenoid hatchGrabberA = new DoubleSolenoid(0, 1);
     DoubleSolenoid hatchGrabberB = new DoubleSolenoid(2, 3);
 
@@ -157,6 +155,28 @@ public class SuperMOEva extends GenericRobot {
         arm.stopMotor();
     }*/
 
+   //Cargo/Hatch
+    @Override
+    public void driveRoll(double power) {
+        rollL.set(ControlMode.PercentOutput, power);
+        rollR.set(ControlMode.PercentOutput, power);
+    }
+
+   @Override
+   public void rollIn() {
+       driveRoll(-0.7);
+   }
+
+   @Override
+    public void rollOut() {
+        driveRoll(0.7);
+    }
+
+    @Override
+    public void grabHatch() {
+
+    }
+
     //Hab Climb
 
     public void driveFroggers(double power) {
@@ -224,6 +244,8 @@ public class SuperMOEva extends GenericRobot {
     public boolean isArmDown() {
         return encoderArm.getPosition() >= 67.2;
     }
+
+
 
     public boolean froggersAreInSync() {
         return encoderFrogLA.getPosition() == encoderFrogLB.getPosition()  && encoderFrogLA.getPosition()  == encoderFrogRA.getPosition()

@@ -12,7 +12,7 @@ public class AutoTest extends GenericAuto{
             //case 0 move forward 2 feet
             case -1:
 
-                robot.resetDriveEncoder();
+                robot.resetDriveEncoders();
                 robot.resetYaw();
                 autoStep = 0;
             case 0:
@@ -28,7 +28,7 @@ public class AutoTest extends GenericAuto{
                 robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 2;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
                 //case 2 moves backwards 2 feet

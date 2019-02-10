@@ -101,6 +101,12 @@ public abstract class GenericRobot {
 
     public double getArmPower() {return armPower;}
 
+    public abstract void driveRoll(double power);
+    public abstract void rollIn();
+    public abstract void rollOut();
+
+    public abstract void grabHatch();
+
     public abstract void checkSafety();
 
     //moving the wrist

@@ -65,6 +65,21 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
+    void setElevatorInternal(double power) {
+
+    }
+
+    @Override
+    void setTurretInternal(double power) {
+
+    }
+
+    @Override
+    void setArmInternal(double power) {
+
+    }
+
+    @Override
     public double getDistanceLeftInches() {
         return encoderL.getRaw() / TICKS_TO_INCHES;
     }
@@ -80,7 +95,7 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
-    public void resetDriveEncoder() {
+    public void resetDriveEncoders() {
         encoderL.reset();
         encoderR.reset();
     }
@@ -99,5 +114,10 @@ public class CaMOElot extends GenericRobot {
     @Override
     public void stopDriving() {
     setDrivePower(0,0);
+    }
+
+    @Override
+    public void checkSafety() {
+
     }
 }
