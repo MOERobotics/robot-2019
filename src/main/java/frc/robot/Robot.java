@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.CaMOElot;
 import frc.robot.genericrobot.GenericRobot;
 
-
 public class Robot extends TimedRobot {
 
   GenericRobot robotHardware = new CaMOElot();
@@ -20,9 +19,12 @@ public class Robot extends TimedRobot {
 
   GenericAuto autoProgram = new DriveStraightAuto();
 
+
   /* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
+  public Robot(){
 
+  }
   @Override
   public void robotInit() {
     autoProgram.robot = robotHardware;
