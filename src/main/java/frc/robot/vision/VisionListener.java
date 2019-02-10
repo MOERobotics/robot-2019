@@ -18,7 +18,7 @@ public class VisionListener extends Thread{
                 VisionClient client = new VisionClient(this,sock);
                 client.start();
             }
-            
+
 
         } catch(Exception ignored) {
 
