@@ -117,7 +117,47 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
+    public void driveRoll(double power) {
+
+    }
+
+    @Override
+    public void rollIn() {
+
+    }
+
+    @Override
+    public void rollOut() {
+
+    }
+
+    @Override
+    public void grabHatch() {
+
+    }
+
+    @Override
     public void checkSafety() {
+
+    }
+
+    @Override
+    public void driveSA(double power) {
+
+    }
+
+    @Override
+    public void driveSB(double power) {
+
+    }
+
+    @Override
+    public void driveFA(double power) {
+
+    }
+
+    @Override
+    public void driveFB(double power) {
 
     }
 }

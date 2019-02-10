@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 public class SuperMOEva extends GenericRobot {
 
     //Drive
-    TalonSRX driveFreeA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveFreeB = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveSupportA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveFreeA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Coast);}};
+    TalonSRX driveFreeB = new TalonSRX(13) {{setNeutralMode(NeutralMode.Coast);}};
+    TalonSRX driveSupportA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Coast);}};
+    TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Coast);}};
 
     AHRS navX = new AHRS(SPI.Port.kMXP, (byte) 50);
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k1X);
@@ -30,6 +30,8 @@ public class SuperMOEva extends GenericRobot {
         driveFreeA.setInverted(true);
         driveFreeB.setInverted(true);
     }
+
+    DoubleSolenoid solenoidDrive = new DoubleSolenoid(0, 1);
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -44,11 +46,11 @@ public class SuperMOEva extends GenericRobot {
     //DigitalInput elevatorTopLimitSwitch = new DigitalInput(7);
 
     //Cargo/Hatch
-    TalonSRX rollL = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
-    TalonSRX rollR = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollL = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
+    TalonSRX rollR = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
 
-    DoubleSolenoid hatchGrabberA = new DoubleSolenoid(0, 1);
-    DoubleSolenoid hatchGrabberB = new DoubleSolenoid(2, 3);
+    Solenoid hatchGrabberA = new Solenoid(0);
+    Solenoid hatchGrabberB = new Solenoid(0);
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(30, CANSparkMaxLowLevel.MotorType.kBrushless);

@@ -75,7 +75,7 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
-        public void resetDriveEncoders() {
+    public void resetDriveEncoders() {
         encoderL.reset();
         encoderR.reset();
     }
@@ -91,7 +91,47 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
+    public void driveRoll(double power) {
+
+    }
+
+    @Override
+    public void rollIn() {
+
+    }
+
+    @Override
+    public void rollOut() {
+
+    }
+
+    @Override
+    public void grabHatch() {
+
+    }
+
+    @Override
     public void checkSafety() {
+
+    }
+
+    @Override
+    public void driveSA(double power) {
+
+    }
+
+    @Override
+    public void driveSB(double power) {
+
+    }
+
+    @Override
+    public void driveFA(double power) {
+
+    }
+
+    @Override
+    public void driveFB(double power) {
 
     }
 }
