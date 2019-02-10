@@ -107,15 +107,27 @@ public class Robot extends TimedRobot {
 
       //driving
       if (leftJoystick.getRawButton(2)) {
-        robotHardware.moveForward(.2); /*(0,4)*/
+        //ha
       } else if (leftJoystick.getRawButton(3)) {
         robotHardware.moveBackward(.2); /*(0,4)*/
       } else if (leftJoystick.getRawButton(4)) {
         robotHardware.turnLeftInplace(.2);
       } else if (leftJoystick.getRawButton(5)) {
         robotHardware.turnRightInplace(.2);
-      } else if (leftJoystick.getTrigger()) {
+      }
+      //just for now
+      else if (leftJoystick.getRawButton(6)) {
+        robotHardware.driveSA(0.5);
+      } else if (leftJoystick.getRawButton(7)) {
+        robotHardware.driveSB(0.5);
+      } else if (leftJoystick.getRawButton(8)) {
+        robotHardware.driveFA(0.5);
+      } else if (leftJoystick.getRawButton(9)) {
+        robotHardware.driveFB(0.5);
+      }
 
+      else if (leftJoystick.getTrigger()) {
+        robotHardware.moveForward(.2); /*(0,4)*/
       } else {
         double driveJoyStickX = leftJoystick.getX();
         double driveJoyStickY = -leftJoystick.getY();

@@ -113,5 +113,11 @@ public abstract class GenericRobot {
 
 
     //moving the collector
+
+    //just for now
+    public abstract void driveSA(double power);
+    public abstract void driveSB(double power);
+    public abstract void driveFA(double power);
+    public abstract void driveFB(double power);
 }
 

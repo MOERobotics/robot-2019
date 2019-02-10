@@ -73,6 +73,25 @@ public class SuperMOEva extends GenericRobot {
         driveFreeB.set(ControlMode.PercentOutput, rightMotor);
     }
 
+    //testing individual motors
+    public void driveSA(double power) {
+        driveSupportA.set(ControlMode.PercentOutput, power);
+    }
+
+    public void driveSB(double power) {
+        driveSupportB.set(ControlMode.PercentOutput, power);
+    }
+
+    public void driveFA(double power) {
+        driveFreeA.set(ControlMode.PercentOutput, power);
+    }
+
+    public void driveFB(double power) {
+        driveFreeB.set(ControlMode.PercentOutput, power);
+    }
+
+    //fin
+
     @Override
     public double getDistanceLeftInches() {
         return encoderL.getRaw();
