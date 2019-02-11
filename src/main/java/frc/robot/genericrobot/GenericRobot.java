@@ -26,6 +26,8 @@ public abstract class GenericRobot {
         rightPower = rightMotor;
         setDrivePowerInternal(leftMotor, rightMotor);
     }
+    public abstract double getPitch();
+    public abstract double getRolling();
 
    //checking for things
     public abstract double getDistanceLeftInches();

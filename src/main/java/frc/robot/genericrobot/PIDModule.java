@@ -40,6 +40,8 @@ public class PIDModule {
                 internal,
                 internal
         );
+        this.pidController.setInputRange(-180,180);
+        this.pidController.setContinuous(true);
     }
 
     public double input;
@@ -70,5 +72,6 @@ public class PIDModule {
         public double pidGet() {
             return parent.input;
         }
+
     }
 }

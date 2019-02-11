@@ -9,19 +9,15 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.genericrobot.CaMOElot;
-import frc.robot.genericrobot.GenericRobot;
-import frc.robot.genericrobot.PIDModule;
+import frc.robot.genericrobot.*;
 
 
 public class Robot extends TimedRobot {
 
-  GenericRobot robotHardware = new CaMOElot();
+  GenericRobot robotHardware = new MOErio();
   Joystick leftJoystick = new Joystick(0);
 
-  GenericAuto autoProgram = new PIDTesting();
-
-  PIDModule straightPID = new PIDModule(0.1,0.008,0);
+  GenericAuto autoProgram = new MOErioCargoSideAuto();
 
   @Override
   public void robotInit() {
@@ -36,6 +32,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Autostep: ",autoProgram.autoStep);
     SmartDashboard.putNumber("Left Motor Power: ", robotHardware.getLeftDrivePower());
     SmartDashboard.putNumber("Right Motor Power: ", robotHardware.getRightDrivePower());
+    SmartDashboard.putNumber("Pitch: ", robotHardware.getPitch());
+    SmartDashboard.putNumber("Rolling: ", robotHardware.getRolling());
   }
 
   @Override

@@ -71,7 +71,7 @@ public class CaMOElot extends GenericRobot {
 
     @Override
     public double getDistanceRightInches() {
-        return encoderL.getRaw() / TICKS_TO_INCHES;
+        return encoderR.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
@@ -99,5 +99,15 @@ public class CaMOElot extends GenericRobot {
     @Override
     public void stopDriving() {
     setDrivePower(0,0);
+    }
+
+    @Override
+    public double getPitch() {
+        return navx.getPitch();
+    }
+
+    @Override
+    public double getRolling() {
+        return navx.getRoll();
     }
 }
