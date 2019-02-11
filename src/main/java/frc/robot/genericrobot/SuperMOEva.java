@@ -44,8 +44,8 @@ public class SuperMOEva extends GenericRobot {
     //DigitalInput elevatorTopLimitSwitch = new DigitalInput(7);
 
     //Cargo/Hatch
-    TalonSRX rollL = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
-    TalonSRX rollR = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollL = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
+    TalonSRX rollR = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
 
     DoubleSolenoid hatchGrabberA = new DoubleSolenoid(0, 1);
     DoubleSolenoid hatchGrabberB = new DoubleSolenoid(2, 3);
@@ -60,8 +60,6 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderFrogLB = new CANEncoder(froggerLB);
     CANEncoder encoderFrogRA = new CANEncoder(froggerRA);
     CANEncoder encoderFrogRB = new CANEncoder(froggerRB);
-
-    //Solenoid flappyBoi = new Solenoid(3);
 
 
     //Drive Functions
@@ -231,7 +229,7 @@ public class SuperMOEva extends GenericRobot {
         if (isArmUp()) driveArm(0);
         if (isArmDown()) driveArm(0);
 
-        if (froggersAreInSync()) driveFroggers(0);
+        if (!froggersAreInSync()) driveFroggers(0);
     }
 
     @Override
@@ -263,7 +261,6 @@ public class SuperMOEva extends GenericRobot {
     public boolean isArmDown() {
         return encoderArm.getPosition() >= 67.2;
     }
-
 
 
     public boolean froggersAreInSync() {

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.GenericRobot;
 //import frc.robot.genericrobot.CaMOElot;
 //import frc.robot.genericrobot.MOErio;
+import frc.robot.genericrobot.MOErio;
 import frc.robot.genericrobot.SuperMOEva;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
@@ -20,7 +21,7 @@ import com.revrobotics.*;
 
 public class Robot extends TimedRobot {
 
-  GenericRobot robotHardware = new SuperMOEva();
+  GenericRobot robotHardware = new MOErio();
   Joystick leftJoystick = new Joystick(0);
   private XboxController functionStick = new XboxController(1);
 
