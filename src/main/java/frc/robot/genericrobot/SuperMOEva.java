@@ -253,4 +253,14 @@ public class SuperMOEva extends GenericRobot {
     public double getArmEncoderCount() {
         return encoderArm.getPosition();
     }
+
+    @Override
+    public double getPitchDegrees() {
+        return navX.getPitch();
+    }
+
+    @Override
+    public double getRollDegrees() {
+        return navX.getRoll();
+    }
 }

@@ -20,12 +20,16 @@ public class DriveCurvedAuto extends GenericAuto {
     }
 
     @Override
-    public void run() {
+    public void printSmartDashboard() {
         SmartDashboard.putNumber("error",straightPid.getInput());
         SmartDashboard.putNumber("correction", straightPid.getCorrection());
         SmartDashboard.putNumber("kP", straightPid.pidController.getP());
         SmartDashboard.putNumber("kI", straightPid.pidController.getI());
         SmartDashboard.putNumber("kD", straightPid.pidController.getD());
+    }
+
+    @Override
+    public void run() {
         switch (autoStep) {
             case 0:
                 long now = System.currentTimeMillis();

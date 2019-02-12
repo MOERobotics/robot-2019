@@ -70,6 +70,16 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
+    public double getPitchDegrees() {
+        return navx.getPitch();
+    }
+
+    @Override
+    public double getRollDegrees() {
+        return navx.getRoll();
+    }
+
+    @Override
     public void resetDriveEncoders() {
         encoderL.reset();
         encoderR.reset();

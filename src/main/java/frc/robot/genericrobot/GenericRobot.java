@@ -16,6 +16,8 @@ public abstract class GenericRobot {
 	public abstract double getDistanceLeftInches();
 	public abstract double getDistanceRightInches();
 	public abstract double getHeadingDegrees();
+	public abstract double getPitchDegrees();
+	public abstract double getRollDegrees();
 	public abstract double getElevatorEncoderCount();
 	public abstract double getTurretEncoderCount();
 	public abstract double getArmEncoderCount();

@@ -10,14 +10,17 @@ import com.kauailabs.navx.frc.AHRS;
 import frc.robot.genericrobot.GenericRobot;
 
 public class MOErio extends GenericRobot {
-    TalonSRX driveLA   = new TalonSRX( 0) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveLB   = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveRA   = new TalonSRX( 1) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveRB   = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX elevator  = new TalonSRX( 2) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX rollLeft  = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX rollRight = new TalonSRX( 3) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX wrist     = new TalonSRX( 4) {{setNeutralMode(NeutralMode.Brake);}};
+
+    final double TICKS_TO_INCHES = 45;
+
+    TalonSRX driveLA = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveLB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveRA = new TalonSRX(1) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveRB = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX elevator = new TalonSRX(2) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollLeft = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollRight = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX wrist = new TalonSRX(4) {{setNeutralMode(NeutralMode.Brake);}};
 
     Encoder encoderL        = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
     Encoder encoderR        = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
@@ -61,12 +64,12 @@ public class MOErio extends GenericRobot {
 
     @Override
     public double getDistanceLeftInches() {
-        return encoderL.getRaw();
+        return encoderL.getRaw() * TICKS_TO_INCHES;
     }
 
     @Override
     public double getDistanceRightInches() {
-        return encoderR.getRaw();
+        return encoderR.getRaw() * TICKS_TO_INCHES;
     }
 
     @Override
@@ -98,10 +101,6 @@ public class MOErio extends GenericRobot {
     }
 
 
-    @Override
-    public void grabHatch() {
-
-    }
 
     @Override
     public void checkSafety() {
@@ -128,22 +127,12 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
-    public boolean isElevatorUp() {
-        return elevatorTopLimitSwitch.get();
+    public double getPitchDegrees() {
+        return navx.getPitch();
     }
 
     @Override
-    public boolean isElevatorDown() {
-        return elevatorBottomLimitSwitch.get();
-    }
-
-    @Override
-    public boolean isArmUp() {
-        return encoderWrist.getRaw() < 0;
-    }
-
-    @Override
-    public boolean isArmDown() {
-        return encoderWrist.getRaw() > 1150;
+    public double getRollDegrees() {
+        return navx.getRoll();
     }
 }
