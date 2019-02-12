@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
+import io.github.pseudoresonance.pixy2api*;
+import io.github.pseudoresonance.pixy2api.links.SPILink;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -35,6 +37,11 @@ public class Robot extends TimedRobot {
 	static final double bottomElevator = -0.6;
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
+
+    //pixy line-detection camera
+    private SPILink pixySPI = new SPILink();
+    private Pixy2 pixyCam = Pixy2.createInstance(pixySPI);
+    private long updateNum;
 
 
 	@Override
@@ -149,6 +156,20 @@ public class Robot extends TimedRobot {
 		else if (functionStick.getTriggerAxis(Hand.kRight) > 0.3) robotHardware.driveElevator( 1.0 * functionStick.getTriggerAxis(Hand.kRight));
 		else                                                      robotHardware.driveElevator( 0.0);
 
+		//pixycam
+        pixyCam.getLine().getAllFeatures();
+        Pixy2Line.Vector[] vec = pixyCam.getLine().getVectors();
+
+        if(vec == null){ return; }
+        //Print vector coords to smartdashboard
+        SmartDashboard.putNumber(vec[0].getX0());
+        SmartDashboard.putNumber(vec[0].getX1());
+        SmartDashboard.putNumber(vec[0].getY0());
+        SmartDashboard.putNumber(vec[0].getX1());
+
+        for(int i=0;i<vec.length;i++){
+            System.out.println(vec[i].toString());
+        }
 
 	}
 
