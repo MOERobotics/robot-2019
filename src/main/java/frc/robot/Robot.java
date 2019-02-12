@@ -11,14 +11,15 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.CaMOElot;
 import frc.robot.genericrobot.GenericRobot;
+import frc.robot.genericrobot.MOErio;
 
 
 public class Robot extends TimedRobot {
 
-  GenericRobot robotHardware = new CaMOElot();
+  GenericRobot robotHardware = new MOErio();
   Joystick leftJoystick = new Joystick(0);
 
-  GenericAuto autoProgram = new TestZ();
+  GenericAuto autoProgram = new MOErioCargoFrontGoBackAuto();
 
   /* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
@@ -36,6 +37,8 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("Left Drive Power: ",robotHardware.getLeftDrivePower());
       SmartDashboard.putNumber("Right Drive Power: ",robotHardware.getRightDrivePower());
       SmartDashboard.putNumber("autostep: ",autoProgram.autoStep);
+      SmartDashboard.putNumber("Pitch: ", robotHardware.getPitch());
+      SmartDashboard.putNumber("Roll: ", robotHardware.getRoll());
 
   }
 

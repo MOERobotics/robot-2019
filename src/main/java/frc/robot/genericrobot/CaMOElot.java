@@ -90,6 +90,15 @@ public class CaMOElot extends GenericRobot {
         navx.reset();
     }
 
+    @Override
+    public double getPitch() {
+        return navx.getPitch();
+    }
+
+    @Override
+    public double getRoll() {
+        return navx.getRoll();
+    }
 
     @Override
     public void stopEverything() {

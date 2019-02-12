@@ -8,7 +8,8 @@ public class AutoRocket extends GenericAuto {
 
     //P = 0.06, I = 0.001, D = 0.0
     PIDModule arcPid = new PIDModule(0.06, 0.001,0.0);
-    double z = 1.11;
+    double z = 1.07;
+    //1.11 was 0.5 and 0.4
 
     @Override
     public void init() {
@@ -43,7 +44,7 @@ public class AutoRocket extends GenericAuto {
                 robot.setDrivePower((0.5 ) * (1 + correction),(0.4 * (1 - correction)));
 
 
-                if(robot.getDistanceLeftInches() >= 96){
+                if(robot.getDistanceLeftInches() >= 108*2){
                     autoStep++;
                     robot.resetDriveEncoder();
                 }

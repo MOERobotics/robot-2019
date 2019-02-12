@@ -8,7 +8,8 @@ public class AutoSideHatch extends GenericAuto {
 
     //P = 0.06, I = 0.001, D = 0.0
     PIDModule arcPid = new PIDModule(0.06, 0.001,0.0);
-    double z = 1.34;
+    double z = 1.4;
+    //1.34 for caMOElot
     boolean rightSide = true;
 
     //front side hatch s = 72in
@@ -17,7 +18,7 @@ public class AutoSideHatch extends GenericAuto {
     public void init() {
         arcPid.resetError();
         arcPid.setHeading(0);
-        autoStep = 0;
+        autoStep = -1;
         robot.resetDriveEncoder();
         robot.resetYaw();
 
@@ -47,9 +48,21 @@ public class AutoSideHatch extends GenericAuto {
         SmartDashboard.putNumber("the magic", louWizardry);
         SmartDashboard.putNumber("Z", z);
         switch (autoStep) {
+            case -1:
+                arcPid.setHeading(robot.getHeadingDegrees());
+                double correction = arcPid.getCorrection();
+
+                robot.setDrivePower(0.5*(1+correction), 0.3*(1-correction));
+
+                if(robot.getPitch() >= 3){
+                    autoStep++;
+                    robot.resetYaw();
+                    robot.resetDriveEncoder();
+                }
+            //left arc
             case 0:
                 arcPid.setHeading(louWizardry) ;
-                double correction = arcPid.getCorrection();
+                correction = arcPid.getCorrection();
 
                 //correction negative, left motor decrease. correction positive, left motor power increase.
                 robot.setDrivePower((0.5 ) * (1 + correction),(0.3 * (1 - correction)));
@@ -57,26 +70,34 @@ public class AutoSideHatch extends GenericAuto {
 
                 if(robot.getDistanceLeftInches() >= 72){
                     autoStep++;
+                    SmartDashboard.putNumber("the first arc left", robot.getDistanceLeftInches());
+                    SmartDashboard.putNumber("the first arc right", robot.getDistanceRightInches());
+                    SmartDashboard.putNumber("the first arc yaw",  robot.getHeadingDegrees());
                     robot.resetDriveEncoder();
                 }
                 break;
+            //right arc
             case 1:
                 louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) / z;
                 arcPid.setHeading(louWizardry) ;
                 correction = arcPid.getCorrection();
 
                 //correction negative, left motor decrease. correction positive, left motor power increase.
+
                 robot.setDrivePower((0.3 ) * (1 + correction),(0.5 * (1 - correction)));
 
 
-                if(robot.getDistanceLeftInches() >= 72 / z){
+                if(robot.getDistanceLeftInches() >= 60 / z){
                     autoStep++;
+                    SmartDashboard.putNumber("the second arc left", robot.getDistanceLeftInches());
+                    SmartDashboard.putNumber("the second arc right", robot.getDistanceRightInches());
+                    SmartDashboard.putNumber("the second arc yaw", robot.getHeadingDegrees());
                     arcPid.setHeading(0);
                     robot.resetDriveEncoder();
                     robot.resetYaw();
                 }
                 break;
-
+            /*
             case 2:
                 arcPid.setHeading(robot.getHeadingDegrees());
                 correction = arcPid.getCorrection();
@@ -89,8 +110,8 @@ public class AutoSideHatch extends GenericAuto {
                     robot.resetDriveEncoder();
                 }
                 break;
-
-
+            */
+            /*
             case 3:
                 if(robot.getHeadingDegrees() <= -90) {
                     autoStep++;
@@ -104,8 +125,8 @@ public class AutoSideHatch extends GenericAuto {
                 }
 
                 break;
-
-
+            */
+            /*
             case 4:
                 arcPid.setHeading(robot.getHeadingDegrees());
                 correction = arcPid.getCorrection();
@@ -119,7 +140,7 @@ public class AutoSideHatch extends GenericAuto {
                     robot.resetDriveEncoder();
                 }
                 break;
-
+            */
             /*
             case 5:
                 if(robot.getHeadingDegrees() <= -90) {
@@ -167,7 +188,7 @@ public class AutoSideHatch extends GenericAuto {
                 break;
             */
 
-            case 5:
+            case 2:
                 robot.stopDriving();
         }
     }

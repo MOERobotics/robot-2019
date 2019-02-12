@@ -19,7 +19,7 @@ public class TestZ extends GenericAuto {
         switch (autoStep) {
             case 0:
 
-                robot.setDrivePower(0.5,0.45);
+                robot.setDrivePower(0.5,0.15);
 
                 if(robot.getDistanceLeftInches() > setDistance) {
                     autoStep = 1;

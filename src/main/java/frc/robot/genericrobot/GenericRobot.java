@@ -31,6 +31,8 @@ public abstract class GenericRobot {
     public abstract double getDistanceLeftInches();
     public abstract double getDistanceRightInches();
     public abstract double getHeadingDegrees();
+    public abstract double getPitch();
+    public abstract double getRoll();
 
     public double getLeftDrivePower () { return leftPower; }
     public double getRightDrivePower() { return rightPower; }

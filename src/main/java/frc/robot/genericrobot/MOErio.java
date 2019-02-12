@@ -22,7 +22,7 @@ public class MOErio extends GenericRobot {
     Encoder encoderL = new Encoder(0, 1, true, CounterBase.EncodingType.k1X);
     Encoder encoderR = new Encoder(2, 3, true, CounterBase.EncodingType.k1X);
 
-    final double TICKS_TO_INCHES = 112.08; /*this is for caMOElot but it's here for testing purposes*/
+    final double TICKS_TO_INCHES = 43; /*this is for caMOElot but it's here for testing purposes*/
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
@@ -75,5 +75,15 @@ public class MOErio extends GenericRobot {
     @Override
     public void stopDriving() {
         setDrivePowerInternal(0,0);
+    }
+
+    @Override
+    public double getPitch() {
+        return navx.getPitch();
+    }
+
+    @Override
+    public double getRoll() {
+        return navx.getRoll();
     }
 }
