@@ -44,17 +44,17 @@ public class SuperMOEva extends GenericRobot {
     //DigitalInput elevatorTopLimitSwitch = new DigitalInput(7);
 
     //Cargo/Hatch
-    TalonSRX rollL = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
-    TalonSRX rollR = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX rollL;// = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
+    TalonSRX rollR;// = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
 
     DoubleSolenoid hatchGrabberA = new DoubleSolenoid(0, 1);
     DoubleSolenoid hatchGrabberB = new DoubleSolenoid(2, 3);
 
     //Hab Lifter
-    CANSparkMax froggerLA = new CANSparkMax(30, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerLB = new CANSparkMax(31, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerRA = new CANSparkMax(32, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerRB = new CANSparkMax(33, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerLA;// = new CANSparkMax(30, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerLB;// = new CANSparkMax(31, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerRA;// = new CANSparkMax(32, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerRB;// = new CANSparkMax(33, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     CANEncoder encoderFrogLA = new CANEncoder(froggerLA);
     CANEncoder encoderFrogLB = new CANEncoder(froggerLB);
@@ -174,19 +174,9 @@ public class SuperMOEva extends GenericRobot {
 
    //Cargo/Hatch
     @Override
-    public void driveRoll(double power) {
-        rollL.set(ControlMode.PercentOutput, power);
-        rollR.set(ControlMode.PercentOutput, power);
-    }
-
-   @Override
-   public void rollIn() {
-       driveRoll(-0.7);
-   }
-
-   @Override
-    public void rollOut() {
-        driveRoll(0.7);
+    public void setRollerInternal(double power) {
+        //rollL.set(ControlMode.PercentOutput, power);
+        //rollR.set(ControlMode.PercentOutput, power);
     }
 
     @Override
@@ -197,10 +187,10 @@ public class SuperMOEva extends GenericRobot {
     //Hab Climb
 
     public void driveFroggers(double power) {
-        froggerLA.set(power);
-        froggerLB.set(power);
-        froggerRA.set(power);
-        froggerRB.set(power);
+        //froggerLA.set(power);
+        //froggerLB.set(power);
+        //froggerRA.set(power);
+        //froggerRB.set(power);
     }
 
     public void climb() {
@@ -268,5 +258,18 @@ public class SuperMOEva extends GenericRobot {
             && encoderFrogLA.getPosition()  == encoderFrogRB.getPosition();
     }
 
+    @Override
+    public double getElevatorEncoderCount() {
+        return encoderElev.getPosition();
+    }
 
+    @Override
+    public double getTurretEncoderCount() {
+        return encoderTur.getPosition();
+    }
+
+    @Override
+    public double getArmEncoderCount() {
+        return encoderArm.getPosition();
+    }
 }

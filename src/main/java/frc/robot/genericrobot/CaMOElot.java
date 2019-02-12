@@ -12,6 +12,14 @@ public class CaMOElot extends GenericRobot {
     final double TICKS_TO_INCHES = 112.08;
     final double TICKS_TO_FEET = TICKS_TO_INCHES * 12;
 
+    double fakeArmEncoder = 0;
+    double fakeElevatorEncoder = 0;
+    double fakeTurretEncoder = 0;
+
+    double fakeArmPower = 0;
+    double fakeElevatorPower = 0;
+    double fakeTurretPower = 0;
+
     private TalonSRX leftMotorA = new TalonSRX(12);
     private TalonSRX leftMotorB = new TalonSRX(13);
     private TalonSRX leftMotorC = new TalonSRX(14);
@@ -65,18 +73,18 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
-    void setElevatorInternal(double power) {
-
+    protected void setElevatorInternal(double power) {
+        fakeElevatorPower = power;
     }
 
     @Override
-    void setTurretInternal(double power) {
-
+    protected void setTurretInternal(double power) {
+        fakeTurretPower = power;
     }
 
     @Override
-    void setArmInternal(double power) {
-
+    protected void setArmInternal(double power) {
+        fakeArmPower = 0;
     }
 
     @Override
@@ -117,19 +125,11 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
-    public void driveRoll(double power) {
-
+    public void setRollerInternal(double power) {
+        shootMotorA.set(ControlMode.PercentOutput,power*0.2);
+        shootMotorB.set(ControlMode.PercentOutput,power*0.2);
     }
 
-    @Override
-    public void rollIn() {
-
-    }
-
-    @Override
-    public void rollOut() {
-
-    }
 
     @Override
     public void grabHatch() {
@@ -138,6 +138,9 @@ public class CaMOElot extends GenericRobot {
 
     @Override
     public void checkSafety() {
+        fakeTurretEncoder   += fakeTurretPower;
+        fakeArmEncoder      += fakeArmPower;
+        fakeElevatorEncoder += fakeElevatorPower;
 
     }
 
@@ -160,4 +163,20 @@ public class CaMOElot extends GenericRobot {
     public void driveFB(double power) {
 
     }
+
+    @Override
+    public double getElevatorEncoderCount() {
+        return fakeElevatorEncoder;
+    }
+
+    @Override
+    public double getTurretEncoderCount() {
+        return fakeTurretEncoder;
+    }
+
+    @Override
+    public double getArmEncoderCount() {
+        return fakeArmEncoder;
+    }
+
 }
