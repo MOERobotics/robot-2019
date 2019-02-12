@@ -10,19 +10,24 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.genericrobot.CaMOElot;
 import frc.robot.genericrobot.GenericRobot;
 //import frc.robot.genericrobot.CaMOElot;
 //import frc.robot.genericrobot.MOErio;
-import frc.robot.genericrobot.MOErio;
 import frc.robot.genericrobot.SuperMOEva;
+
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
 
 import com.revrobotics.*;
 
 public class Robot extends TimedRobot {
 
-  GenericRobot robotHardware = new MOErio();
-  Joystick leftJoystick = new Joystick(0);
+  GenericRobot robotHardware = new CaMOElot();
+  Joystick driveStick = new Joystick(0);
   private XboxController functionStick = new XboxController(1);
 
   GenericAuto autoProgram = new DriveStraightAuto();
@@ -36,6 +41,11 @@ public class Robot extends TimedRobot {
   //drive elevator
   static final double upperElevator = 1;
   static final double bottomElevator = -0.6;
+
+  //camera
+  UsbCamera cam1;
+  //UsbCamera cam2;
+  VideoSink server;
 
   /* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
@@ -58,16 +68,21 @@ public class Robot extends TimedRobot {
       }
 
     }
+
+    //CameraServer.getInstance().startAutomaticCapture();
+    cam1 = CameraServer.getInstance().startAutomaticCapture(0);
+    cam1.setWhiteBalanceAuto();
+    /*cam2 = CameraServer.getInstance().startAutomaticCapture(1);
+    cam2.setWhiteBalanceAuto();*/
+    server = CameraServer.getInstance().getServer();
+    CameraServer.getInstance().startAutomaticCapture();
+
+    robotHardware.dashboardInit(robotHardware);
   }
 
     @Override
     public void robotPeriodic () {
-      SmartDashboard.putNumber("Yaw: ", robotHardware.getHeadingDegrees());
-      SmartDashboard.putNumber("Left Encoder: ", robotHardware.getDistanceLeftInches());
-      SmartDashboard.putNumber("Right Encoder: ", robotHardware.getDistanceRightInches());
-      SmartDashboard.putNumber("Left Drive Power: ", robotHardware.getLeftDrivePower());
-      SmartDashboard.putNumber("Right Drive Power: ", robotHardware.getRightDrivePower());
-      SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
+      robotHardware.dashboardPeriodic(robotHardware);
     }
 
     @Override
@@ -76,10 +91,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic () {
-      if (leftJoystick.getRawButton(2)) {
+      if (driveStick.getRawButton(2)) {
         robotHardware.resetYaw();
         robotHardware.resetDriveEncoders();
       }
+
+      robotHardware.dashboardPeriodic(robotHardware);
     }
 
     @Override
@@ -87,6 +104,8 @@ public class Robot extends TimedRobot {
       autoProgram.init();
       //AutoTest.init();
       Lidar.init(Blinky);
+
+      robotHardware.dashboardPeriodic(robotHardware);
     }
 
     @Override
@@ -100,6 +119,8 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit () {
       Lidar.init(Blinky);
+
+      //robotHardware.dashboardInit(robotHardware);
     }
 
     @Override
@@ -107,31 +128,33 @@ public class Robot extends TimedRobot {
       Lidar.getLidar(this, Blinky);
 
       //driving
-      if (leftJoystick.getRawButton(2)) {
-        //ha
-      } else if (leftJoystick.getRawButton(3)) {
-        robotHardware.moveBackward(.2); /*(0,4)*/
-      } else if (leftJoystick.getRawButton(4)) {
-        robotHardware.turnLeftInplace(.2);
-      } else if (leftJoystick.getRawButton(5)) {
+      if (driveStick.getRawButton(2)) {
         robotHardware.turnRightInplace(.2);
-      }
-      //just for now
-      else if (leftJoystick.getRawButton(6)) {
-        robotHardware.driveSA(0.5);
-      } else if (leftJoystick.getRawButton(7)) {
-        robotHardware.driveSB(0.5);
-      } else if (leftJoystick.getRawButton(8)) {
-        robotHardware.driveFA(0.5);
-      } else if (leftJoystick.getRawButton(9)) {
-        robotHardware.driveFB(0.5);
+      } else if (driveStick.getRawButton(3)) {
+        robotHardware.moveBackward(.2); /*(0,4)*/
+      } else if (driveStick.getRawButton(4)) {
+        robotHardware.turnLeftInplace(.2);
+      } else if (driveStick.getRawButton(5)) {
+
       }
 
-      else if (leftJoystick.getTrigger()) {
+      //just for now
+      else if (driveStick.getRawButton(6)) {
+        robotHardware.driveSA(0.5);
+      } else if (driveStick.getRawButton(7)) {
+        robotHardware.driveSB(0.5);
+      } else if (driveStick.getRawButton(8)) {
+        robotHardware.driveFA(0.5);
+      } else if (driveStick.getRawButton(9)) {
+        robotHardware.driveFB(0.5);
+      }
+      //fin~
+
+      else if (driveStick.getTrigger()) {
         robotHardware.moveForward(.2); /*(0,4)*/
       } else {
-        double driveJoyStickX = leftJoystick.getX();
-        double driveJoyStickY = -leftJoystick.getY();
+        double driveJoyStickX = driveStick.getX();
+        double driveJoyStickY = -driveStick.getY();
 
         double drivePowerLeft = driveJoyStickY + driveJoyStickX;
         double drivePowerRight = driveJoyStickY - driveJoyStickX;
@@ -164,6 +187,8 @@ public class Robot extends TimedRobot {
       else {
         robotHardware.driveElevator((upperElevator * functionStick.getTriggerAxis(Hand.kRight)));
       }
+
+      robotHardware.dashboardPeriodic(robotHardware);
     }
 
     @Override

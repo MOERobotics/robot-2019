@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.genericrobot.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

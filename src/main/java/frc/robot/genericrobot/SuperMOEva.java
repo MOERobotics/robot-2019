@@ -33,11 +33,11 @@ public class SuperMOEva extends GenericRobot {
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax turret = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
+    //CANSparkMax turret = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     CANEncoder encoderElev = new CANEncoder(elevator);
-    CANEncoder encoderTur = new CANEncoder(turret);
+    //CANEncoder encoderTur = new CANEncoder(turret);
     CANEncoder encoderArm = new CANEncoder(arm);
 
     //DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
@@ -47,11 +47,11 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX rollL = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
     TalonSRX rollR = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
 
-    DoubleSolenoid hatchGrabberA = new DoubleSolenoid(0, 1);
-    DoubleSolenoid hatchGrabberB = new DoubleSolenoid(2, 3);
+    //DoubleSolenoid hatchGrabberA = new DoubleSolenoid(0, 1);
+    //DoubleSolenoid hatchGrabberB = new DoubleSolenoid(2, 3);
 
     //Hab Lifter
-    CANSparkMax froggerLA = new CANSparkMax(30, CANSparkMaxLowLevel.MotorType.kBrushless);
+    /*CANSparkMax froggerLA = new CANSparkMax(30, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax froggerLB = new CANSparkMax(31, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax froggerRA = new CANSparkMax(32, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax froggerRB = new CANSparkMax(33, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -59,7 +59,7 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderFrogLA = new CANEncoder(froggerLA);
     CANEncoder encoderFrogLB = new CANEncoder(froggerLB);
     CANEncoder encoderFrogRA = new CANEncoder(froggerRA);
-    CANEncoder encoderFrogRB = new CANEncoder(froggerRB);
+    CANEncoder encoderFrogRB = new CANEncoder(froggerRB);*/
 
 
     //Drive Functions
@@ -87,7 +87,6 @@ public class SuperMOEva extends GenericRobot {
     public void driveFB(double power) {
         driveFreeB.set(ControlMode.PercentOutput, power);
     }
-
     //fin
 
     @Override
@@ -137,7 +136,7 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void setTurretInternal(double power) {
-        turret.set(power);
+        //turret.set(power);
     }
 
     @Override
@@ -181,12 +180,12 @@ public class SuperMOEva extends GenericRobot {
 
    @Override
    public void rollIn() {
-       driveRoll(-0.7);
+       //driveRoll(-0.7);
    }
 
    @Override
     public void rollOut() {
-        driveRoll(0.7);
+        //driveRoll(0.7);
     }
 
     @Override
@@ -195,8 +194,7 @@ public class SuperMOEva extends GenericRobot {
     }
 
     //Hab Climb
-
-    public void driveFroggers(double power) {
+    /*public void driveFroggers(double power) {
         froggerLA.set(power);
         froggerLB.set(power);
         froggerRA.set(power);
@@ -204,11 +202,8 @@ public class SuperMOEva extends GenericRobot {
     }
 
     public void climb() {
-        if (encoderFrogLA.getPosition() == encoderFrogLB.getPosition()  && encoderFrogLA.getPosition()  == encoderFrogRA.getPosition()
-        && encoderFrogLA.getPosition()  == encoderFrogRB.getPosition()) {
-            if (encoderFrogLA.getPosition() < 100) driveFroggers(1);
-        }
-    }
+        if (froggersAreInSync()) driveFroggers(1);
+    }*/
 
     //Safety Check
     @Override
@@ -229,44 +224,62 @@ public class SuperMOEva extends GenericRobot {
         if (isArmUp()) driveArm(0);
         if (isArmDown()) driveArm(0);
 
-        if (!froggersAreInSync()) driveFroggers(0);
+        //if (!froggersAreInSync()) driveFroggers(0);
     }
 
     @Override
     public boolean isElevatorUp() {
-        return encoderElev.getPosition() <= -33.6;
-    }
-
-    @Override
-    public boolean isElevatorDown() {
         return encoderElev.getPosition() >= 33.6;
     }
 
     @Override
+    public boolean isElevatorDown() {
+        return encoderElev.getPosition() <= -33.6;
+    }
+
+    @Override
     public boolean isTurretRight() {
-        return encoderTur.getPosition() >= 180;
+        //return encoderTur.getPosition() >= 180;
+        return false;
     }
 
     @Override
     public boolean isTurretLeft() {
-        return encoderTur.getPosition() <= 0;
+        //return encoderTur.getPosition() <= 0;
+        return false;
     }
 
     @Override
     public boolean isArmUp() {
-        return encoderArm.getPosition() <= 0;
+        return encoderArm.getPosition() >= 67.2;
     }
 
     @Override
     public boolean isArmDown() {
-        return encoderArm.getPosition() >= 67.2;
+        return encoderArm.getPosition() <= 0;
+    }
+
+    @Override
+    public double getElevatorEncoderCount() {
+        return encoderElev.getPosition();
+    }
+
+    @Override
+    public double getArmEncoderCount() {
+        return encoderArm.getPosition();
+    }
+
+    @Override
+    public double getTurretEncoderCount() {
+        //return encoderTur.getPosition();
+        return 0;
     }
 
 
-    public boolean froggersAreInSync() {
+    /*public boolean froggersAreInSync() {
         return encoderFrogLA.getPosition() == encoderFrogLB.getPosition()  && encoderFrogLA.getPosition()  == encoderFrogRA.getPosition()
             && encoderFrogLA.getPosition()  == encoderFrogRB.getPosition();
-    }
+    }*/
 
 
 }
