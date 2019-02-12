@@ -145,25 +145,6 @@ public class SuperMOEva extends GenericRobot {
         arm.set(power);
     }
 
-    @Override
-    public void elevatorUp(double power) {
-        setElevatorInternal(power);
-    }
-
-    @Override
-    public void elevatorDown(double power) {
-        setElevatorInternal(-power);
-    }
-
-    @Override
-    public void turretRight(double power) {
-        setTurretInternal(power);
-    }
-
-    @Override
-    public void turretLeft(double power) {
-        setTurretInternal(-power);
-    }
 
 
     /*public void stopTurret() {

@@ -90,10 +90,6 @@ public class MOErio extends GenericRobot {
         navx.reset();
     }
 
-    @Override
-    public void stopDriving() {
-
-    }
 
     @Override
     public void setRollerInternal(double power) {
@@ -109,28 +105,12 @@ public class MOErio extends GenericRobot {
 
     @Override
     public void checkSafety() {
-
+        if (isElevatorUp()) driveElevator(0);
+        if (isElevatorDown()) driveElevator(0);
+        if (isArmUp()) driveArm(0);
+        if (isArmDown()) driveArm(0);
     }
 
-    @Override
-    public void driveSA(double power) {
-
-    }
-
-    @Override
-    public void driveSB(double power) {
-
-    }
-
-    @Override
-    public void driveFA(double power) {
-
-    }
-
-    @Override
-    public void driveFB(double power) {
-
-    }
 
     @Override
     public double getElevatorEncoderCount() {

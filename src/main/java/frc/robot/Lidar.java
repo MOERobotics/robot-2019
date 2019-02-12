@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/*
 public class Lidar {
 
     public static void init(SerialPort Blinky) {
@@ -105,7 +105,7 @@ public class Lidar {
             } catch (Exception e) {
                 exception = "ERROR " + e;
                 SmartDashboard.putString("Lidar 1 parsing error: ", exception);
-            }*/
+            }* /
 
             SmartDashboard.putNumber("Lidar 0: ", l[0]);
             SmartDashboard.putNumber("Lidar 1: ", l[1]);
@@ -114,7 +114,7 @@ public class Lidar {
             SmartDashboard.putNumber("Lidar 4: ", l[4]);
             SmartDashboard.putNumber("Lidar 5: ", l[5]);
             SmartDashboard.putNumber("Lidar 6: ", l[6]);
-            SmartDashboard.putNumber("Lidar 7: ", l[7]);*/
+            SmartDashboard.putNumber("Lidar 7: ", l[7]);* /
 
             us.lidar[0] = l[0];
             us.lidar[1] = l[1];
@@ -123,8 +123,9 @@ public class Lidar {
             us.lidar[4] = l[4];
             us.lidar[5] = l[5];
             us.lidar[6] = l[6];
-            us.lidar[7] = l[7];*/
+            us.lidar[7] = l[7];* /
 
         }
     }
 }
+                */
