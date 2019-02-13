@@ -11,7 +11,7 @@ import frc.robot.genericrobot.GenericRobot;
 
 public class MOErio extends GenericRobot {
 
-    final double TICKS_TO_INCHES = 45;
+    final double TICKS_TO_INCHES = 44;
 
     TalonSRX driveLA = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveLB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
