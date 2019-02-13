@@ -10,6 +10,9 @@ import com.kauailabs.navx.frc.AHRS;
 import frc.robot.genericrobot.GenericRobot;
 
 public class MOErio extends GenericRobot {
+
+    final double TICKS_TO_INCHES = 45;
+
     TalonSRX driveLA = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveLB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveRA = new TalonSRX(1) {{setNeutralMode(NeutralMode.Brake);}};
@@ -19,8 +22,13 @@ public class MOErio extends GenericRobot {
     TalonSRX rollRight = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX wrist = new TalonSRX(4) {{setNeutralMode(NeutralMode.Brake);}};
 
-    Encoder encoderL = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
-    Encoder encoderR = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
+    Encoder encoderL        = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
+    Encoder encoderR        = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
+    Encoder encoderElevator = new Encoder(4, 5, true,  CounterBase.EncodingType.k2X);
+    Encoder encoderWrist    = new Encoder(8, 9, true,  CounterBase.EncodingType.k2X);
+
+    DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
+    DigitalInput elevatorTopLimitSwitch    = new DigitalInput(7);
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
@@ -32,36 +40,36 @@ public class MOErio extends GenericRobot {
 
     @Override
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
-        driveLA.set(ControlMode.PercentOutput, leftMotor);
-        driveLB.set(ControlMode.PercentOutput, leftMotor);
+        driveLA.set(ControlMode.PercentOutput,  leftMotor);
+        driveLB.set(ControlMode.PercentOutput,  leftMotor);
 
         driveRA.set(ControlMode.PercentOutput, rightMotor);
         driveRB.set(ControlMode.PercentOutput, rightMotor);
     }
 
     @Override
-    void setElevatorInternal(double power) {
+    protected void setElevatorInternal(double power) {
         elevator.set(ControlMode.PercentOutput, power);
     }
 
     @Override
-    void setTurretInternal(double power) {
+    protected void setTurretInternal(double power) {
         //no turret!
     }
 
     @Override
-    void setArmInternal(double power) {
+    protected void setArmInternal(double power) {
         wrist.set(ControlMode.PercentOutput, power);
     }
 
     @Override
     public double getDistanceLeftInches() {
-        return encoderL.getRaw();
+        return encoderL.getRaw() * TICKS_TO_INCHES;
     }
 
     @Override
     public double getDistanceRightInches() {
-        return encoderR.getRaw();
+        return encoderR.getRaw() * TICKS_TO_INCHES;
     }
 
     @Override
@@ -85,19 +93,27 @@ public class MOErio extends GenericRobot {
         navx.reset();
     }
 
-    @Override
-    public void stopDriving() {
 
+    @Override
+    public void setRollerInternal(double power) {
+        rollLeft .set(ControlMode.PercentOutput, power);
+        rollRight.set(ControlMode.PercentOutput, power);
     }
+
+
+
+    @Override
+    public void checkSafety() {
+        if (isElevatorUp()) driveElevator(0);
+        if (isElevatorDown()) driveElevator(0);
+        if (isArmUp()) driveArm(0);
+        if (isArmDown()) driveArm(0);
+    }
+
 
     @Override
     public double getElevatorEncoderCount() {
-        return 0;
-    }
-
-    @Override
-    public double getArmEncoderCount() {
-        return 0;
+        return encoderElevator.get();
     }
 
     @Override
@@ -106,47 +122,17 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
-    public void driveRoll(double power) {
-
+    public double getArmEncoderCount() {
+        return encoderWrist.get();
     }
 
     @Override
-    public void rollIn() {
-
+    public double getPitchDegrees() {
+        return navx.getPitch();
     }
 
     @Override
-    public void rollOut() {
-
-    }
-
-    @Override
-    public void grabHatch() {
-
-    }
-
-    @Override
-    public void checkSafety() {
-
-    }
-
-    @Override
-    public void driveSA(double power) {
-
-    }
-
-    @Override
-    public void driveSB(double power) {
-
-    }
-
-    @Override
-    public void driveFA(double power) {
-
-    }
-
-    @Override
-    public void driveFB(double power) {
-
+    public double getRollDegrees() {
+        return navx.getRoll();
     }
 }
