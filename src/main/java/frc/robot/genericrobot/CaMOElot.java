@@ -96,7 +96,32 @@ public class CaMOElot extends GenericRobot {
         shootMotorB.set(ControlMode.PercentOutput,power*0.2);
     }
 
-	//Fake some parts
+    @Override
+    public void shiftHigh() {
+
+    }
+
+    @Override
+    public void shiftLow() {
+
+    }
+
+    @Override
+    public void grabHatch() {
+
+    }
+
+    @Override
+    public void releaseHatch() {
+
+    }
+
+    @Override
+    public void climb() {
+
+    }
+
+    //Fake some parts
 
     double fakeArmEncoder = 0;
     double fakeElevatorEncoder = 0;
