@@ -14,9 +14,6 @@ import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
-
 public class Robot extends TimedRobot {
 
 	private GenericRobot   robotHardware = new SuperMOEva();

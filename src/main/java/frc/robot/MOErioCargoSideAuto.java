@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MOErioCargoSideAuto extends GenericAuto {
@@ -114,7 +113,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 break;
             case 4:
                 robot.stopDriving();
-                /*robot.resetDriveEncoder();
+                /*robot.resetDriveEncoders();
                 robot.setDrivePower((0.3)*(1 + correction),(0.3)*(1 - correction));
 
                 if (robot.getDistanceLeftInches() == /*x4) {

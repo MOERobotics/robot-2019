@@ -19,7 +19,7 @@ public class AutoSideHatch extends GenericAuto {
         arcPid.resetError();
         arcPid.setHeading(0);
         autoStep = -1;
-        robot.resetDriveEncoder();
+        robot.resetDriveEncoders();
         robot.resetYaw();
 
     }
@@ -54,10 +54,10 @@ public class AutoSideHatch extends GenericAuto {
 
                 robot.setDrivePower(0.5*(1+correction), 0.3*(1-correction));
 
-                if(robot.getPitch() >= 3){
+                if(robot.getPitchDegrees() >= 3){
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
             //left arc
             case 0:
@@ -73,7 +73,7 @@ public class AutoSideHatch extends GenericAuto {
                     SmartDashboard.putNumber("the first arc left", robot.getDistanceLeftInches());
                     SmartDashboard.putNumber("the first arc right", robot.getDistanceRightInches());
                     SmartDashboard.putNumber("the first arc yaw",  robot.getHeadingDegrees());
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             //right arc
@@ -93,7 +93,7 @@ public class AutoSideHatch extends GenericAuto {
                     SmartDashboard.putNumber("the second arc right", robot.getDistanceRightInches());
                     SmartDashboard.putNumber("the second arc yaw", robot.getHeadingDegrees());
                     arcPid.setHeading(0);
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                     robot.resetYaw();
                 }
                 break;
@@ -107,7 +107,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getDistanceLeftInches() >= 45+14){
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             */
@@ -116,7 +116,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getHeadingDegrees() <= -90) {
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                     arcPid.setHeading(0);
                 } else if(robot.getHeadingDegrees() <= -80){
                     robot.turnLeftInplace(0.2);
@@ -137,7 +137,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getDistanceLeftInches() >= 21){
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             */
@@ -146,7 +146,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getHeadingDegrees() <= -90) {
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                     arcPid.setHeading(0);
                 } else if(robot.getHeadingDegrees() <= -80){
                     robot.turnLeftInplace(0.2);
@@ -167,7 +167,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getDistanceLeftInches() >= 96 / z){
                     autoStep++;
                     arcPid.setHeading(0);
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                     robot.resetYaw();
                 }
                 break;
@@ -183,7 +183,7 @@ public class AutoSideHatch extends GenericAuto {
 
                 if(robot.getDistanceLeftInches() >= 96){
                     autoStep++;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             */

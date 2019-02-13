@@ -1,7 +1,5 @@
 package frc.robot;
 
-import frc.robot.genericrobot.GenericRobot;
-
 public class AutoTest extends GenericAuto{
     public static long endTime;
     public void init() {

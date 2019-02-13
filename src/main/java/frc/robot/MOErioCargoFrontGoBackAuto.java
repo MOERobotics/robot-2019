@@ -1,9 +1,6 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.genericrobot.MOErio;
-import frc.robot.PIDModule;
 
 public class MOErioCargoFrontGoBackAuto extends GenericAuto {
 
@@ -18,7 +15,7 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
     @Override
     public void init() {
         autoStep = -2;
-        robot.resetDriveEncoder();
+        robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.resetError();
         MOErioAuto.setHeading(0);

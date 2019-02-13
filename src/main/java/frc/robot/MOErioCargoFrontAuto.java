@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.genericrobot.MOErio;
 
 public class MOErioCargoFrontAuto extends GenericAuto {
 
@@ -62,9 +61,9 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                 //correction negative, left motor decrease, correction positive, left motor power increase
                 robot.setDrivePower((0.5)*(1 + correction),(0.5)*(1 - correction));
                 /*
-                if (robot.getPitch() >= 3) {
+                if (robot.getPitchDegrees() >= 3) {
                     autoStep++;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 */
                 if(robot.getDistanceLeftInches() >= 46) {
