@@ -83,7 +83,7 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
-        public void resetDriveEncoders() {
+    public void resetDriveEncoders() {
         encoderL.reset();
         encoderR.reset();
     }
@@ -98,6 +98,11 @@ public class MOErio extends GenericRobot {
     public void setRollerInternal(double power) {
         rollLeft .set(ControlMode.PercentOutput, power);
         rollRight.set(ControlMode.PercentOutput, power);
+    }
+
+    @Override
+    public void grabHatch() {
+
     }
 
     @Override
@@ -140,11 +145,6 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
-    public void grabHatch() {
-
-    }
-
-    @Override
     public void releaseHatch() {
 
     }
@@ -157,5 +157,25 @@ public class MOErio extends GenericRobot {
     @Override
     public double getRollDegrees() {
         return navx.getRoll();
+    }
+
+    @Override
+    public void driveSA(double power) {
+
+    }
+
+    @Override
+    public void driveSB(double power) {
+
+    }
+
+    @Override
+    public void driveFA(double power) {
+
+    }
+
+    @Override
+    public void driveFB(double power) {
+
     }
 }

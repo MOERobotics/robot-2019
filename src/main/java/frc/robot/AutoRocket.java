@@ -16,7 +16,7 @@ public class AutoRocket extends GenericAuto {
         arcPid.resetError();
         arcPid.setHeading(0);
         autoStep = 0;
-        robot.resetDriveEncoder();
+        robot.resetDriveEncoders();
         robot.resetYaw();
 
     }
@@ -46,7 +46,7 @@ public class AutoRocket extends GenericAuto {
 
                 if(robot.getDistanceLeftInches() >= 108*2){
                     autoStep++;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
 

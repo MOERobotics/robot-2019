@@ -19,7 +19,7 @@ public class AutoSideHatch extends GenericAuto {
         arcPid.resetError();
         arcPid.setHeading(0);
         autoStep = -1;
-        robot.resetDriveEncoder();
+        //robot.resetDriveEncoder();
         robot.resetYaw();
 
     }
@@ -54,10 +54,10 @@ public class AutoSideHatch extends GenericAuto {
 
                 robot.setDrivePower(0.5*(1+correction), 0.3*(1-correction));
 
-                if(robot.getPitch() >= 3){
+                if(robot.getPitchDegrees() >= 3){
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    //robot.resetDriveEncoder();
                 }
             //left arc
             case 0:
@@ -73,7 +73,7 @@ public class AutoSideHatch extends GenericAuto {
                     SmartDashboard.putNumber("the first arc left", robot.getDistanceLeftInches());
                     SmartDashboard.putNumber("the first arc right", robot.getDistanceRightInches());
                     SmartDashboard.putNumber("the first arc yaw",  robot.getHeadingDegrees());
-                    robot.resetDriveEncoder();
+                    //robot.resetDriveEncoder();
                 }
                 break;
             //right arc
@@ -93,7 +93,7 @@ public class AutoSideHatch extends GenericAuto {
                     SmartDashboard.putNumber("the second arc right", robot.getDistanceRightInches());
                     SmartDashboard.putNumber("the second arc yaw", robot.getHeadingDegrees());
                     arcPid.setHeading(0);
-                    robot.resetDriveEncoder();
+                    //robot.resetDriveEncoder();
                     robot.resetYaw();
                 }
                 break;

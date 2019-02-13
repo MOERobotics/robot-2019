@@ -18,7 +18,7 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
     @Override
     public void init() {
         autoStep = -2;
-        robot.resetDriveEncoder();
+        //robot.resetDriveEncoder();
         robot.resetYaw();
         MOErioAuto.resetError();
         MOErioAuto.setHeading(0);
