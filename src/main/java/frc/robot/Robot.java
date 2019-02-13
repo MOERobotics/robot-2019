@@ -57,16 +57,35 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic () {
-		SmartDashboard.putNumber("Yaw: "              , robotHardware.getHeadingDegrees()      );
-		SmartDashboard.putNumber("Left Encoder: "     , robotHardware.getDistanceLeftInches()  );
-		SmartDashboard.putNumber("Right Encoder: "    , robotHardware.getDistanceRightInches() );
-		SmartDashboard.putNumber("Left Drive Power: " , robotHardware.getLeftDrivePower()      );
-		SmartDashboard.putNumber("Right Drive Power: ", robotHardware.getRightDrivePower()     );
-		SmartDashboard.putNumber("Turret Encoder: "   , robotHardware.getTurretPower()         );
-		SmartDashboard.putNumber("Elevator Encoder: " , robotHardware.getElevatorPower()       );
-		SmartDashboard.putNumber("Arm Power: "        , robotHardware.getArmPower()            );
-		SmartDashboard.putNumber("Roller Power: "     , robotHardware.getRollerPower()         );
-		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
+		SmartDashboard.putString ("Robot Class"        , robotHardware.getClass().getSimpleName() );
+		SmartDashboard.putString ("Auto Class"         , autoProgram.getClass().getSimpleName()   );
+
+		SmartDashboard.putNumber ("Yaw: "              , robotHardware.getHeadingDegrees()        );
+		SmartDashboard.putNumber ("Roll: "             , robotHardware.getRollDegrees()           );
+		SmartDashboard.putNumber ("Pitch: "            , robotHardware.getPitchDegrees()          );
+		SmartDashboard.putNumber ("Left Encoder: "     , robotHardware.getDistanceLeftInches()    );
+		SmartDashboard.putNumber ("Right Encoder: "    , robotHardware.getDistanceRightInches()   );
+		SmartDashboard.putNumber ("Arm Encoder: "      , robotHardware.getArmEncoderCount()       );
+		SmartDashboard.putNumber ("Turret Encoder: "   , robotHardware.getTurretEncoderCount()    );
+		SmartDashboard.putNumber ("Elevator Encoder: " , robotHardware.getElevatorEncoderCount()  );
+
+		SmartDashboard.putNumber ("Left Drive Power: " , robotHardware.getLeftDrivePower()        );
+		SmartDashboard.putNumber ("Right Drive Power: ", robotHardware.getRightDrivePower()       );
+		SmartDashboard.putNumber ("Arm Power: "        , robotHardware.getArmPower()              );
+		SmartDashboard.putNumber ("Turret Power: "     , robotHardware.getTurretPower()           );
+		SmartDashboard.putNumber ("Elevator Power: "   , robotHardware.getElevatorPower()         );
+		SmartDashboard.putNumber ("Roller Power: "     , robotHardware.getRollerPower()           );
+
+		SmartDashboard.putBoolean("Is ArmDown"         , robotHardware.isArmDown()                );
+		SmartDashboard.putBoolean("Is ArmUp"           , robotHardware.isArmUp()                  );
+		SmartDashboard.putBoolean("Is Elevator Down"   , robotHardware.isElevatorDown()           );
+		SmartDashboard.putBoolean("Is Elevator Up"     , robotHardware.isElevatorUp()             );
+		SmartDashboard.putBoolean("Is Turret Left"     , robotHardware.isTurretLeft()             );
+		SmartDashboard.putBoolean("Is Turret Right"    , robotHardware.isTurretRight()            );
+
+
+		SmartDashboard.putNumber ("Yaw: "              , robotHardware.getHeadingDegrees()        );
+		autoProgram.printSmartDashboard();
 	}
 
 	@Override
@@ -111,6 +130,9 @@ public class Robot extends TimedRobot {
 		else if (leftJoystick.getRawButton(8))  robotHardware.driveFA(0.5);
 		else if (leftJoystick.getRawButton(9))  robotHardware.driveFB(0.5);
 
+		else if (leftJoystick.getRawButton(11)) robotHardware.shiftHigh();
+		else if (leftJoystick.getRawButton(12))	robotHardware.shiftLow();
+
 		//Manual Control
 		else {
 			double driveJoyStickX =  leftJoystick.getX();
@@ -137,9 +159,9 @@ public class Robot extends TimedRobot {
 		else                                           robotHardware.driveArm( 0.0);
 
 		//turret
-		if      (functionStick.getStickButton(Hand.kRight)) robotHardware.driveTurret( 0.5);
-		else if (functionStick.getStickButton(Hand.kLeft )) robotHardware.driveTurret(-0.5);
-		else                                                robotHardware.driveTurret( 0.0);
+		if      (functionStick.getRawButton(3)) robotHardware.driveTurret( 0.5);
+		else if (functionStick.getRawButton(2)) robotHardware.driveTurret(-0.5);
+		else                                    robotHardware.driveTurret( 0.0);
 
 		//elevator
 		if      (functionStick.getTriggerAxis(Hand.kLeft ) > 0.3) robotHardware.driveElevator(-0.6 * functionStick.getTriggerAxis(Hand.kLeft ));

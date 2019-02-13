@@ -2,6 +2,8 @@ package frc.robot.genericrobot;
 
 /*code*/
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 public abstract class GenericRobot {
 
 	//Last recorded values
@@ -110,6 +112,17 @@ public abstract class GenericRobot {
     public void driveSB(double power) {};
     public void driveFA(double power) {};
     public void driveFB(double power) {};
+
+    public abstract void shiftHigh();
+    public abstract void shiftLow();
+    public void shiftDrive(DoubleSolenoid.Value value) {
+    	//this.shifterSolenoidValue = value;
+    	//shiftDriveInternal(value);
+	}
+
+	/*public void shiftDriveInternal(DoubleSolenoid shifter, DoubleSolenoid.Value value) {
+		shifter.set(value);
+    }*/
 
 	//needs work
 	public void grabHatch() {

@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 
 public class SuperMOEva extends GenericRobot {
 
+    final int COUNTS_PER_REV = 512;
+
     //Drive
     TalonSRX driveFreeA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveFreeB = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
@@ -25,6 +27,8 @@ public class SuperMOEva extends GenericRobot {
     AHRS navX = new AHRS(SPI.Port.kMXP, (byte) 50);
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k1X);
     Encoder encoderR = new Encoder(2, 3, true, EncodingType.k1X);
+
+    DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
 
     {//not sure which side is inverted
         driveFreeA.setInverted(true);
@@ -160,11 +164,6 @@ public class SuperMOEva extends GenericRobot {
         //rollR.set(ControlMode.PercentOutput, power);
     }
 
-    @Override
-    public void grabHatch() {
-
-    }
-
     //Hab Climb
 
     public void driveFroggers(double power) {
@@ -263,4 +262,15 @@ public class SuperMOEva extends GenericRobot {
     public double getRollDegrees() {
         return navX.getRoll();
     }
+
+    @Override
+    public void shiftHigh() {
+        shifter.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    @Override
+    public void shiftLow() {
+        shifter.set(DoubleSolenoid.Value.kForward);
+    }
+
 }
