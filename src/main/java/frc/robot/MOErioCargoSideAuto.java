@@ -58,8 +58,8 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 //correction negative, left motor decrease, correction positive, left motor power increase
                 robot.setDrivePower((0.5)*(1 + correction),(0.5)*(1 - correction));
 
-                if (robot.getPitchDegrees() >= 3) {
-                    autoStep++;
+                if(robot.getDistanceLeftInches() >= 48) {
+                    autoStep=0;
                     robot.resetDriveEncoders();
                 }
                 break;
