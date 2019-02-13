@@ -134,8 +134,6 @@ public abstract class GenericRobot {
 		spearB.set(open);
 	}
 
-
-
 	//climb
 	public abstract void climb();
 
