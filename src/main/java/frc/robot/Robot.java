@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
+//import frc.robot.genericrobot.CaMOElot;
+//import frc.robot.genericrobot.MOErio;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
+//import java.util.function.BooleanSupplier;
+//import java.util.function.Predicate;
 
 public class Robot extends TimedRobot {
 
@@ -40,27 +42,29 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
-/*
-    //opening serial port
-    if (!PortOpen) {
-      PortOpen = true;
+		/*
+		//opening serial port
+		if (!PortOpen) {
+		  PortOpen = true;
 
-      try {
-        Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
-        SmartDashboard.putString("Open serial port: ", "Success!");
-      } catch (Exception e) {
-        String exception = e + "";
-        SmartDashboard.putString("I caught: ", exception);
-        PortOpen = false;
-      }
+		  try {
+			Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
+			SmartDashboard.putString("Open serial port: ", "Success!");
+		  } catch (Exception e) {
+			String exception = e + "";
+			SmartDashboard.putString("I caught: ", exception);
+			PortOpen = false;
+		  }
 
-    }
-    */
+		}
+		*/
 	}
 
 	@Override
 	public void robotPeriodic () {
 		SmartDashboard.putNumber("Yaw: "              , robotHardware.getHeadingDegrees()      );
+		SmartDashboard.putNumber("Pitch: ", robotHardware.getPitchDegrees());
+		SmartDashboard.putNumber("Roll: ", robotHardware.getRollDegrees());
 		SmartDashboard.putNumber("Left Encoder: "     , robotHardware.getDistanceLeftInches()  );
 		SmartDashboard.putNumber("Right Encoder: "    , robotHardware.getDistanceRightInches() );
 		SmartDashboard.putNumber("Left Drive Power: " , robotHardware.getLeftDrivePower()      );
@@ -75,7 +79,21 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Elevator Power: "   , robotHardware.getElevatorPower());
 		SmartDashboard.putNumber("Roller Power: "     , robotHardware.getRollerPower()         );
 
+		SmartDashboard.putString("Shifter State: ", robotHardware.getShifterSolenoidState().name());
+		SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearSolenoidState());
+		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getHatchGrabbSolenoidState());
+
+		SmartDashboard.putBoolean("Is Turret Left: ", robotHardware.isTurretLeft());
+		SmartDashboard.putBoolean("Is Turret Right: ", robotHardware.isTurretRight());
+		SmartDashboard.putBoolean("Is Arm Down: ", robotHardware.isArmDown());
+		SmartDashboard.putBoolean("Is Arm Up: ", robotHardware.isArmUp());
+		SmartDashboard.putBoolean("Is Elevator Down: ", robotHardware.isElevatorDown());
+		SmartDashboard.putBoolean("Is Elevator Up: ", robotHardware.isElevatorUp());
+
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
+		autoProgram.printSmartDashboard();
+
+		//robotHardware.checkSafety();
 	}
 
 	@Override
@@ -137,34 +155,40 @@ public class Robot extends TimedRobot {
 			robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
 		}
 
-		//roller
-		if      (functionStick.getAButton()) robotHardware.rollIn (0.3);
-		else if (functionStick.getBButton()) robotHardware.rollOut(0.3);
-		else                                 robotHardware.driveRoller(0);
-
 		//hatchGrab
-		if (functionStick.getXButton()) robotHardware.grabHatch();
-		else if (functionStick.getYButton()) robotHardware.releaseHatch();
+		if (functionStick.getXButton()) robotHardware.spearIn();
+		else if (functionStick.getYButton()) robotHardware.spearOut();
+		if      (functionStick.getAButton()) robotHardware.hatchGrabIn();
+		else if (functionStick.getBButton()) robotHardware.hatchGrabOut();
 
 		//roller
-		if (functionStick.getStickButton(Hand.kLeft)) robotHardware.rollIn(0.3);
-		else if (functionStick.getStickButton(Hand.kLeft)) robotHardware.rollOut(0.3);
+		//controls all set to the left stick. up to roll in, down to roll out.
+		if (functionStick.getY(Hand.kLeft) > 0.1) robotHardware.rollIn(Math.abs(functionStick.getY(Hand.kLeft)) * 0.3);
+		else if (functionStick.getY(Hand.kLeft) < -0.1) robotHardware.rollOut(Math.abs(functionStick.getY(Hand.kLeft)) * 0.3);
+		else robotHardware.rollIn(0);
 
 		//arm
-		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.driveArm( 0.8);
-		else if (functionStick.getBumper(Hand.kRight)) robotHardware.driveArm(-0.4);
+		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.driveArm( 0.3);
+		else if (functionStick.getBumper(Hand.kRight)) robotHardware.driveArm(-0.3);
 		else                                           robotHardware.driveArm( 0.0);
 
 		//turret
-		if      (functionStick.getRawButton(3)) robotHardware.driveTurret( 0.5);
-		else if (functionStick.getRawButton(2)) robotHardware.driveTurret(-0.5);
-		else                                 robotHardware.driveTurret( 0.0);
+		//controls all set to the right stick. up to move right, down to move left.
+		if (functionStick.getY(Hand.kRight) > 0.1) robotHardware.driveTurret(0.3 * functionStick.getY(Hand.kRight));
+		else if (functionStick.getY(Hand.kRight) < 0.1) robotHardware.driveTurret(0.3 * functionStick.getY(Hand.kRight));
+		else robotHardware.driveTurret(0);
+
+		/*
+		//set these buttons to something else! (if used)
+
+		if      (functionStick.getRawButton(8)) robotHardware.driveTurret( 0.3);
+		else if (functionStick.getRawButton(9)) robotHardware.driveTurret(-0.3);
+		else                                 robotHardware.driveTurret( 0.0);*/
 
 		//elevator
 		if      (functionStick.getTriggerAxis(Hand.kLeft ) > 0.3) robotHardware.driveElevator(-0.3 * functionStick.getTriggerAxis(Hand.kLeft ));
 		else if (functionStick.getTriggerAxis(Hand.kRight) > 0.3) robotHardware.driveElevator( 0.3 * functionStick.getTriggerAxis(Hand.kRight));
 		else                                                      robotHardware.driveElevator( 0.0);
-
 	}
 
 	@Override

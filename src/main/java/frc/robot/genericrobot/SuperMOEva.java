@@ -12,8 +12,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 //import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class SuperMOEva extends GenericRobot {
@@ -46,16 +44,16 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderTur = new CANEncoder(turret);
     CANEncoder encoderArm = new CANEncoder(arm);
 
-    //DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
-    //DigitalInput elevatorTopLimitSwitch = new DigitalInput(7);
+    //DigitalInput elevatorLimit = new DigitalInput(6);
+    //DigitalInput turretLimit = new DigitalInput(7);
+    //DigitalInput armLimit = new DigitalInput(8);
 
     //Cargo/Hatch
-    TalonSRX rollL;// = new TalonSRX(3) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
-    TalonSRX rollR;// = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
-    //TalonSRX
+    TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
+    TalonSRX rollR = new TalonSRX(10) {{setNeutralMode(NeutralMode.Brake);}};
 
-    Solenoid hatchGrabberA = new Solenoid(2);
-    Solenoid hatchGrabberB = new Solenoid(3);
+    Solenoid spear = new Solenoid(2); //extend
+    Solenoid hatchGrabber = new Solenoid(3); //grab
 
     //Hab Lifter
     CANSparkMax froggerSA;// = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -78,6 +76,12 @@ public class SuperMOEva extends GenericRobot {
         driveFreeB.set(ControlMode.PercentOutput, rightMotor);
     }
 
+    //shifting
+    @Override
+    public void shiftDriveInternal(DoubleSolenoid.Value value) {
+        shifter.set(value);
+    }
+
     //testing individual motors
     public void driveSA(double power) {
         driveSupportA.set(ControlMode.PercentOutput, power);
@@ -94,7 +98,6 @@ public class SuperMOEva extends GenericRobot {
     public void driveFB(double power) {
         driveFreeB.set(ControlMode.PercentOutput, power);
     }
-
     //fin
 
     @Override
@@ -154,31 +157,24 @@ public class SuperMOEva extends GenericRobot {
         arm.set(power);
     }
 
-
-    /*public void stopTurret() {
-        turret.stopMotor();
-        elevator.stopMotor();
-        arm.stopMotor();
-    }*/
-
    //Cargo/Hatch
     @Override
     public void setRollerInternal(double power) {
-        //rollL.set(ControlMode.PercentOutput, power);
-        //rollR.set(ControlMode.PercentOutput, power);
+        rollL.set(ControlMode.PercentOutput, power);
+        rollR.set(ControlMode.PercentOutput, power);
     }
 
     @Override
-    public void grabHatch() {
-        shiftSpearInternal(hatchGrabberA, hatchGrabberB, true);
+    public void shiftSpearInternal(boolean out) {
+        spear.set(out);
     }
 
     @Override
-    public void releaseHatch() {
-        shiftSpearInternal(hatchGrabberA, hatchGrabberB, false);
+    public void shiftHatchGrabInternal(boolean out) {
+        hatchGrabber.set(out);
     }
+
     //Hab Climb
-
     public void driveFroggers(double power) {
         froggerFA.set(power);
         froggerFB.set(power);
@@ -187,23 +183,13 @@ public class SuperMOEva extends GenericRobot {
     }
 
     public void climb() {
-        if (encoderFrogSA.getPosition() == encoderFrogSB.getPosition()  && encoderFrogSA.getPosition()  == encoderFrogFA.getPosition()
-        && encoderFrogSA.getPosition()  == encoderFrogFB.getPosition()) {
-            driveFroggers(1);
-        }
+        driveFroggers(1);
     }
 
     //Safety Check
     @Override
     public void checkSafety() {
-        /*if(elevatorBottomLimitSwitch.get()) {
-			if(power < 0) power = 0;
-		}
-		else if(elevatorTopLimitSwitch.get()) {
-			if(power > 0) power = 0;
-		}*/
-
-        if (isElevatorUp()) driveElevator(0);
+        /*if (isElevatorUp()) driveElevator(0);
         if (isElevatorDown()) driveElevator(0);
 
         if (isTurretRight()) driveTurret(0);
@@ -212,12 +198,14 @@ public class SuperMOEva extends GenericRobot {
         if (isArmUp()) driveArm(0);
         if (isArmDown()) driveArm(0);
 
-        if (!froggersAreInSync()) driveFroggers(0);
+        if (!froggersAreInSync()) driveFroggers(0);*/
     }
 
     @Override
     public boolean isElevatorUp() {
         return encoderElev.getPosition() >= 200;
+        //return !elevatorLimit.get();
+
     }
 
     @Override
@@ -228,6 +216,7 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public boolean isTurretRight() {
         return encoderTur.getPosition() >= 65;
+        //return !turretLimit.get();
     }
 
     @Override
@@ -238,6 +227,7 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public boolean isArmUp() {
         return encoderArm.getPosition() >= 85;
+        //return !armLimit.get();
     }
 
     @Override
@@ -245,13 +235,18 @@ public class SuperMOEva extends GenericRobot {
         return encoderArm.getPosition() <= -5;
     }
 
-
     public boolean froggersAreInSync() {
-        return encoderFrogSA.getPosition() == encoderFrogSB.getPosition()  && encoderFrogSA.getPosition()  == encoderFrogFA.getPosition()
-            && encoderFrogSA.getPosition()  == encoderFrogFB.getPosition();
-        //include a tolerance
+        double toleranceSame = 5; //same side
+        double toleranceOpp = 5; //opposite side
+
+        return Math.abs(encoderFrogSA.getPosition() - encoderFrogSB.getPosition()) < toleranceSame
+        && Math.abs(encoderFrogFA.getPosition() - encoderFrogFB.getPosition()) < toleranceSame
+        && Math.abs(encoderFrogSA.getPosition() - encoderFrogFA.getPosition()) < toleranceOpp
+        && Math.abs(encoderFrogSB.getPosition() - encoderFrogFB.getPosition()) < toleranceOpp
+        && Math.abs(encoderFrogFA.getPosition() - encoderFrogSB.getPosition()) < toleranceOpp;
     }
 
+    //getting values
     @Override
     public double getElevatorEncoderCount() {
         return encoderElev.getPosition();
@@ -275,18 +270,6 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public double getRollDegrees() {
         return navX.getRoll();
-    }
-
-    @Override
-    public void shiftHigh() {
-        shifter.set(DoubleSolenoid.Value.kReverse);
-        //first gear
-    }
-
-    @Override
-    public void shiftLow() {
-        shifter.set(DoubleSolenoid.Value.kForward);
-        //second gear
     }
 
 }

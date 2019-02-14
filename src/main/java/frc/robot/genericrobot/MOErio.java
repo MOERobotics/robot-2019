@@ -30,6 +30,16 @@ public class MOErio extends GenericRobot {
     DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
     DigitalInput elevatorTopLimitSwitch    = new DigitalInput(7);
 
+    @Override
+    public void shiftSpearInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftHatchGrabInternal(boolean out) {
+
+    }
+
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
     {
@@ -101,11 +111,6 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
-    public void grabHatch() {
-
-    }
-
-    @Override
     public void checkSafety() {
         if (isElevatorUp()) driveElevator(0);
         if (isElevatorDown()) driveElevator(0);
@@ -145,7 +150,7 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
-    public void releaseHatch() {
+    public void shiftDriveInternal(DoubleSolenoid.Value value) {
 
     }
 

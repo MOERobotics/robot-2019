@@ -14,6 +14,9 @@ public abstract class GenericRobot {
     private double turretPower;
     private double armPower;
     private double rollerPower;
+    private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
+    private boolean spearSolenoidState;
+    private boolean hatchGrabSolenoidState;
 
 	//checking for things
 	public abstract double getDistanceLeftInches();
@@ -52,6 +55,26 @@ public abstract class GenericRobot {
 	public final double getLeftDrivePower  () { return  leftPower; }
 	public final double getRightDrivePower () { return rightPower; }
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);
+
+	//shifting
+	public void shiftHigh() {
+		shiftDrive(DoubleSolenoid.Value.kReverse);
+	}
+
+	public void shiftLow() {
+		shiftDrive(DoubleSolenoid.Value.kForward);
+	}
+
+	public void shiftDrive(DoubleSolenoid.Value value) {
+		this.shifterSolenoidValue = value;
+		shiftDriveInternal(value);
+	}
+
+	public abstract void shiftDriveInternal(DoubleSolenoid.Value value);
+	public DoubleSolenoid.Value getShifterSolenoidState() {
+		return shifterSolenoidValue;
+	}
+
 	//</editor-fold>
 
     //Elevator <editor-fold>
@@ -87,9 +110,10 @@ public abstract class GenericRobot {
     //Arm <editor-fold>
     public final void    driveArm    (double power)  {
         this.armPower = power;
-        if      (isArmUp  () && power > 0) setArmInternal(  0.0);
-        else if (isArmDown() && power < 0) setArmInternal(  0.0);
-        else                               setArmInternal(power);
+        /*if      (isArmUp  () && power > 0) setArmInternal(  0.0);
+        else if (isArmDown() && power < 0) setArmInternal(  0.0);*/
+        //else
+		setArmInternal(power);
     }
 	public       boolean isArmUp     () {return    false;}
 	public       boolean isArmDown   () {return    false;}
@@ -108,31 +132,44 @@ public abstract class GenericRobot {
 	protected abstract void setRollerInternal(double power);
 	//</editor-fold>
 
+	//Hatch Grab
+	public void spearIn() {
+		shiftSpear(false);
+	}
+
+	public void spearOut() {
+		shiftSpear(true);
+	}
+
+	public void shiftSpear(boolean out) {
+		this.spearSolenoidState = out;
+		shiftSpearInternal(out);
+	}
+
+	public abstract void shiftSpearInternal(boolean out);
+	public boolean getSpearSolenoidState() {return spearSolenoidState;}
+
+	public void hatchGrabIn() {
+		shiftSpear(false);
+	}
+
+	public void hatchGrabOut() {
+		shiftSpear(true);
+	}
+
+	public void shiftHatchGrab(boolean out) {
+		this.hatchGrabSolenoidState = out;
+		shiftHatchGrabInternal(out);
+	}
+
+	public abstract void shiftHatchGrabInternal(boolean out);
+	public boolean getHatchGrabbSolenoidState() {return hatchGrabSolenoidState;}
+
     //Temporary for SuperMOEva testing
     public void driveSA(double power) {};
     public void driveSB(double power) {};
     public void driveFA(double power) {};
     public void driveFB(double power) {};
-
-    public abstract void shiftHigh();
-    public abstract void shiftLow();
-    public void shiftDrive(DoubleSolenoid.Value value) {
-    	//this.shifterSolenoidValue = value;
-    	//shiftDriveInternal(value);
-	}
-
-	/*public void shiftDriveInternal(DoubleSolenoid shifter, DoubleSolenoid.Value value) {
-		shifter.set(value);
-    }*/
-
-	//needs work
-	public abstract void grabHatch();
-	public abstract void releaseHatch ();
-
-	public void shiftSpearInternal(Solenoid spearA, Solenoid spearB, boolean open) {
-		spearA.set(open);
-		spearB.set(open);
-	}
 
 	//climb
 	public abstract void climb();

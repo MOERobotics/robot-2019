@@ -15,6 +15,16 @@ public class CaMOElot extends GenericRobot {
     private TalonSRX leftMotorB = new TalonSRX(13);
     private TalonSRX leftMotorC = new TalonSRX(14);
 
+    @Override
+    public void shiftSpearInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftHatchGrabInternal(boolean out) {
+
+    }
+
     private TalonSRX rightMotorA = new TalonSRX(1);
     private TalonSRX rightMotorB = new TalonSRX(2);
     private TalonSRX rightMotorC = new TalonSRX(3);
@@ -107,12 +117,7 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
-    public void grabHatch() {
-
-    }
-
-    @Override
-    public void releaseHatch() {
+    public void shiftDriveInternal(DoubleSolenoid.Value value) {
 
     }
 
