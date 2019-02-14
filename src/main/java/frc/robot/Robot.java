@@ -19,10 +19,10 @@ import java.util.function.Predicate;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new SuperMOEva();
+	private GenericRobot   robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	private GenericAuto    autoProgram   = new MOErioCargoSideHighDiveAuto();
 
 	//lidar
 	//SerialPort Blinky;
@@ -70,6 +70,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Arm Power: "        , robotHardware.getArmPower()            );
 		SmartDashboard.putNumber("Roller Power: "     , robotHardware.getRollerPower()         );
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
+		autoProgram.printSmartDashboard();
+		SmartDashboard.putString("Auto program", autoProgram.getClass().getSimpleName());
 	}
 
 	@Override

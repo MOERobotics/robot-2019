@@ -3,7 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class MOErioCargoSideAuto extends GenericAuto {
+public class MOErioCargoSideHighDiveAuto extends GenericAuto {
 
     PIDModule MOErioAuto = new PIDModule(0.06,0.001,0);
     long startTime = 0;
@@ -58,7 +58,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 //correction negative, left motor decrease, correction positive, left motor power increase
                 robot.setDrivePower((0.5)*(1 + correction),(0.5)*(1 - correction));
 
-                if(Math.abs(robot.getDistanceLeftInches()) >= 48) {
+                if(Math.abs(robot.getDistanceLeftInches()) >= 48 * 2) {
                     autoStep=0;
                     robot.resetDriveEncoders();
                 }
@@ -121,5 +121,5 @@ public class MOErioCargoSideAuto extends GenericAuto {
                     robot.stopDriving();
                 }*/
         }
-        }
+    }
 }

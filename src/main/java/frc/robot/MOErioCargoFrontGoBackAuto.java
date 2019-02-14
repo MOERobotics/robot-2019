@@ -9,7 +9,7 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
 
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     long startTime = 0;
-    double z = 1.67;
+    double z = 1.81;
     //z = 1.67 for left = 0.5 right = 0.15 power
     //z = 1.33 for 0.5 and 0.3
 
@@ -18,7 +18,7 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
     @Override
     public void init() {
         autoStep = -2;
-        robot.resetDriveEncoder();
+        robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.resetError();
         MOErioAuto.setHeading(0);
@@ -27,9 +27,9 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
 
     @Override
     public void run() {
-        double leftDistance = robot.getDistanceLeftInches();
-        double rightDistance = robot.getDistanceRightInches();
-        double louWizardry = Math.abs(rightDistance) - Math.abs(leftDistance) / z;
+        double leftDistance = Math.abs(robot.getDistanceLeftInches());
+        double rightDistance = Math.abs(robot.getDistanceRightInches());
+        double louWizardry = rightDistance - leftDistance / z;
 
         SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", MOErioAuto.getCorrection());
@@ -57,21 +57,48 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
                 MOErioAuto.setHeading(louWizardry);
                 double correction = MOErioAuto.getCorrection();
 
-                robot.setDrivePower(-0.5*(1-correction),-0.15*(1+correction));
-                if(Math.abs(robot.getDistanceRightInches()) >= 59.7/z){
+                robot.setDrivePower(-0.5*(1-correction),-0.1*(1+correction));
+                if(Math.abs(robot.getDistanceRightInches()) >= 69.6/z){
                     autoStep++;
+                    robot.resetDriveEncoders();
                 }
                 break;
             case 0:
-                MOErioAuto.setHeading(robot.getHeadingDegrees() - 45);
+                MOErioAuto.setHeading(robot.getHeadingDegrees() + 60);
                 correction = MOErioAuto.getCorrection();
 
                 robot.setDrivePower(-0.5*(1-correction), -0.5*(1+correction));
 
-                if(Math.abs(robot.getDistanceRightInches()) >= 43){
+                if(Math.abs(robot.getDistanceRightInches()) >= 75){
+                    autoStep++;
+                    robot.resetDriveEncoders();
+
+                }
+                break;
+            case 1:
+                louWizardry = rightDistance - leftDistance * z;
+                MOErioAuto.setHeading(louWizardry);
+                correction = MOErioAuto.getCorrection();
+
+                robot.setDrivePower(-0.1*(1-correction), -0.5*(1+correction));
+
+                if(Math.abs(robot.getDistanceRightInches()) >= 69.6 /*it was 59.7 before(Lou's math)*/){
+                    autoStep++;
+                    robot.resetDriveEncoders();
+                }
+                break;
+            case 2:
+                louWizardry = rightDistance - leftDistance * z;
+                MOErioAuto.setHeading(robot.getHeadingDegrees());
+                correction = MOErioAuto.getCorrection();
+
+                robot.setDrivePower(-0.3*(1-correction), -0.3*(1+correction));
+
+                if(Math.abs(robot.getDistanceRightInches()) >= 13.5 /*it was 59.7 before(Lou's math)*/){
                     autoStep++;
                 }
-            case 1:
+                break;
+            case 3:
                 robot.stopDriving();
                 break;
         }

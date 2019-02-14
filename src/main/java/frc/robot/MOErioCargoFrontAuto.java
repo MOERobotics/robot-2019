@@ -67,7 +67,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                     robot.resetDriveEncoder();
                 }
                 */
-                if(robot.getDistanceLeftInches() >= 46) {
+                if(Math.abs(robot.getDistanceLeftInches()) >= 46) {
                     autoStep=0;
                     robot.resetDriveEncoders();
                 }
