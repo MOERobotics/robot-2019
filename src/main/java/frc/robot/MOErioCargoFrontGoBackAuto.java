@@ -10,6 +10,7 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     long startTime = 0;
     double z = 1.81;
+    boolean LeftSide = false;
     //z = 1.67 for left = 0.5 right = 0.15 power
     //z = 1.33 for 0.5 and 0.3
 
@@ -50,7 +51,11 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
                 if (System.currentTimeMillis() >= startTime + 100) {
                     MOErioAuto.resetError();
                     robot.resetYaw();
-                    autoStep = -1;
+                    if (LeftSide) {
+                        autoStep = 4;
+                    } else {
+                        autoStep = -1;
+                    }
                 }
                 break;
             case -1:
@@ -100,6 +105,40 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
                 break;
             case 3:
                 robot.stopDriving();
+                break;
+            case 4:
+                MOErioAuto.setHeading(louWizardry);
+                correction = MOErioAuto.getCorrection();
+
+                robot.setDrivePower(-0.1*(1-correction),-0.5*(1+correction));
+                if(Math.abs(robot.getDistanceLeftInches()) >= 69.6){
+                    autoStep++;
+                    robot.resetDriveEncoders();
+                }
+                break;
+            case 5:
+                MOErioAuto.setHeading(robot.getHeadingDegrees() + 60);
+                correction = MOErioAuto.getCorrection();
+
+                robot.setDrivePower(-0.5*(1-correction), -0.5*(1+correction));
+
+                if(Math.abs(robot.getDistanceLeftInches()) >= 75){
+                    autoStep++;
+                    robot.resetDriveEncoders();
+
+                }
+                break;
+            case 6:
+                louWizardry = rightDistance - leftDistance * z;
+                MOErioAuto.setHeading(louWizardry);
+                correction = MOErioAuto.getCorrection();
+
+                robot.setDrivePower(-0.5*(1-correction), -0.1*(1+correction));
+
+                if(Math.abs(robot.getDistanceLeftInches()) >= 69.6 / z /*it was 59.7 before(Lou's math)*/){
+                    autoStep = 2;
+                    robot.resetDriveEncoders();
+                }
                 break;
         }
     }
