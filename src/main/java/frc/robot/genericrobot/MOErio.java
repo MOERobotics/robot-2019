@@ -30,6 +30,16 @@ public class MOErio extends GenericRobot {
     DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
     DigitalInput elevatorTopLimitSwitch    = new DigitalInput(7);
 
+    @Override
+    public void shiftSpearShaftInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftSpearHookInternal(boolean out) {
+
+    }
+
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
     {
@@ -132,7 +142,17 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
+    public void shiftDriveInternal(DoubleSolenoid.Value value) {
+
+    }
+
+    @Override
     public double getRollDegrees() {
         return navx.getRoll();
+    }
+
+    @Override
+    public void climbInternal(double power) {
+
     }
 }

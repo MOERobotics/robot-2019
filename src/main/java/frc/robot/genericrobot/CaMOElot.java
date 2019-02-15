@@ -96,6 +96,21 @@ public class CaMOElot extends GenericRobot {
         shootMotorB.set(ControlMode.PercentOutput,power*0.2);
     }
 
+    @Override
+    public void shiftSpearShaftInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftSpearHookInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftDriveInternal(DoubleSolenoid.Value value) {
+
+    }
+
 	//Fake some parts
 
     double fakeArmEncoder = 0;
@@ -143,4 +158,8 @@ public class CaMOElot extends GenericRobot {
         return fakeArmEncoder;
     }
 
+    @Override
+    public void climbInternal(double power) {
+
+    }
 }

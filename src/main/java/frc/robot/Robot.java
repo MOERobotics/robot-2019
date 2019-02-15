@@ -14,6 +14,12 @@ import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class Robot extends TimedRobot {
 
 	private GenericRobot   robotHardware = new SuperMOEva();
@@ -33,6 +39,13 @@ public class Robot extends TimedRobot {
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
+	public static final Map<Integer, POVDirection> directionMap =
+		Arrays.stream(POVDirection.values()).collect(
+			Collectors.toMap(
+				(POVDirection x) -> x.getAngle(),
+				(POVDirection x) -> x
+			)
+		);
 
 	@Override
 	public void robotInit() {
@@ -83,8 +96,11 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Is Turret Left"     , robotHardware.isTurretLeft()             );
 		SmartDashboard.putBoolean("Is Turret Right"    , robotHardware.isTurretRight()            );
 
+		SmartDashboard.putString("Shifter State: ", robotHardware.getShifterSolenoidState().name());
+		SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
+		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
 
-		SmartDashboard.putNumber ("Yaw: "              , robotHardware.getHeadingDegrees()        );
+		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
 		autoProgram.printSmartDashboard();
 	}
 
@@ -118,17 +134,16 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic () {
 		//Driving
-		if      (leftJoystick.getRawButton(2))  robotHardware.moveForward(.2);
-		else if (leftJoystick.getTrigger()   )  robotHardware.moveForward(.2);
-		else if (leftJoystick.getRawButton(3))  robotHardware.moveBackward(.2);
-		else if (leftJoystick.getRawButton(4))  robotHardware.turnLeftInplace(.2);
-		else if (leftJoystick.getRawButton(5))  robotHardware.turnRightInplace(.2);
+		     if (leftJoystick.getTrigger()   )  robotHardware.moveForward(.2);
+		else if (leftJoystick.getRawButton(2))  robotHardware.moveBackward(.2);
+		else if (leftJoystick.getRawButton(3))  robotHardware.turnLeftInplace(.2);
+		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.2);
 
 		//Individual motors (For testing)
-		else if (leftJoystick.getRawButton(6))  robotHardware.driveSA(0.5);
-		else if (leftJoystick.getRawButton(7))  robotHardware.driveSB(0.5);
-		else if (leftJoystick.getRawButton(8))  robotHardware.driveFA(0.5);
-		else if (leftJoystick.getRawButton(9))  robotHardware.driveFB(0.5);
+		else if (leftJoystick.getRawButton(5))  robotHardware.driveSA(0.5);
+		else if (leftJoystick.getRawButton(6))  robotHardware.driveSB(0.5);
+		else if (leftJoystick.getRawButton(7))  robotHardware.driveFA(0.5);
+		else if (leftJoystick.getRawButton(8))  robotHardware.driveFB(0.5);
 
 		else if (leftJoystick.getRawButton(11)) robotHardware.shiftHigh();
 		else if (leftJoystick.getRawButton(12))	robotHardware.shiftLow();
@@ -147,11 +162,17 @@ public class Robot extends TimedRobot {
 			robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
 		}
 
-		//roller
-		if      (functionStick.getAButton()) robotHardware.rollIn (0.3);
-		else if (functionStick.getBButton()) robotHardware.rollOut(0.3);
-		else                                 robotHardware.driveRoller(0);
+		//hatchGrab
+		if      (functionStick.getXButton()) robotHardware.spearIn();
+		else if (functionStick.getYButton()) robotHardware.spearOut();
+		if      (functionStick.getAButton()) robotHardware.spearHook();
+		else if (functionStick.getBButton()) robotHardware.spearUnhook();
 
+		//roller
+		//controls all set to the left stick. up to roll in, down to roll out.
+		double rollerPower = functionStick.getY(Hand.kLeft);
+		if (Math.abs(rollerPower) < 0.1) rollerPower = 0;
+		robotHardware.rollIn(rollerPower);
 
 		//arm
 		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.driveArm( 0.8);
@@ -159,15 +180,58 @@ public class Robot extends TimedRobot {
 		else                                           robotHardware.driveArm( 0.0);
 
 		//turret
-		if      (functionStick.getRawButton(3)) robotHardware.driveTurret( 0.5);
-		else if (functionStick.getRawButton(2)) robotHardware.driveTurret(-0.5);
-		else                                    robotHardware.driveTurret( 0.0);
+		//Right stick, left/right rotates.
+		double turretPower = functionStick.getX(Hand.kRight);
+		if (Math.abs(turretPower) < 0.1) turretPower = 0;
+		robotHardware.driveTurret(turretPower);
 
 		//elevator
 		if      (functionStick.getTriggerAxis(Hand.kLeft ) > 0.3) robotHardware.driveElevator(-0.6 * functionStick.getTriggerAxis(Hand.kLeft ));
 		else if (functionStick.getTriggerAxis(Hand.kRight) > 0.3) robotHardware.driveElevator( 1.0 * functionStick.getTriggerAxis(Hand.kRight));
 		else                                                      robotHardware.driveElevator( 0.0);
 
+		//Climbing
+
+		POVDirection controlPadDirection = directionMap.getOrDefault(functionStick.getPOV(), POVDirection.NULL);
+		switch (controlPadDirection) {
+			case NORTHWEST:
+			case NORTH:
+			case NORTHEAST:
+				robotHardware.climbUp(0.3);
+				break;
+			case SOUTHWEST:
+			case SOUTH:
+			case SOUTHEAST:
+				robotHardware.climbDown(0.2);
+				break;
+			default:
+				robotHardware.climb(0);
+				break;
+		}
+
+	}
+
+	public static enum POVDirection {
+		NORTH     (  0),
+		NORTHEAST ( 45),
+		EAST      ( 90),
+		SOUTHEAST (135),
+		SOUTH     (180),
+		SOUTHWEST (225),
+		WEST      (270), //best
+		NORTHWEST (315),
+		NULL      ( -1);
+
+		private final int angle;
+		private POVDirection(int angle) {
+			this.angle = angle;
+		}
+		public int getAngle() {
+			return angle;
+		}
+		public static int getAngle(POVDirection direction) {
+			return direction.getAngle();
+		}
 
 	}
 
