@@ -8,7 +8,7 @@ public class TestZ extends GenericAuto {
     @Override
     public void init() {
         autoStep = 0;
-        robot.resetDriveEncoder();
+        robot.resetDriveEncoders();
         robot.resetYaw();
         SmartDashboard.putNumber("set distance", setDistance);
 
