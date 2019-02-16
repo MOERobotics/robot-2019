@@ -122,17 +122,17 @@ public class MOErio extends GenericRobot {
 
 
     @Override
-    public double getElevatorEncoderCount() {
+    public double getElevatorEncoderCountInternal() {
         return encoderElevator.get();
     }
 
     @Override
-    public double getTurretEncoderCount() {
+    public double getTurretEncoderCountInternal() {
         return 0;
     }
 
     @Override
-    public double getArmEncoderCount() {
+    public double getArmEncoderCountInternal() {
         return encoderWrist.get();
     }
 

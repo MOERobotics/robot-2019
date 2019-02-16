@@ -25,8 +25,8 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
 
     AHRS navX = new AHRS(SPI.Port.kMXP, (byte) 50);
-    Encoder encoderL = new Encoder(0, 1, true, EncodingType.k1X);
-    Encoder encoderR = new Encoder(2, 3, true, EncodingType.k1X);
+    Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
+    Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X);
 
     DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
 
@@ -48,6 +48,7 @@ public class SuperMOEva extends GenericRobot {
 
     Solenoid spearShaft = new Solenoid(2); //extend
     Solenoid spearHook  = new Solenoid(3); //grab
+    Solenoid betaClimb  = new Solenoid(4); //grab
 
     //Hab Lifter
     CANSparkMax froggerSA = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -62,6 +63,9 @@ public class SuperMOEva extends GenericRobot {
         driveFreeA.setInverted(true);
         driveFreeB.setInverted(true);
         rollR.setInverted(true);
+        arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        elevator.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        turret.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
 
 
@@ -172,7 +176,7 @@ public class SuperMOEva extends GenericRobot {
     }
 
     //Hab Climb
-
+/* rip frogger 2019-2019
     public void climbInternal(double power) {
         double deltaEncoder =
             encoderFrogL.getPosition() -
@@ -191,7 +195,15 @@ public class SuperMOEva extends GenericRobot {
         froggerFA.set(rightPower);
         froggerFB.set(rightPower);
     }
+*/
 
+    public void climbInternal(double power) {
+        if (power > 0) {
+            betaClimb.set(true);
+        } else if (power < 0) {
+            betaClimb.set(false);
+        }
+    }
     //Safety Check
     @Override
     public void checkSafety() {
@@ -209,47 +221,45 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isElevatorUp() {
-        return encoderElev.getPosition() >= 200;
+        return !getSafetyOverride() && getElevatorEncoderCount() >= 44;
     }
 
     @Override
-    public boolean isElevatorDown() {
-        return encoderElev.getPosition() <= -20;
-    }
+    public boolean isElevatorDown() { return !getSafetyOverride() && getElevatorEncoderCount() <= -30; }
 
     @Override
     public boolean isTurretRight() {
-        return encoderTur.getPosition() >= 65;
+        return !getSafetyOverride() && getTurretEncoderCount() >= 110;
     }
 
     @Override
     public boolean isTurretLeft() {
-        return encoderTur.getPosition() <= -7;
+        return !getSafetyOverride() && getTurretEncoderCount() <= -5;
     }
 
     @Override
     public boolean isArmUp() {
-        return encoderArm.getPosition() >= 75;
+        return !getSafetyOverride() && getArmEncoderCount() >= 100;
     }
 
     @Override
     public boolean isArmDown() {
-        return encoderArm.getPosition() <= -5;
+        return !getSafetyOverride() && getArmEncoderCount() <= -2;
     }
 
 
     @Override
-    public double getElevatorEncoderCount() {
+    public double getElevatorEncoderCountInternal() {
         return encoderElev.getPosition();
     }
 
     @Override
-    public double getTurretEncoderCount() {
+    public double getTurretEncoderCountInternal() {
         return encoderTur.getPosition();
     }
 
     @Override
-    public double getArmEncoderCount() {
+    public double getArmEncoderCountInternal() {
         return encoderArm.getPosition();
     }
 

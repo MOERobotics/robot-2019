@@ -7,16 +7,22 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public abstract class GenericRobot {
 
 	//Last recorded values
-    private double leftPower;
-    private double rightPower;
-    private double elevatorPower;
-    private double turretPower;
-    private double armPower;
-    private double rollerPower;
-	private double climbPower;
-    private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
+    private double        leftPower;
+    private double       rightPower;
+    private double    elevatorPower;
+    private double      turretPower;
+    private double         armPower;
+    private double      rollerPower;
+	private double       climbPower;
     private boolean spearShaftState;
-    private boolean spearHookState;
+    private boolean  spearHookState;
+
+	private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
+
+    private double       armEncoderOffset = 0;
+    private double    turretEncoderOffset = 0;
+    private double  elevatorEncoderOffset = 0;
+    private boolean   totalSafetyOverride = false;
 
 	//checking for things
 	public abstract double getDistanceLeftInches();
@@ -24,9 +30,9 @@ public abstract class GenericRobot {
 	public abstract double getHeadingDegrees();
 	public abstract double getPitchDegrees();
 	public abstract double getRollDegrees();
-	public abstract double getElevatorEncoderCount();
-	public abstract double getTurretEncoderCount();
-	public abstract double getArmEncoderCount();
+	public abstract double getElevatorEncoderCountInternal();
+	public abstract double getTurretEncoderCountInternal();
+	public abstract double getArmEncoderCountInternal();
 
 	//stopping and resetting
 	public abstract void resetDriveEncoders();
@@ -159,5 +165,34 @@ public abstract class GenericRobot {
     public void driveSB(double power) {};
     public void driveFA(double power) {};
     public void driveFB(double power) {};
+
+    public void setOffsets() {
+    	this.armEncoderOffset = getArmEncoderCountInternal();
+    	this.elevatorEncoderOffset = getElevatorEncoderCountInternal();
+    	this.turretEncoderOffset = getTurretEncoderCountInternal();
+	}
+
+	public void clearOffsets() {
+    	this.armEncoderOffset = 0;
+    	this.elevatorEncoderOffset = 0;
+    	this.turretEncoderOffset = 0;
+	}
+
+	public void setSafetyOverride(boolean state) {
+    	totalSafetyOverride = state;
+	}
+
+	public boolean getSafetyOverride() {return totalSafetyOverride;}
+
+	public double getArmEncoderCount() {
+    	return getArmEncoderCountInternal() - armEncoderOffset;
+	}
+	public double getElevatorEncoderCount() {
+		return getElevatorEncoderCountInternal() - elevatorEncoderOffset;
+	}
+	public double getTurretEncoderCount() {
+		return getTurretEncoderCountInternal() - turretEncoderOffset;
+	}
+
 }
 
