@@ -30,11 +30,6 @@ public class SuperMOEva extends GenericRobot {
 
     DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
 
-    {//not sure which side is inverted
-        driveFreeA.setInverted(true);
-        driveFreeB.setInverted(true);
-    }
-
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax turret   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -60,10 +55,14 @@ public class SuperMOEva extends GenericRobot {
     CANSparkMax froggerFA = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax froggerFB = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    CANEncoder encoderFrogLA = new CANEncoder(froggerSA);
-    CANEncoder encoderFrogLB = new CANEncoder(froggerSB);
-    CANEncoder encoderFrogRA = new CANEncoder(froggerFA);
-    CANEncoder encoderFrogRB = new CANEncoder(froggerFB);
+    CANEncoder encoderFrogL = new CANEncoder(froggerSA);
+    CANEncoder encoderFrogR = new CANEncoder(froggerFA);
+
+    {//not sure which side is inverted
+        driveFreeA.setInverted(true);
+        driveFreeB.setInverted(true);
+        rollR.setInverted(true);
+    }
 
 
     //Drive Functions
@@ -175,16 +174,23 @@ public class SuperMOEva extends GenericRobot {
     //Hab Climb
 
     public void climbInternal(double power) {
-        driveFroggers(power);
+        double deltaEncoder =
+            encoderFrogL.getPosition() -
+            encoderFrogR.getPosition();
+        double
+             leftPower = power,
+            rightPower = power;
+        if (power < 0 && deltaEncoder > 10) {
+            leftPower = 0;
+        }
+        if (power > 0 && deltaEncoder < 10) {
+            rightPower = 0;
+        }
+        froggerSA.set( leftPower);
+        froggerSB.set( leftPower);
+        froggerFA.set(rightPower);
+        froggerFB.set(rightPower);
     }
-
-    private void driveFroggers(double power) {
-        froggerSA.set(power);
-        froggerSB.set(power);
-        froggerFA.set(power);
-        froggerFB.set(power);
-    }
-
 
     //Safety Check
     @Override
@@ -223,7 +229,7 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isArmUp() {
-        return encoderArm.getPosition() >= 85;
+        return encoderArm.getPosition() >= 75;
     }
 
     @Override

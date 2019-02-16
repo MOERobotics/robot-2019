@@ -145,8 +145,8 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
 	//Habitat Climb <editor-fold>
-	public void climbUp(double power) {climb(power);}
-	public void climbDown(double power) {climb(power);}
+	public void climbUp  (double power) {climb(-power);}
+	public void climbDown(double power) {climb( power);}
 	public void climb(double power) {
 		this.climbPower = power;
 		climbInternal(power);

@@ -88,6 +88,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber ("Turret Power: "     , robotHardware.getTurretPower()           );
 		SmartDashboard.putNumber ("Elevator Power: "   , robotHardware.getElevatorPower()         );
 		SmartDashboard.putNumber ("Roller Power: "     , robotHardware.getRollerPower()           );
+		SmartDashboard.putNumber ("Climber Power: "    , robotHardware.getClimbPower()            );
 
 		SmartDashboard.putBoolean("Is ArmDown"         , robotHardware.isArmDown()                );
 		SmartDashboard.putBoolean("Is ArmUp"           , robotHardware.isArmUp()                  );
@@ -135,9 +136,9 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic () {
 		//Driving
 		     if (leftJoystick.getTrigger()   )  robotHardware.moveForward(.2);
-		else if (leftJoystick.getRawButton(2))  robotHardware.moveBackward(.2);
+		else if (leftJoystick.getRawButton(4))  robotHardware.moveBackward(.2);
 		else if (leftJoystick.getRawButton(3))  robotHardware.turnLeftInplace(.2);
-		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.2);
+		else if (leftJoystick.getRawButton(2))  robotHardware.turnRightInplace(.2);
 
 		//Individual motors (For testing)
 		else if (leftJoystick.getRawButton(5))  robotHardware.driveSA(0.5);
@@ -153,6 +154,7 @@ public class Robot extends TimedRobot {
 			double driveJoyStickX =  leftJoystick.getX();
 			double driveJoyStickY = -leftJoystick.getY();
 
+			if (Math.abs(driveJoyStickY) < 0.05) driveJoyStickY = 0.0;
 			//Attempt to drive straight if joystick is within 15% of vertical
 			if (Math.abs(driveJoyStickX) < 0.15) driveJoyStickX = 0.0;
 
@@ -172,7 +174,7 @@ public class Robot extends TimedRobot {
 		//controls all set to the left stick. up to roll in, down to roll out.
 		double rollerPower = functionStick.getY(Hand.kLeft);
 		if (Math.abs(rollerPower) < 0.1) rollerPower = 0;
-		robotHardware.rollIn(rollerPower);
+		robotHardware.rollIn(rollerPower*0.5);
 
 		//arm
 		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.driveArm( 0.8);
@@ -182,8 +184,8 @@ public class Robot extends TimedRobot {
 		//turret
 		//Right stick, left/right rotates.
 		double turretPower = functionStick.getX(Hand.kRight);
-		if (Math.abs(turretPower) < 0.1) turretPower = 0;
-		robotHardware.driveTurret(turretPower);
+		if (Math.abs(turretPower) < 0.2) turretPower = 0;
+		robotHardware.driveTurret(turretPower*0.5);
 
 		//elevator
 		if      (functionStick.getTriggerAxis(Hand.kLeft ) > 0.3) robotHardware.driveElevator(-0.6 * functionStick.getTriggerAxis(Hand.kLeft ));
@@ -197,12 +199,12 @@ public class Robot extends TimedRobot {
 			case NORTHWEST:
 			case NORTH:
 			case NORTHEAST:
-				robotHardware.climbUp(0.3);
+				robotHardware.climbUp(1.0);
 				break;
 			case SOUTHWEST:
 			case SOUTH:
 			case SOUTHEAST:
-				robotHardware.climbDown(0.2);
+				robotHardware.climbDown(0.3);
 				break;
 			default:
 				robotHardware.climb(0);
