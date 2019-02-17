@@ -74,12 +74,12 @@ public class MOErio extends GenericRobot {
 
     @Override
     public double getDistanceLeftInches() {
-        return encoderL.getRaw() * TICKS_TO_INCHES;
+        return encoderL.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
     public double getDistanceRightInches() {
-        return encoderR.getRaw() * TICKS_TO_INCHES;
+        return encoderR.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class MOErio extends GenericRobot {
 
     @Override
     public void stopEverything() {
-
+        stopDriving();
     }
 
     @Override

@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new SuperMOEva();
+	private GenericRobot   robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	private GenericAuto    autoProgram   = new MOErioCargoFrontGoBackAuto();
 
 	//lidar
 	//SerialPort Blinky;
@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
 
 
 
-		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
+		SmartDashboard.putNumber("AutoStep: "         , autoProgram.autoStep                   );
 		autoProgram.printSmartDashboard();
 
 
@@ -135,10 +135,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic () {
 		//Driving
-		     if (leftJoystick.getTrigger()   )  robotHardware.moveForward(.2);
-		else if (leftJoystick.getRawButton(2))  robotHardware.moveBackward(.2);
-		else if (leftJoystick.getRawButton(3))  robotHardware.turnLeftInplace(.2);
-		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.2);
+		     if (leftJoystick.getTrigger()   )  robotHardware.moveForward(.25);
+		else if (leftJoystick.getRawButton(3))  robotHardware.moveBackward(.25);
+		else if (leftJoystick.getRawButton(2))  robotHardware.turnLeftInplace(.3);
+		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.4);
 
 		//Individual motors (For testing)
 		else if (leftJoystick.getRawButton(5))  robotHardware.driveSA(0.5);

@@ -9,7 +9,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
     long startTime = 0;
     double z = 1.33;
     double louWizardry = 0;
-    boolean LeftSide = true;
+    boolean LeftSide = false;
 
     @Override
     public void init() {
