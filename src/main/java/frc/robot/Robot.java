@@ -16,15 +16,16 @@ import frc.robot.genericrobot.SuperMOEva;
 import io.github.pseudoresonance.pixy2api.*;
 import io.github.pseudoresonance.pixy2api.links.SPILink;
 
+import java.io.Console;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new SuperMOEva();
-	private Joystick       leftJoystick  = new Joystick(0);
-	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	private GenericRobot   robotHardware = new CaMOElot();
+	private Joystick       leftJoystick  = new Joystick(1);
+	//private XboxController functionStick = new XboxController(1);
+	//private GenericAuto    autoProgram   = new DriveStraightAuto();
 
 	//lidar
 	//SerialPort Blinky;
@@ -33,20 +34,19 @@ public class Robot extends TimedRobot {
 	// public static int[] lidar = new int[numSensors];
 
 	//drive elevator
-	static final double upperElevator = 1;
-	static final double bottomElevator = -0.6;
+	//static final double upperElevator = 1;
+	//static final double bottomElevator = -0.6;
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
     //pixy line-detection camera
-    private SPILink pixySPI = new SPILink();
-    private Pixy2 pixyCam = Pixy2.createInstance(pixySPI);
     private long updateNum;
-
+	PixyCam pixyCam = new PixyCam();
 
 	@Override
 	public void robotInit() {
-		autoProgram.robot = robotHardware;
+		pixyCam.init();
+		//autoProgram.robot = robotHardware;
 /*
     //opening serial port
     if (!PortOpen) {
@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic () {
-		SmartDashboard.putNumber("Yaw: "              , robotHardware.getHeadingDegrees()      );
+		/*SmartDashboard.putNumber("Yaw: "              , robotHardware.getHeadingDegrees()      );
 		SmartDashboard.putNumber("Left Encoder: "     , robotHardware.getDistanceLeftInches()  );
 		SmartDashboard.putNumber("Right Encoder: "    , robotHardware.getDistanceRightInches() );
 		SmartDashboard.putNumber("Left Drive Power: " , robotHardware.getLeftDrivePower()      );
@@ -76,38 +76,42 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Elevator Encoder: " , robotHardware.getElevatorPower()       );
 		SmartDashboard.putNumber("Arm Power: "        , robotHardware.getArmPower()            );
 		SmartDashboard.putNumber("Roller Power: "     , robotHardware.getRollerPower()         );
-		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
+		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );*/
 	}
 
 	@Override
 	public void disabledInit () {
+		pixyCam.stop();
 	}
 
 	@Override
 	public void disabledPeriodic () {
-		if (leftJoystick.getRawButton(2)) {
+		/*if (leftJoystick.getRawButton(2)) {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
-		}
+		}*/
 	}
 
 	@Override
 	public void autonomousInit () {
-		autoProgram.init();
+		//autoProgram.init();
 	}
 
 	@Override
 	public void autonomousPeriodic () {
-		robotHardware.checkSafety();
-		autoProgram.run();
+		/*robotHardware.checkSafety();
+		autoProgram.run();*/
 	}
 
 	@Override
 	public void teleopInit () {
+		pixyCam.run();
+		pixyCam.start();
 	}
 
 	@Override
 	public void teleopPeriodic () {
+		/*
 		//Driving
 		if      (leftJoystick.getRawButton(2))  robotHardware.moveForward(.2);
 		else if (leftJoystick.getTrigger()   )  robotHardware.moveForward(.2);
@@ -120,9 +124,9 @@ public class Robot extends TimedRobot {
 		else if (leftJoystick.getRawButton(7))  robotHardware.driveSB(0.5);
 		else if (leftJoystick.getRawButton(8))  robotHardware.driveFA(0.5);
 		else if (leftJoystick.getRawButton(9))  robotHardware.driveFB(0.5);
-
+		*/
 		//Manual Control
-		else {
+		//else {
 			double driveJoyStickX =  leftJoystick.getX();
 			double driveJoyStickY = -leftJoystick.getY();
 
@@ -132,9 +136,9 @@ public class Robot extends TimedRobot {
 			double drivePowerLeft  = driveJoyStickY + driveJoyStickX;
 			double drivePowerRight = driveJoyStickY - driveJoyStickX;
 
-			robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
-		}
-
+			robotHardware.setDrivePower(drivePowerLeft*0.25, drivePowerRight*0.25);
+		//}
+		/*
 		//roller
 		if      (functionStick.getAButton()) robotHardware.rollIn (0.3);
 		else if (functionStick.getBButton()) robotHardware.rollOut(0.3);
@@ -155,18 +159,23 @@ public class Robot extends TimedRobot {
 		if      (functionStick.getTriggerAxis(Hand.kLeft ) > 0.3) robotHardware.driveElevator(-0.6 * functionStick.getTriggerAxis(Hand.kLeft ));
 		else if (functionStick.getTriggerAxis(Hand.kRight) > 0.3) robotHardware.driveElevator( 1.0 * functionStick.getTriggerAxis(Hand.kRight));
 		else                                                      robotHardware.driveElevator( 0.0);
+		*/
+		//pixycam (should I implement SuperMOEva?
 
-		//pixycam (should I implement SuperMOEva?)
-        pixyCam.getLine().getAllFeatures();
-        Pixy2Line.Vector[] vec = pixyCam.getLine().getVectors();
-
-        if(vec != null){
-			//Print first vector found coords to smartdashboard
-			SmartDashboard.putNumber("PixyVec X0", vec[0].getX0());
-			SmartDashboard.putNumber("PixyVec X1", vec[0].getX1());
-			SmartDashboard.putNumber("PixyVec Y0", vec[0].getY0());
-			SmartDashboard.putNumber("PixyVec Y1", vec[0].getY1());
+		try{
+			Pixy2Line.Vector[] vec = pixyCam.getLastVector();
+			if(vec != null && vec.length > 0){
+				//Print first vector found coords to smartdashboard
+				System.out.println(vec[0].toString());
+				SmartDashboard.putNumber("PixyVec X0", vec[0].getX0());
+				SmartDashboard.putNumber("PixyVec X1", vec[0].getX1());
+				SmartDashboard.putNumber("PixyVec Y0", vec[0].getY0());
+				SmartDashboard.putNumber("PixyVec Y1", vec[0].getY1());
+			}
+		}catch(Exception e){
+			e.printStackTrace(System.out);
 		}
+
 	}
 
 	@Override
@@ -176,5 +185,4 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic () {
 	}
-
-}
+ }
