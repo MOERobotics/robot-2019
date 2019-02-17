@@ -42,7 +42,6 @@ public class VisionStandalone {
                 running = false;
                 continue;
             }
-            socket.send(packet);
         }
         socket.close();
     }
