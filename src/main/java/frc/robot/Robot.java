@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
-import io.github.pseudoresonance.pixy2api.*;
-import io.github.pseudoresonance.pixy2api.links.SPILink;
+//import io.github.pseudoresonance.pixy2api.*;
+//import io.github.pseudoresonance.pixy2api.links.SPILink;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
@@ -33,14 +33,14 @@ public class Robot extends TimedRobot {
 	// public static int[] lidar = new int[numSensors];
 
 	//drive elevator
-	static final double upperElevator = 1;
-	static final double bottomElevator = -0.6;
+	//static final double upperElevator = 1;
+	//static final double bottomElevator = -0.6;
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
     //pixy line-detection camera
-    private SPILink pixySPI = new SPILink();
-    private Pixy2 pixyCam = Pixy2.createInstance(pixySPI);
+    //private SPILink pixySPI = new SPILink();
+    //private Pixy2 pixyCam = Pixy2.createInstance(pixySPI);
     private long updateNum;
 
 
@@ -157,16 +157,16 @@ public class Robot extends TimedRobot {
 		else                                                      robotHardware.driveElevator( 0.0);
 
 		//pixycam (should I implement SuperMOEva?)
-        pixyCam.getLine().getAllFeatures();
-        Pixy2Line.Vector[] vec = pixyCam.getLine().getVectors();
+        //pixyCam.getLine().getAllFeatures();
+        //Pixy2Line.Vector[] vec = pixyCam.getLine().getVectors();
 
-        if(vec != null){
+        /*if(vec != null){
 			//Print first vector found coords to smartdashboard
 			SmartDashboard.putNumber("PixyVec X0", vec[0].getX0());
 			SmartDashboard.putNumber("PixyVec X1", vec[0].getX1());
 			SmartDashboard.putNumber("PixyVec Y0", vec[0].getY0());
 			SmartDashboard.putNumber("PixyVec Y1", vec[0].getY1());
-		}
+		}*/
 	}
 
 	@Override
