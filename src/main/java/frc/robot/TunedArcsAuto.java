@@ -15,7 +15,7 @@ public class TunedArcsAuto extends GenericAuto {
         arcPid.resetError();
         arcPid.setHeading(0);
         autoStep = 0;
-        robot.resetDriveEncoder();
+        robot.resetDriveEncoders();
         robot.resetYaw();
 
     }
@@ -45,7 +45,7 @@ public class TunedArcsAuto extends GenericAuto {
 
                 if(robot.getDistanceLeftInches() >= 72){
                     autoStep++;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             case 1:

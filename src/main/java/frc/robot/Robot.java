@@ -13,16 +13,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
+import frc.robot.genericrobot.MOErio;
+import frc.robot.genericrobot.CaMOElot;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new SuperMOEva();
+	private GenericRobot   robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	private GenericAuto    autoProgram   = new MOErioCargoSideAuto();
 
 	//lidar
 	//SerialPort Blinky;

@@ -19,7 +19,7 @@ public class AutoFrontHatch extends GenericAuto {
         arcPid.resetError();
         arcPid.setHeading(0);
         autoStep = 0;
-        robot.resetDriveEncoder();
+        robot.resetDriveEncoders();
         robot.resetYaw();
 
     }
@@ -49,7 +49,7 @@ public class AutoFrontHatch extends GenericAuto {
 
                 if(robot.getDistanceLeftInches() >= 72 / z){
                     autoStep++;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             case 1:
@@ -63,7 +63,7 @@ public class AutoFrontHatch extends GenericAuto {
 
                 if(robot.getDistanceLeftInches() >= 65){
                     autoStep++;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             case 2:
