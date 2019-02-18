@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
+    final double TICKS_TO_INCHES = 218;
+
 
     //Drive
-    TalonSRX driveFreeA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveFreeB = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveFreeA    = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveFreeB    = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveSupportA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
 
@@ -32,11 +34,11 @@ public class SuperMOEva extends GenericRobot {
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax turret   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax turret   ;//= new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm      = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     CANEncoder encoderElev = new CANEncoder(elevator);
-    CANEncoder encoderTur  = new CANEncoder(turret);
+    CANEncoder encoderTur  ;//= new CANEncoder(turret);
     CANEncoder encoderArm  = new CANEncoder(arm);
 
     //DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
@@ -49,20 +51,21 @@ public class SuperMOEva extends GenericRobot {
     Solenoid spearShaft = new Solenoid(2); //extend
     Solenoid spearHook  = new Solenoid(3); //grab
     Solenoid betaClimb  = new Solenoid(4); //grab
+    Solenoid betaClimb2 = new Solenoid(5); //grab
 
     //Hab Lifter
-    CANSparkMax froggerSA = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerSB = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerFA = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerFB = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerSA ;//= new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerSB ;//= new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerFA ;//= new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerFB ;//= new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    CANEncoder encoderFrogL = new CANEncoder(froggerSA);
-    CANEncoder encoderFrogR = new CANEncoder(froggerFA);
+    CANEncoder encoderFrogL ;//= new CANEncoder(froggerSA);
+    CANEncoder encoderFrogR ;//= new CANEncoder(froggerFA);
 
     {//not sure which side is inverted
         driveFreeA.setInverted(true);
         driveFreeB.setInverted(true);
-        rollR.setInverted(true);
+        rollL.setInverted(true);
         arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
         elevator.setIdleMode(CANSparkMax.IdleMode.kBrake);
         turret.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -105,12 +108,12 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public double getDistanceLeftInches() {
-        return encoderL.getRaw();
+        return encoderL.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
     public double getDistanceRightInches() {
-        return encoderR.getRaw();
+        return encoderR.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
@@ -271,6 +274,10 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public double getRollDegrees() {
         return navX.getRoll();
+    }
+
+    public void climb2(boolean state) {
+        betaClimb2.set(state);
     }
 
 }
