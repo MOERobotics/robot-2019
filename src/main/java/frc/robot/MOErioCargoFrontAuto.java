@@ -39,6 +39,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
         SmartDashboard.putNumber("Z: ",z);
         SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
+        SmartDashboard.putString("autoprogram", "MOErioCargoFrontAuto");
     }
 
 
@@ -74,7 +75,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                 */
 
                 if(levelTwo){
-                    if(robot.getDistanceLeftInches() >= 46*2) {
+                    if(Math.abs(robot.getDistanceLeftInches()) >= 46*2) {
                         robot.resetDriveEncoders();
                         if(habLeftSide){
                             autoStep = 3;
@@ -83,7 +84,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                         }
                     }
                 } else {
-                    if(robot.getDistanceLeftInches() >= 46) {
+                    if(Math.abs(robot.getDistanceLeftInches()) >= 46) {
                         robot.resetDriveEncoders();
                         if(habLeftSide){
                             autoStep = 3;
