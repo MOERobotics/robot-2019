@@ -107,7 +107,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getDistanceLeftInches() >= 45+14){
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             */
@@ -116,7 +116,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getHeadingDegrees() <= -90) {
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                     arcPid.setHeading(0);
                 } else if(robot.getHeadingDegrees() <= -80){
                     robot.turnLeftInplace(0.2);
@@ -137,7 +137,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getDistanceLeftInches() >= 21){
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             */
@@ -146,7 +146,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getHeadingDegrees() <= -90) {
                     autoStep++;
                     robot.resetYaw();
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                     arcPid.setHeading(0);
                 } else if(robot.getHeadingDegrees() <= -80){
                     robot.turnLeftInplace(0.2);
@@ -167,7 +167,7 @@ public class AutoSideHatch extends GenericAuto {
                 if(robot.getDistanceLeftInches() >= 96 / z){
                     autoStep++;
                     arcPid.setHeading(0);
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                     robot.resetYaw();
                 }
                 break;
@@ -183,7 +183,7 @@ public class AutoSideHatch extends GenericAuto {
 
                 if(robot.getDistanceLeftInches() >= 96){
                     autoStep++;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
             */

@@ -2,15 +2,27 @@ package frc.robot.genericrobot;
 
 /*code*/
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 public abstract class GenericRobot {
 
 	//Last recorded values
-    private double leftPower;
-    private double rightPower;
-    private double elevatorPower;
-    private double turretPower;
-    private double armPower;
-    private double rollerPower;
+    private double        leftPower;
+    private double       rightPower;
+    private double    elevatorPower;
+    private double      turretPower;
+    private double         armPower;
+    private double      rollerPower;
+	private double       climbPower;
+    private boolean spearShaftState;
+    private boolean  spearHookState;
+
+	private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
+
+    private double       armEncoderOffset = 0;
+    private double    turretEncoderOffset = 0;
+    private double  elevatorEncoderOffset = 0;
+    private boolean   totalSafetyOverride = false;
 
 	//checking for things
 	public abstract double getDistanceLeftInches();
@@ -18,9 +30,9 @@ public abstract class GenericRobot {
 	public abstract double getHeadingDegrees();
 	public abstract double getPitchDegrees();
 	public abstract double getRollDegrees();
-	public abstract double getElevatorEncoderCount();
-	public abstract double getTurretEncoderCount();
-	public abstract double getArmEncoderCount();
+	public abstract double getElevatorEncoderCountInternal();
+	public abstract double getTurretEncoderCountInternal();
+	public abstract double getArmEncoderCountInternal();
 
 	//stopping and resetting
 	public abstract void resetDriveEncoders();
@@ -49,6 +61,19 @@ public abstract class GenericRobot {
 	public final double getLeftDrivePower  () { return  leftPower; }
 	public final double getRightDrivePower () { return rightPower; }
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);
+
+	//shifting
+	public void shiftHigh () { shiftDrive(DoubleSolenoid.Value.kReverse); }
+	public void shiftLow  () { shiftDrive(DoubleSolenoid.Value.kForward); }
+
+	public void shiftDrive(DoubleSolenoid.Value value) {
+		this.shifterSolenoidValue = value;
+		shiftDriveInternal(value);
+	}
+
+	public abstract void shiftDriveInternal(DoubleSolenoid.Value value);
+	public DoubleSolenoid.Value getShifterSolenoidState() { return shifterSolenoidValue; }
+
 	//</editor-fold>
 
     //Elevator <editor-fold>
@@ -105,15 +130,68 @@ public abstract class GenericRobot {
 	protected abstract void setRollerInternal(double power);
 	//</editor-fold>
 
+	//Hatch Grab <editor-fold>
+	public void spearIn()  { shiftSpearShaft(false); }
+	public void spearOut() { shiftSpearShaft(true); }
+	public void shiftSpearShaft(boolean out) {
+		this.spearShaftState = out;
+		shiftSpearShaftInternal(out);
+	}
+	public abstract void shiftSpearShaftInternal(boolean out);
+	public boolean getSpearShaftState() {return spearShaftState;}
+
+	public void spearHook  () { shiftSpearHook(false); }
+	public void spearUnhook() { shiftSpearHook( true); }
+	public void shiftSpearHook(boolean out) {
+		this.spearHookState = out;
+		shiftSpearHookInternal(out);
+	}
+	public abstract void shiftSpearHookInternal(boolean out);
+	public boolean getSpearHookState() {return spearHookState;}
+	//</editor-fold>
+
+	//Habitat Climb <editor-fold>
+	public void climbUp  (double power) {climb(-power);}
+	public void climbDown(double power) {climb( power);}
+	public void climb(double power) {
+		this.climbPower = power;
+		climbInternal(power);
+	}
+	public abstract void climbInternal(double power);
+	public double getClimbPower() {return this.climbPower;}
+
     //Temporary for SuperMOEva testing
     public void driveSA(double power) {};
     public void driveSB(double power) {};
     public void driveFA(double power) {};
     public void driveFB(double power) {};
 
-	//needs work
-	public void grabHatch() {
+    public void setOffsets() {
+    	this.armEncoderOffset = getArmEncoderCountInternal();
+    	this.elevatorEncoderOffset = getElevatorEncoderCountInternal();
+    	this.turretEncoderOffset = getTurretEncoderCountInternal();
+	}
 
+	public void clearOffsets() {
+    	this.armEncoderOffset = 0;
+    	this.elevatorEncoderOffset = 0;
+    	this.turretEncoderOffset = 0;
+	}
+
+	public void setSafetyOverride(boolean state) {
+    	totalSafetyOverride = state;
+	}
+
+	public boolean getSafetyOverride() {return totalSafetyOverride;}
+
+	public double getArmEncoderCount() {
+    	return getArmEncoderCountInternal() - armEncoderOffset;
+	}
+	public double getElevatorEncoderCount() {
+		return getElevatorEncoderCountInternal() - elevatorEncoderOffset;
+	}
+	public double getTurretEncoderCount() {
+		return getTurretEncoderCountInternal() - turretEncoderOffset;
 	}
 
 }

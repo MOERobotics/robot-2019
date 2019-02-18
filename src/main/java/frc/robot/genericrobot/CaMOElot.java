@@ -24,8 +24,8 @@ public class CaMOElot extends GenericRobot {
     private TalonSRX shootMotorA = new TalonSRX(10);
     private TalonSRX shootMotorB = new TalonSRX(11);
 
-    Encoder  encoderL    = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
-    Encoder  encoderR    = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
+    Encoder  encoderL = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
+    Encoder  encoderR = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
@@ -96,6 +96,21 @@ public class CaMOElot extends GenericRobot {
         shootMotorB.set(ControlMode.PercentOutput,power*0.2);
     }
 
+    @Override
+    public void shiftSpearShaftInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftSpearHookInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftDriveInternal(DoubleSolenoid.Value value) {
+
+    }
+
 	//Fake some parts
 
     double fakeArmEncoder = 0;
@@ -129,18 +144,22 @@ public class CaMOElot extends GenericRobot {
 	}
 
     @Override
-    public double getElevatorEncoderCount() {
+    public double getElevatorEncoderCountInternal() {
         return fakeElevatorEncoder;
     }
 
     @Override
-    public double getTurretEncoderCount() {
+    public double getTurretEncoderCountInternal() {
         return fakeTurretEncoder;
     }
 
     @Override
-    public double getArmEncoderCount() {
+    public double getArmEncoderCountInternal() {
         return fakeArmEncoder;
     }
 
+    @Override
+    public void climbInternal(double power) {
+
+    }
 }
