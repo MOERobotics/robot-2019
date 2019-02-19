@@ -11,7 +11,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
     long startTime = 0;
     double z = 1.67;
     double louWizardry =0;
-    boolean LeftSide = true;
+    boolean LeftSide = false;
 
     @Override
     public void init() {
@@ -87,7 +87,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                 //correction negative, left motor decrease, correction positive, left motor power increase
                 robot.setDrivePower((0.15)*(1 + correction),(0.5)*(1 - correction));
 
-                if (Math.abs(robot.getDistanceLeftInches()) >= 53 / z /*x1*/) {
+                if (Math.abs(robot.getDistanceLeftInches()) >= (53) / z /*x1*/) {
                     autoStep=1;
                     robot.resetDriveEncoders();
                 }
@@ -105,6 +105,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                     robot.resetDriveEncoders();
                 }
                 break;
+                //59.4 in 121 t
             case 2:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();

@@ -9,7 +9,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
     long startTime = 0;
     double z = 1.33;
     double louWizardry = 0;
-    boolean LeftSide = true;
+    boolean LeftSide = false;
 
     @Override
     public void init() {
@@ -106,7 +106,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower((0.4)*(1 + correction),(0.4)*(1 - correction));
 
-                if (Math.abs(robot.getDistanceLeftInches()) >= 41) {
+                if (Math.abs(robot.getDistanceLeftInches()) >= 41+5) {
                     autoStep++;
                     robot.resetYaw();
                 }
@@ -155,7 +155,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower((0.4)*(1 + correction),(0.4)*(1 - correction));
 
-                if (Math.abs(robot.getDistanceLeftInches()) >= 41) {
+                if (Math.abs(robot.getDistanceLeftInches()) >= 41+5) {
                     autoStep++;
                     robot.resetYaw();
                 }

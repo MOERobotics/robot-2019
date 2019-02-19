@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
+import frc.robot.genericrobot.MOErio;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -22,9 +23,10 @@ import java.util.stream.Collectors;
 public class Robot extends TimedRobot {
 
 	private SuperMOEva     robotHardware = new SuperMOEva();
+    //private MOErio         robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	private GenericAuto    autoProgram   = new MOErioCargoSideAuto();
 
 	//lidar
 	//SerialPort Blinky;
@@ -178,13 +180,16 @@ public class Robot extends TimedRobot {
 		else                                    robotHardware.climb    (0.0);
 
 
+		/*
 		if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
 		else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
+        */
+		//25084 tk 59.4 in
 
 		//Shifting
 
-		if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();
-		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
+		if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftLow();
+		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftHigh ();
 
 		//hatchGrab
 		if      (functionStick.getXButton()) robotHardware.spearIn    ();

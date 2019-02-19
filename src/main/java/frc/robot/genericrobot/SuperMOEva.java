@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
-    final double TICKS_TO_INCHES = 218;
+    final double TICKS_TO_INCHES = 410;
 
 
     //Drive
@@ -34,11 +34,11 @@ public class SuperMOEva extends GenericRobot {
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax turret   ;//= new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax turret   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm      = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     CANEncoder encoderElev = new CANEncoder(elevator);
-    CANEncoder encoderTur  ;//= new CANEncoder(turret);
+    CANEncoder encoderTur  = new CANEncoder(turret);
     CANEncoder encoderArm  = new CANEncoder(arm);
 
     //DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
@@ -108,7 +108,7 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public double getDistanceLeftInches() {
-        return encoderL.getRaw() / TICKS_TO_INCHES;
+        return -encoderL.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override

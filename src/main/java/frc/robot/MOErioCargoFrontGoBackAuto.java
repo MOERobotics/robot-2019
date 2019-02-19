@@ -14,7 +14,24 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
     //z = 1.67 for left = 0.5 right = 0.15 power
     //z = 1.33 for 0.5 and 0.3
 
+@Override
+public void printSmartDashboard() {
+    double leftDistance = Math.abs(robot.getDistanceLeftInches());
+    double rightDistance = Math.abs(robot.getDistanceRightInches());
+    double louWizardry = rightDistance - leftDistance / z;
 
+    SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
+    SmartDashboard.putNumber("Correction: ", MOErioAuto.getCorrection());
+    SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());
+    SmartDashboard.putNumber("kI: ", MOErioAuto.pidController.getI());
+    SmartDashboard.putNumber("kD: ", MOErioAuto.pidController.getD());
+    SmartDashboard.putNumber("Current Time: ", System.currentTimeMillis());
+    SmartDashboard.putNumber("The Magic: ", louWizardry);
+    SmartDashboard.putNumber("Z: ", z);
+    SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
+    SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
+
+}
 
     @Override
     public void init() {
@@ -31,17 +48,6 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
         double louWizardry = rightDistance - leftDistance / z;
-
-        SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
-        SmartDashboard.putNumber("Correction: ", MOErioAuto.getCorrection());
-        SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());
-        SmartDashboard.putNumber("kI: ", MOErioAuto.pidController.getI());
-        SmartDashboard.putNumber("kD: ", MOErioAuto.pidController.getD());
-        SmartDashboard.putNumber("Current Time: ", System.currentTimeMillis());
-        SmartDashboard.putNumber("The Magic: ", louWizardry);
-        SmartDashboard.putNumber("Z: ", z);
-        SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
-        SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
 
         switch (autoStep) {
             case -2:
@@ -66,15 +72,16 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
                 if(Math.abs(robot.getDistanceRightInches()) >= 69.6/z){
                     autoStep++;
                     robot.resetDriveEncoders();
+                    MOErioAuto.setHeading(robot.getHeadingDegrees() - 45);
+                    MOErioAuto.resetError();
                 }
                 break;
             case 0:
-                MOErioAuto.setHeading(robot.getHeadingDegrees() - 45);
                 correction = MOErioAuto.getCorrection();
 
                 robot.setDrivePower(-0.5*(1-correction), -0.5*(1+correction));
 
-                if(Math.abs(robot.getDistanceRightInches()) >= 43){
+                if(Math.abs(robot.getDistanceRightInches()) >= 43+20){
                     autoStep++;
                     robot.resetDriveEncoders();
 
@@ -90,16 +97,16 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
                 if(Math.abs(robot.getDistanceRightInches()) >= 69.6 /*it was 59.7 before(Lou's math)*/){
                     autoStep++;
                     robot.resetDriveEncoders();
+                    MOErioAuto.setHeading(robot.getHeadingDegrees());
+                    MOErioAuto.resetError();
                 }
                 break;
             case 2:
-                louWizardry = rightDistance - leftDistance * z;
-                MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
 
                 robot.setDrivePower(-0.3*(1-correction), -0.3*(1+correction));
 
-                if(Math.abs(robot.getDistanceRightInches()) >= 13.5 /*it was 59.7 before(Lou's math)*/){
+                if(Math.abs(robot.getDistanceRightInches()) >= 13.5 ){
                     autoStep++;
                 }
                 break;
