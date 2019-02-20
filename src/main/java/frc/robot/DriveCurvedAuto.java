@@ -5,8 +5,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveCurvedAuto extends GenericAuto {
 
+    //P = 0.06, I = 0.001, D = 0.0
     PIDModule straightPid = new PIDModule(0.06, 0.001,0.0);
     long startTime = 0;
+    double louMagic = 0.082*1.5;
 
     @Override
     public void init() {
@@ -37,22 +39,38 @@ public class DriveCurvedAuto extends GenericAuto {
 
                 double yawRate = 5.0 / 1000;
 
+                //sets error
                 straightPid.setHeading(robot.getHeadingDegrees() - (dT*yawRate));
 
                 //h = s - e
                 //e = r - s
                 //h = s - r + s
-
                 double correction = straightPid.getCorrection();
 
-                //correction negative, left motor increase decrease. correction positive, left motor power increase.
-                robot.setDrivePower((0.2 + 0.082) * (1 + correction),(0.2 * (1 - correction)));
+                //correction negative, left motor decrease. correction positive, left motor power increase.
+                robot.setDrivePower((0.2 + louMagic) * (1 + correction),(0.4 * (1 - correction)));
+
+                if(dT > 4000) {
+                    autoStep = 1;
+                } else {
+                    break;
+                }
+            /*case 1:
+                now = System.currentTimeMillis();
+                dT = now - startTime;
+
+                yawRate = 5.0 / 1000;
+
+                straightPid.setHeading(robot.getHeadingDegrees() - (10000-dT)*yawRate);
+                correction = straightPid.getCorrection();
+                robot.setDrivePower(0.3 * (1 + correction), (0.3 + louMagic) * (1 - correction));
 
                 if(dT > 10000) {
                     autoStep++;
                 } else {
                     break;
                 }
+                */
             case 1:
                 robot.stopDriving();
         }
