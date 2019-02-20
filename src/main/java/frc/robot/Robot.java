@@ -16,6 +16,7 @@ import frc.robot.genericrobot.SuperMOEva;
 import frc.robot.genericrobot.MOErio;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,7 +27,7 @@ public class Robot extends TimedRobot {
     //private MOErio         robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new MOErioCargoSideAuto();
+	private GenericAuto    autoProgram   = new MOErioCargoFrontAuto();
 
 	//lidar
 	//SerialPort Blinky;
@@ -65,8 +66,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic () {
 		SmartDashboard.putString ("Robot Class"        , robotHardware.getClass().getSimpleName() );
-		SmartDashboard.putString ("Auto Class"         , autoProgram.getClass().getSimpleName()   );
-
+		SmartDashboard.putString ("Auto Class"         , autoProgram.getClass().getName()   );
+		SmartDashboard.putString ("AAAAAAAAAAAAAAA"         , "AAAAAAAAAAAAAAAAAAAAA"   );
 		SmartDashboard.putNumber ("Yaw: "              , robotHardware.getHeadingDegrees()        );
 		SmartDashboard.putNumber ("Roll: "             , robotHardware.getRollDegrees()           );
 		SmartDashboard.putNumber ("Pitch: "            , robotHardware.getPitchDegrees()          );
@@ -96,7 +97,17 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
 		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
 
-
+		String modified = "fail";
+				try {
+					modified = new Date(
+							Robot
+								.class
+								.getResource("Main.class")
+								.openConnection()
+								.getLastModified()
+					).toString();
+				} catch (Exception ignored) {}
+				SmartDashboard.putString("modifiedDate: ", modified);
 
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
 		autoProgram.printSmartDashboard();

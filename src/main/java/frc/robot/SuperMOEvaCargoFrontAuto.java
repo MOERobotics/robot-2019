@@ -3,13 +3,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.MOErio;
 
-public class MOErioCargoFrontAuto extends GenericAuto {
+public class SuperMOEvaCargoFrontAuto extends GenericAuto {
 
     //1.67 for 0.5 0.15 power
     //1.33 for 0.5 0.3 power
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     long startTime = 0;
-    double z = 1.77;
+    double z = 1.67;
     double louWizardry =0;
     boolean LeftSide = false;
 
@@ -37,7 +37,6 @@ public class MOErioCargoFrontAuto extends GenericAuto {
         SmartDashboard.putNumber("Z: ",z);
         SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
-        SmartDashboard.putNumber("i am so angry right now", 6);
     }
 
 
@@ -88,7 +87,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                 //correction negative, left motor decrease, correction positive, left motor power increase
                 robot.setDrivePower((0.15)*(1 + correction),(0.5)*(1 - correction));
 
-                if (Math.abs(robot.getDistanceLeftInches()) >= (53+5) / z /*x1*/) {
+                if (Math.abs(robot.getDistanceLeftInches()) >= (53) / z /*x1*/) {
                     autoStep=1;
                     robot.resetDriveEncoders();
                 }
@@ -101,24 +100,26 @@ public class MOErioCargoFrontAuto extends GenericAuto {
 
                 robot.setDrivePower((0.5)*(1 + correction), (0.15)*(1 - correction));
 
-                if (Math.abs(robot.getDistanceLeftInches()) >= 53+5){
+                if (Math.abs(robot.getDistanceLeftInches()) >= 53){
                     autoStep=2;
                     robot.resetDriveEncoders();
                 }
                 break;
-                //59.4 in 121 t
+            //59.4 in 121 t
             case 2:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
 
                 robot.setDrivePower((0.3)*(1 + correction),(0.3)*(1 - correction));
 
-                if (Math.abs(robot.getDistanceLeftInches()) >= 6) {
+                if (Math.abs(robot.getDistanceLeftInches()) >= 5) {
                     autoStep++;
                 }
                 break;
             case 3:
                 robot.stopDriving();
+                //robot.spearIn();
+                //robot.spearUnhook();
                 break;
             case 4:
                 louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) * z;

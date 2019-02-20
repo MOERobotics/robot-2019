@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
-    final double TICKS_TO_INCHES = 410;
+    final double TICKS_TO_INCHES = 420;
 
 
     //Drive
@@ -27,8 +27,8 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
 
     AHRS navX = new AHRS(SPI.Port.kMXP, (byte) 50);
-    Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
-    Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X);
+    Encoder encoderL = new Encoder(0, 1, true, EncodingType.k2X);
+    Encoder encoderR = new Encoder(4, 5, true, EncodingType.k2X);
 
     DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
 
