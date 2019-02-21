@@ -14,7 +14,7 @@ public class MOErioCargoSideGoBackAuto extends GenericAuto {
     double z = 1.33;
     double louWizardry = 0;
     boolean LeftSide = false;
-    double correction =0;
+    double correction = 0;
     //z = 1.67 for left = 0.5 right = 0.15 power
     //z = 1.33 for 0.5 and 0.3
 

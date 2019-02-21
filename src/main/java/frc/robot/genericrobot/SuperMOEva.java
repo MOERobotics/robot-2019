@@ -72,6 +72,10 @@ public class SuperMOEva extends GenericRobot {
     }
 
 
+    //lidar
+    @Override
+    public int numSensors() {return 8;}
+
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
         driveSupportA.set(ControlMode.PercentOutput, leftMotor);

@@ -155,4 +155,9 @@ public class MOErio extends GenericRobot {
     public void climbInternal(double power) {
 
     }
+
+    @Override
+    public int numSensors() {
+        return 2;
+    }
 }

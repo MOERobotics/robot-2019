@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
 import frc.robot.genericrobot.MOErio;
 
+import javax.sound.sampled.Port;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -23,17 +24,15 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private SuperMOEva     robotHardware = new SuperMOEva();
-    //private MOErio         robotHardware = new MOErio();
+	//private SuperMOEva     robotHardware = new SuperMOEva();
+    private MOErio         robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new MOErioCargoFrontAuto();
+	private GenericAuto    autoProgram   = new MOErioCargoSideAuto();
 
 	//lidar
-	//SerialPort Blinky;
-	// boolean PortOpen = false;
-	// public static int numSensors = 8;
-	// public static int[] lidar = new int[numSensors];
+	SerialPort Blinky;
+	boolean PortOpen = false;
 
 	//drive elevator
 	static final double upperElevator = 1;
@@ -45,7 +44,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
-/*
+
     //opening serial port
     if (!PortOpen) {
       PortOpen = true;
@@ -60,7 +59,8 @@ public class Robot extends TimedRobot {
       }
 
     }
-    */
+
+		Lidar.init(Blinky);
 	}
 
 	@Override
@@ -112,6 +112,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
 		autoProgram.printSmartDashboard();
 
+
+		Lidar.getLidar(robotHardware, Blinky);
 
 		if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();

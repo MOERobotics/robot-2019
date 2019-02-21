@@ -24,6 +24,10 @@ public abstract class GenericRobot {
     private double  elevatorEncoderOffset = 0;
     private boolean   totalSafetyOverride = false;
 
+    //lidar
+	public abstract int numSensors();
+	public int[] lidar = new int[numSensors()];
+
 	//checking for things
 	public abstract double getDistanceLeftInches();
 	public abstract double getDistanceRightInches();

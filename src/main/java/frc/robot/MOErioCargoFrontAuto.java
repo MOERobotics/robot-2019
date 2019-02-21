@@ -10,7 +10,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     long startTime = 0;
     double z = 1.77;
-    double louWizardry =0;
+    double louWizardry = 0;
     boolean LeftSide = false;
 
     @Override
