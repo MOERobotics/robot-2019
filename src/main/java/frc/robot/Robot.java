@@ -39,30 +39,22 @@ public class Robot extends TimedRobot {
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
-    //pixy line-detection camera
-    private long updateNum;
-	PixyCam pixyCam = new PixyCam();
-
 	@Override
 	public void robotInit() {
-		pixyCam.init();
 		//autoProgram.robot = robotHardware;
-/*
-    //opening serial port
-    if (!PortOpen) {
-      PortOpen = true;
+		if (!PortOpen) {
+			PortOpen = true;
 
-      try {
-        Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
-        SmartDashboard.putString("Open serial port: ", "Success!");
-      } catch (Exception e) {
-        String exception = e + "";
-        SmartDashboard.putString("I caught: ", exception);
-        PortOpen = false;
-      }
+			try {
+				Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
+				SmartDashboard.putString("Open serial port: ", "Success!");
+			} catch (Exception e) {
+				String exception = e + "";
+				SmartDashboard.putString("I caught: ", exception);
+				PortOpen = false;
+			}
 
-    }
-    */
+		}
 	}
 
 	@Override
@@ -85,27 +77,25 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic () {
-		/*if (leftJoystick.getRawButton(2)) {
+		if (leftJoystick.getRawButton(2)) {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
-		}*/
+		}
 	}
 
 	@Override
 	public void autonomousInit () {
-		//autoProgram.init();
+		autoProgram.init();
 	}
 
 	@Override
 	public void autonomousPeriodic () {
-		/*robotHardware.checkSafety();
-		autoProgram.run();*/
+		robotHardware.checkSafety();
+		autoProgram.run();
 	}
 
 	@Override
 	public void teleopInit () {
-		pixyCam.run();
-		pixyCam.start();
 	}
 
 	@Override
@@ -144,7 +134,6 @@ public class Robot extends TimedRobot {
 		}
 
 		//Climbing
-
 		if      (leftJoystick.getRawButton( 9)) robotHardware.climbUp  (1.0);
 		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
 		else                                    robotHardware.climb    (0.0);
@@ -201,9 +190,7 @@ public class Robot extends TimedRobot {
 			functionStick.getTriggerAxis(Hand.kRight) -
 			functionStick.getTriggerAxis(Hand.kLeft );
 
-		if (
-				Math.abs(elevatorPower) < 0.3
-		) elevatorPower = 0;
+		if (Math.abs(elevatorPower) < 0.3) elevatorPower = 0;
 		else if (elevatorPower > 0) elevatorPower -= 0.3;
 		else if (elevatorPower < 0) elevatorPower += 0.3;
 		robotHardware.driveElevator(elevatorPower*0.8);
@@ -221,21 +208,6 @@ public class Robot extends TimedRobot {
 			default:
 				break;
 		}
-
-		try{
-			Pixy2Line.Vector[] vec = pixyCam.getLastVector();
-			if(vec != null && vec.length > 0){
-				//Print first vector found coords to smartdashboard
-				System.out.println(vec[0].toString());
-				SmartDashboard.putNumber("PixyVec X0", vec[0].getX0());
-				SmartDashboard.putNumber("PixyVec X1", vec[0].getX1());
-				SmartDashboard.putNumber("PixyVec Y0", vec[0].getY0());
-				SmartDashboard.putNumber("PixyVec Y1", vec[0].getY1());
-			}
-		}catch(Exception e){
-			e.printStackTrace(System.out);
-		}
-
 	}
 
 	public enum POVDirection {
@@ -267,11 +239,13 @@ public class Robot extends TimedRobot {
 		}
 	}
 
-	@Override
+	/*@Override
 	public void testInit () {
+
 	}
 
 	@Override
 	public void testPeriodic () {
-	}
- }
+
+	}*/
+

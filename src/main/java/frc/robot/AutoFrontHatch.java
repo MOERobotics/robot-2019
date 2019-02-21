@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import io.github.pseudoresonance.pixy2api.Pixy2Line;
 
 
 //rightmost level 1
@@ -13,7 +14,7 @@ public class AutoFrontHatch extends GenericAuto {
     //right front hatch s = 72in then 65in for the second arc...
     //left front hatch s = 96in then 50in for the second arc....
 
-
+    public PixyCam pixyCam = new PixyCam();
     @Override
     public void init() {
         arcPid.resetError();
@@ -21,6 +22,9 @@ public class AutoFrontHatch extends GenericAuto {
         autoStep = 0;
         robot.resetDriveEncoders();
         robot.resetYaw();
+        pixyCam.init();
+        pixyCam.run();
+        pixyCam.start();
 
     }
 
@@ -75,8 +79,19 @@ public class AutoFrontHatch extends GenericAuto {
                     autoStep++;
                 }
                 break;
-
             case 3:
+                //get pixycam data
+                Pixy2Line.Vector[] vec = pixyCam.getLastVector();
+                if(vec != null && vec.length > 0){
+                    //Print first vector found coords to smartdashboard
+                    System.out.println(vec[0].toString());
+                    SmartDashboard.putNumber("PixyVec X0", vec[0].getX0());
+                    SmartDashboard.putNumber("PixyVec X1", vec[0].getX1());
+                    SmartDashboard.putNumber("PixyVec Y0", vec[0].getY0());
+                    SmartDashboard.putNumber("PixyVec Y1", vec[0].getY1());
+                    autoStep++;
+                }
+            case 4:
                 robot.stopDriving();
         }
     }
