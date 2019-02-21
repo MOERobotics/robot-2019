@@ -34,11 +34,11 @@ public class SuperMOEva extends GenericRobot {
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax turret   ;//= new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax turret   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm      = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     CANEncoder encoderElev = new CANEncoder(elevator);
-    CANEncoder encoderTur  ;//= new CANEncoder(turret);
+    CANEncoder encoderTur  = new CANEncoder(turret);
     CANEncoder encoderArm  = new CANEncoder(arm);
 
     //DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
