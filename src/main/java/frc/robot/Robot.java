@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import frc.robot.genericrobot.SuperMOEva;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -27,10 +26,8 @@ public class Robot extends TimedRobot {
 	private GenericAuto    autoProgram   = new DriveStraightAuto();
 
 	//lidar
-	//SerialPort Blinky;
-	// boolean PortOpen = false;
-	// public static int numSensors = 8;
-	// public static int[] lidar = new int[numSensors];
+	SerialPort Blinky;
+	boolean PortOpen = false;
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
@@ -38,26 +35,32 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
-/*
-    //opening serial port
-    if (!PortOpen) {
-      PortOpen = true;
+		robotHardware.enableElevatorLimits(true);
+		robotHardware.enableArmLimits(true);
+		robotHardware.shiftLow();
 
-      try {
-        Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
-        SmartDashboard.putString("Open serial port: ", "Success!");
-      } catch (Exception e) {
-        String exception = e + "";
-        SmartDashboard.putString("I caught: ", exception);
-        PortOpen = false;
-      }
+		//opening serial port
+		if (!PortOpen) {
+		  PortOpen = true;
 
-    }
-    */
+		  try {
+			Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
+			SmartDashboard.putString("Open serial port: ", "Success!");
+		  } catch (Exception e) {
+			String exception = e + "";
+			SmartDashboard.putString("I caught: ", exception);
+			PortOpen = false;
+		  }
+
+		}
+
+		//if (PortOpen) Lidar.init(Blinky);
+
 	}
 
 	@Override
 	public void robotPeriodic () {
+
 		SmartDashboard.putString ("Robot Class"        , robotHardware.getClass().getSimpleName() );
 		SmartDashboard.putString ("Auto Class"         , autoProgram.getClass().getSimpleName()   );
 
@@ -78,28 +81,37 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber ("Roller Power: "     , robotHardware.getRollerPower()           );
 		SmartDashboard.putNumber ("Climber Power: "    , robotHardware.getClimbPower()            );
 
-		SmartDashboard.putBoolean("Is ArmDown"         , robotHardware.isArmDown()                );
-		SmartDashboard.putBoolean("Is ArmUp"           , robotHardware.isArmUp()                  );
-		SmartDashboard.putBoolean("Is Elevator Down"   , robotHardware.isElevatorDown()           );
-		SmartDashboard.putBoolean("Is Elevator Up"     , robotHardware.isElevatorUp()             );
-		SmartDashboard.putBoolean("Is Turret Left"     , robotHardware.isTurretLeft()             );
-		SmartDashboard.putBoolean("Is Turret Right"    , robotHardware.isTurretRight()            );
+		SmartDashboard.putBoolean("Is ArmDown: "         , robotHardware.isArmDown()                );
+		SmartDashboard.putBoolean("Is ArmUp: "           , robotHardware.isArmUp()                  );
+		SmartDashboard.putBoolean("Is Elevator Down: "   , robotHardware.isElevatorDown()           );
+		SmartDashboard.putBoolean("Is Elevator Up: "     , robotHardware.isElevatorUp()             );
+		//SmartDashboard.putBoolean("Is Turret Left: "     , robotHardware.isTurretLeft()             );
+		//SmartDashboard.putBoolean("Is Turret Right: "    , robotHardware.isTurretRight()            );
 		SmartDashboard.putBoolean("SAFETY MOEVERRIDE"  , robotHardware.getSafetyOverride()        );
 
 		SmartDashboard.putString("Shifter State: ", robotHardware.getShifterSolenoidState().name());
 		SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
 		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
 
+		SmartDashboard.putBoolean("Elevator Forward Limit Enabled: ", robotHardware.isElevForwardLimitEnabled());
+		SmartDashboard.putBoolean("At Elevator Forward Limit: ", robotHardware.atElevForwardLimit());
+		SmartDashboard.putBoolean("Elevator Reverse Limit Enabled: ", robotHardware.isElevReverseLimitEnabled());
+		SmartDashboard.putBoolean("At Elevator Reverse Limit: ", robotHardware.atElevReverseLimit());
 
+		SmartDashboard.putBoolean("Arm Forward Limit Enabled: ", robotHardware.isArmForwardLimitEnabled());
+		SmartDashboard.putBoolean("At Arm Forward Limit: ", robotHardware.atArmForwardLimit());
+		SmartDashboard.putBoolean("Arm Reverse Limit Enabled: ", robotHardware.isArmReverseLimitEnabled());
+		SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
 
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
 		autoProgram.printSmartDashboard();
-
 
 		if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
 		if (leftJoystick.getRawButtonPressed (14)) robotHardware.setSafetyOverride(true);
 		if (leftJoystick.getRawButtonReleased(14)) robotHardware.setSafetyOverride(false);
+
+		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 	}
 
 	@Override
@@ -130,6 +142,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit () {
+		robotHardware.enableElevatorLimits(true);
+		robotHardware.enableArmLimits(true);
 	}
 
 	@Override
@@ -145,6 +159,12 @@ public class Robot extends TimedRobot {
 		//else if (leftJoystick.getRawButton(6))  robotHardware.driveSB(0.5);
 		//else if (leftJoystick.getRawButton(7))  robotHardware.driveFA(0.5);
 		//else if (leftJoystick.getRawButton(8))  robotHardware.driveFB(0.5);
+
+		 else if (leftJoystick.getRawButton(5)) robotHardware.enableElevatorLimits(false);
+		 else if (leftJoystick.getRawButton(6)) robotHardware.enableArmLimits(false);
+		 else if (leftJoystick.getRawButton(7)) robotHardware.enableElevatorLimits(true);
+		 else if (leftJoystick.getRawButton(8)) robotHardware.enableArmLimits(true);
+
 
 		//Manual Control
 		else {
@@ -168,7 +188,6 @@ public class Robot extends TimedRobot {
 		}
 
 		//Climbing
-
 		if      (leftJoystick.getRawButton( 9)) robotHardware.climbUp  (1.0);
 		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
 		else                                    robotHardware.climb    (0.0);
@@ -178,7 +197,6 @@ public class Robot extends TimedRobot {
 		else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
-
 		if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();
 		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
 
@@ -193,8 +211,6 @@ public class Robot extends TimedRobot {
 		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
 		else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollOut(0.5);
 		else                                           robotHardware.driveRoller(0.0);
-
-
 
 
 		double armPower    = functionStick.getY(Hand.kRight);

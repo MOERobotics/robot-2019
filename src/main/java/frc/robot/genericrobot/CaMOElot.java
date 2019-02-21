@@ -29,6 +29,16 @@ public class CaMOElot extends GenericRobot {
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
+    @Override
+    public void enableElevatorLimits(boolean enabled) {
+
+    }
+
+    @Override
+    public void enableArmLimits(boolean enabled) {
+
+    }
+
     public CaMOElot() {
         leftMotorA.setNeutralMode(NeutralMode.Brake);
         leftMotorB.setNeutralMode(NeutralMode.Brake);
@@ -53,6 +63,10 @@ public class CaMOElot extends GenericRobot {
         rightMotorC.set(ControlMode.PercentOutput, rightMotor);
     }
 
+    @Override
+    public int numSensors() {
+        return 0;
+    }
 
     @Override
     public double getDistanceLeftInches() {

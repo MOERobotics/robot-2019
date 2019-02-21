@@ -31,6 +31,11 @@ public class MOErio extends GenericRobot {
     DigitalInput elevatorTopLimitSwitch    = new DigitalInput(7);
 
     @Override
+    public int numSensors() {
+        return 0;
+    }
+
+    @Override
     public void shiftSpearShaftInternal(boolean out) {
 
     }
@@ -63,6 +68,11 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
+    public void enableElevatorLimits(boolean enabled) {
+
+    }
+
+    @Override
     protected void setTurretInternal(double power) {
         //no turret!
     }
@@ -70,6 +80,11 @@ public class MOErio extends GenericRobot {
     @Override
     protected void setArmInternal(double power) {
         wrist.set(ControlMode.PercentOutput, power);
+    }
+
+    @Override
+    public void enableArmLimits(boolean enabled) {
+
     }
 
     @Override
