@@ -20,16 +20,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.io.Console;
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 
 public class Robot extends TimedRobot {
 
-	private SuperMOEva     robotHardware = new SuperMOEva();
+	private GenericRobot     robotHardware = new CaMOElot();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	private GenericAuto    autoProgram   = new AutoFrontHatch();
 
 	//lidar
 	//SerialPort Blinky;
@@ -41,38 +38,73 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		//autoProgram.robot = robotHardware;
-		if (!PortOpen) {
-			PortOpen = true;
+		autoProgram.robot = robotHardware;
+/*
+    //opening serial port
+    if (!PortOpen) {
+      PortOpen = true;
 
-			try {
-				Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
-				SmartDashboard.putString("Open serial port: ", "Success!");
-			} catch (Exception e) {
-				String exception = e + "";
-				SmartDashboard.putString("I caught: ", exception);
-				PortOpen = false;
-			}
+      try {
+        Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
+        SmartDashboard.putString("Open serial port: ", "Success!");
+      } catch (Exception e) {
+        String exception = e + "";
+        SmartDashboard.putString("I caught: ", exception);
+        PortOpen = false;
+      }
 
-		}
+    }
+    */
 	}
 
 	@Override
 	public void robotPeriodic () {
-		SmartDashboard.putNumber("Yaw: "              , robotHardware.getHeadingDegrees()      );
-		SmartDashboard.putNumber("Left Encoder: "     , robotHardware.getDistanceLeftInches()  );
-		SmartDashboard.putNumber("Right Encoder: "    , robotHardware.getDistanceRightInches() );
-		SmartDashboard.putNumber("Left Drive Power: " , robotHardware.getLeftDrivePower()      );
-		SmartDashboard.putNumber("Right Drive Power: ", robotHardware.getRightDrivePower()     );
-		SmartDashboard.putNumber("Turret Encoder: "   , robotHardware.getTurretPower()         );
-		SmartDashboard.putNumber("Elevator Encoder: " , robotHardware.getElevatorPower()       );
-		SmartDashboard.putNumber("Arm Power: "        , robotHardware.getArmPower()            );
-		SmartDashboard.putNumber("Roller Power: "     , robotHardware.getRollerPower()         );
+		SmartDashboard.putString ("Robot Class"        , robotHardware.getClass().getSimpleName() );
+		SmartDashboard.putString ("Auto Class"         , autoProgram.getClass().getSimpleName()   );
+
+		SmartDashboard.putNumber ("Yaw: "              , robotHardware.getHeadingDegrees()        );
+		SmartDashboard.putNumber ("Roll: "             , robotHardware.getRollDegrees()           );
+		SmartDashboard.putNumber ("Pitch: "            , robotHardware.getPitchDegrees()          );
+		SmartDashboard.putNumber ("Left Encoder: "     , robotHardware.getDistanceLeftInches()    );
+		SmartDashboard.putNumber ("Right Encoder: "    , robotHardware.getDistanceRightInches()   );
+		SmartDashboard.putNumber ("Arm Encoder: "      , robotHardware.getArmEncoderCount()       );
+		SmartDashboard.putNumber ("Turret Encoder: "   , robotHardware.getTurretEncoderCount()    );
+		SmartDashboard.putNumber ("Elevator Encoder: " , robotHardware.getElevatorEncoderCount()  );
+
+		SmartDashboard.putNumber ("Left Drive Power: " , robotHardware.getLeftDrivePower()        );
+		SmartDashboard.putNumber ("Right Drive Power: ", robotHardware.getRightDrivePower()       );
+		SmartDashboard.putNumber ("Arm Power: "        , robotHardware.getArmPower()              );
+		SmartDashboard.putNumber ("Turret Power: "     , robotHardware.getTurretPower()           );
+		SmartDashboard.putNumber ("Elevator Power: "   , robotHardware.getElevatorPower()         );
+		SmartDashboard.putNumber ("Roller Power: "     , robotHardware.getRollerPower()           );
+		SmartDashboard.putNumber ("Climber Power: "    , robotHardware.getClimbPower()            );
+
+		SmartDashboard.putBoolean("Is ArmDown"         , robotHardware.isArmDown()                );
+		SmartDashboard.putBoolean("Is ArmUp"           , robotHardware.isArmUp()                  );
+		SmartDashboard.putBoolean("Is Elevator Down"   , robotHardware.isElevatorDown()           );
+		SmartDashboard.putBoolean("Is Elevator Up"     , robotHardware.isElevatorUp()             );
+		SmartDashboard.putBoolean("Is Turret Left"     , robotHardware.isTurretLeft()             );
+		SmartDashboard.putBoolean("Is Turret Right"    , robotHardware.isTurretRight()            );
+		SmartDashboard.putBoolean("SAFETY MOEVERRIDE"  , robotHardware.getSafetyOverride()        );
+
+		SmartDashboard.putString("Shifter State: ", robotHardware.getShifterSolenoidState().name());
+		SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
+		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
+
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
+		autoProgram.printSmartDashboard();
+
+		if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
+		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
+		if (leftJoystick.getRawButtonPressed (14)) robotHardware.setSafetyOverride(true);
+		if (leftJoystick.getRawButtonReleased(14)) robotHardware.setSafetyOverride(false);
 	}
 
 	@Override
 	public void disabledInit () {
+		robotHardware.shiftSpearHook(false);
+		robotHardware.shiftSpearShaft(false);
+
 	}
 
 	@Override
@@ -113,7 +145,7 @@ public class Robot extends TimedRobot {
 		//else if (leftJoystick.getRawButton(8))  robotHardware.driveFB(0.5);
 
 		//Manual Control
-		//else {
+		else {
 			double driveJoyStickX =  leftJoystick.getX();
 			double driveJoyStickY = -leftJoystick.getY();
 
@@ -134,13 +166,14 @@ public class Robot extends TimedRobot {
 		}
 
 		//Climbing
+
 		if      (leftJoystick.getRawButton( 9)) robotHardware.climbUp  (1.0);
 		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
 		else                                    robotHardware.climb    (0.0);
 
 
-		if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
-		else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
+		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
+		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
 
@@ -190,7 +223,9 @@ public class Robot extends TimedRobot {
 			functionStick.getTriggerAxis(Hand.kRight) -
 			functionStick.getTriggerAxis(Hand.kLeft );
 
-		if (Math.abs(elevatorPower) < 0.3) elevatorPower = 0;
+		if (
+				Math.abs(elevatorPower) < 0.3
+		) elevatorPower = 0;
 		else if (elevatorPower > 0) elevatorPower -= 0.3;
 		else if (elevatorPower < 0) elevatorPower += 0.3;
 		robotHardware.driveElevator(elevatorPower*0.8);
@@ -239,13 +274,11 @@ public class Robot extends TimedRobot {
 		}
 	}
 
-	/*@Override
+	@Override
 	public void testInit () {
-
 	}
 
 	@Override
 	public void testPeriodic () {
-
-	}*/
-
+	}
+}

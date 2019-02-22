@@ -11,7 +11,6 @@ import com.revrobotics.CANSparkMax;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import frc.robot.PixyCam;
 
 //import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
@@ -19,6 +18,7 @@ public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
     final double TICKS_TO_INCHES = 218;
+
 
     //Drive
     TalonSRX driveFreeA    = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
