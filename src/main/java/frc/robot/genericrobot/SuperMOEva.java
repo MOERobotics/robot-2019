@@ -19,24 +19,31 @@ public class SuperMOEva extends GenericRobot {
     final double TICKS_TO_INCHES = 218;
 
     //Drive
-    TalonSRX driveFreeA    = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    /*TalonSRX driveFreeA    = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveFreeB    = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveSupportA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};*/
+
+    TalonSRX driveLA    = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveLB    = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveRA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveRB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
 
     AHRS navX = new AHRS(SPI.Port.kMXP, (byte) 50);
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
-    Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X);
+    Encoder encoderR = new Encoder(2, 3, true, EncodingType.k4X); //falcon only
+    //Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X); //supermoeva
+
 
     DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax turret   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax turret;//   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm      = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     CANEncoder encoderElev = new CANEncoder(elevator);
-    CANEncoder encoderTur  = new CANEncoder(turret);
+    CANEncoder encoderTur;//  = new CANEncoder(turret);
     CANEncoder encoderArm  = new CANEncoder(arm);
 
     //Cargo/Hatch
@@ -58,8 +65,8 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderFrogR ;//= new CANEncoder(froggerFA);
 
     {//not sure which side is inverted
-        driveFreeA.setInverted(true);
-        driveFreeB.setInverted(true);
+        driveLA.setInverted(true);
+        driveLB.setInverted(true);
         rollL.setInverted(true);
         arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
         elevator.setIdleMode(CANSparkMax.IdleMode.kBrake);
@@ -75,11 +82,11 @@ public class SuperMOEva extends GenericRobot {
 
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
-        driveSupportA.set(ControlMode.PercentOutput, leftMotor);
-        driveSupportB.set(ControlMode.PercentOutput, leftMotor);
+        driveRA.set(ControlMode.PercentOutput, leftMotor);
+        driveRB.set(ControlMode.PercentOutput, leftMotor);
 
-        driveFreeA.set(ControlMode.PercentOutput, rightMotor);
-        driveFreeB.set(ControlMode.PercentOutput, rightMotor);
+        driveLA.set(ControlMode.PercentOutput, rightMotor);
+        driveLB.set(ControlMode.PercentOutput, rightMotor);
     }
 
     //shifting
@@ -89,22 +96,21 @@ public class SuperMOEva extends GenericRobot {
     }
 
     //testing individual motors (if you need to do this, set the talons to COAST)
-    public void driveSA(double power) {
-        driveSupportA.set(ControlMode.PercentOutput, power);
+    /*public void driveRA(double power) {
+        driveRA.set(ControlMode.PercentOutput, power);
     }
 
-    public void driveSB(double power) {
-        driveSupportB.set(ControlMode.PercentOutput, power);
+    public void driveRB(double power) {
+        driveRB.set(ControlMode.PercentOutput, power);
     }
 
-    public void driveFA(double power) {
-        driveFreeA.set(ControlMode.PercentOutput, power);
+    public void driveLA(double power) {
+        driveLA.set(ControlMode.PercentOutput, power);
     }
 
-    public void driveFB(double power) {
-        driveFreeB.set(ControlMode.PercentOutput, power);
-    }
-    //fin
+    public void driveLB(double power) {
+        driveLB.set(ControlMode.PercentOutput, power);
+    }*/
 
     @Override
     public double getDistanceLeftInches() {
@@ -231,7 +237,7 @@ public class SuperMOEva extends GenericRobot {
     }
 
     //Hab Climb
-/* rip frogger 2019-2019
+    /* rip frogger 2019-2019
     public void climbInternal(double power) {
         double deltaEncoder =
             encoderFrogL.getPosition() -
@@ -249,8 +255,7 @@ public class SuperMOEva extends GenericRobot {
         froggerSB.set( leftPower);
         froggerFA.set(rightPower);
         froggerFB.set(rightPower);
-    }
-*/
+    }*/
 
     public void climbInternal(double power) {
         if (power > 0) {
@@ -259,6 +264,7 @@ public class SuperMOEva extends GenericRobot {
             betaClimb.set(false);
         }
     }
+
     //Safety Check
     @Override
     public void checkSafety() {
@@ -284,12 +290,14 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isTurretRight() {
-        return !getSafetyOverride() && getTurretEncoderCount() >= 110;
+        return false;
+        //return !getSafetyOverride() && getTurretEncoderCount() >= 110;
     }
 
     @Override
     public boolean isTurretLeft() {
-        return !getSafetyOverride() && getTurretEncoderCount() <= -5;
+        return false;
+        //return !getSafetyOverride() && getTurretEncoderCount() <= -5;
     }
 
     @Override

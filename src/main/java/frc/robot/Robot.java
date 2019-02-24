@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private SuperMOEva     robotHardware = new SuperMOEva();
+	//private SuperMOEva robotHardware = new SuperMOEva();
+	private MOErio     robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	private GenericAuto    autoProgram   = new DriveStraightAuto();
@@ -111,14 +112,13 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getRawButtonPressed (14)) robotHardware.setSafetyOverride(true);
 		if (leftJoystick.getRawButtonReleased(14)) robotHardware.setSafetyOverride(false);
 
-		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
+		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 	}
 
 	@Override
 	public void disabledInit () {
 		robotHardware.shiftSpearHook(false);
 		robotHardware.shiftSpearShaft(false);
-
 	}
 
 	@Override
@@ -127,6 +127,11 @@ public class Robot extends TimedRobot {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
 		}
+
+		if (leftJoystick.getRawButton(5)) autoProgram = new AutoFrontHatch();
+		else if (leftJoystick.getRawButton(6)) autoProgram = new AutoRocket();
+		else if (leftJoystick.getRawButton(7)) autoProgram = new AutoSideHatch();
+
 	}
 
 	@Override
@@ -193,8 +198,8 @@ public class Robot extends TimedRobot {
 		else                                    robotHardware.climb    (0.0);
 
 
-		if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
-		else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
+		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
+		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
 		if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();

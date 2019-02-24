@@ -32,7 +32,7 @@ public class MOErio extends GenericRobot {
 
     @Override
     public int numSensors() {
-        return 0;
+        return 1;
     }
 
     @Override
