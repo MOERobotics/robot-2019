@@ -12,6 +12,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
     double z = 1.77;
     double louWizardry = 0;
     boolean LeftSide = false;
+    boolean levelTwo = false;
 
     @Override
     public void init() {
@@ -71,7 +72,16 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                     robot.resetDriveEncoders();
                 }
                 */
-                if(Math.abs(robot.getDistanceLeftInches()) >= 46) {
+                if(levelTwo){
+                    if(Math.abs(robot.getDistanceLeftInches()) >= 46*2){
+                        if (LeftSide) {
+                            autoStep = 4;
+                        } else {
+                            autoStep++;
+                        }
+                        robot.resetDriveEncoders();
+                    }
+                } else if(Math.abs(robot.getDistanceLeftInches()) >= 46) {
                     if (LeftSide) {
                         autoStep = 4;
                     } else {

@@ -65,6 +65,7 @@ public class MOErioCargoSideGoBackAuto extends GenericAuto {
                 }
                 break;
             case -1:
+
                 MOErioAuto.setHeading((robot.getHeadingDegrees() - 90)*0.9);
                 correction = MOErioAuto.getCorrection();
                 //je ne sais pas

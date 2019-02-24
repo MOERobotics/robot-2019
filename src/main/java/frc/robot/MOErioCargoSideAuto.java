@@ -11,6 +11,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
     double louWizardry = 0;
     boolean LeftSide = false;
     double correction =0;
+    double moementumCorrection = 147;
     @Override
     public void init() {
         autoStep = -2;
@@ -82,9 +83,6 @@ public class MOErioCargoSideAuto extends GenericAuto {
 
                 if (Math.abs(robot.getDistanceLeftInches()) >= 72 /*x1*/) {
                     autoStep++;
-                    SmartDashboard.putNumber("FirstArcLeft: ", leftDistance);
-                    SmartDashboard.putNumber("FirstArcRight: ", rightDistance);
-                    SmartDashboard.putNumber("FirstArcYaw: ", robot.getHeadingDegrees());
                     robot.resetDriveEncoders();
                 }
                 break;
@@ -96,9 +94,6 @@ public class MOErioCargoSideAuto extends GenericAuto {
 
                 if (Math.abs(robot.getDistanceLeftInches()) >= 43 / z /*x2*/) {
                     autoStep++;
-                    SmartDashboard.putNumber("SecondArcLeft: x", leftDistance);
-                    SmartDashboard.putNumber("SecondArcRight: ", rightDistance);
-                    SmartDashboard.putNumber("SecondArcYaw: ", robot.getHeadingDegrees());
                     robot.resetDriveEncoders();
                 }
                 break;
@@ -109,11 +104,11 @@ public class MOErioCargoSideAuto extends GenericAuto {
 
                 if (Math.abs(robot.getDistanceLeftInches()) >= 41+5) {
                     autoStep++;
-                    robot.resetYaw();
                     MOErioAuto.resetError();
                 }
                 break;
             case 3:
+                /*
                 MOErioAuto.setHeading((robot.getHeadingDegrees() - -90)*0.9);
                 correction = MOErioAuto.getCorrection();
                 double temp_correction = correction * -0.5;
@@ -126,10 +121,40 @@ public class MOErioCargoSideAuto extends GenericAuto {
                     correction > -0.3
                 ) {
                     autoStep++;
+                }*/
+                robot.turnLeftInplace(0.45);
+                if(robot.getHeadingDegrees() <= -80){
+                    autoStep++;
                 }
                 break;
             case 4:
-                robot.stopDriving();
+                robot.turnLeftInplace(0.3);
+                if(robot.getHeadingDegrees() <= -90){
+                    autoStep++;
+                }
+                break;
+            case 5:
+                MOErioAuto.setHeading(robot.getHeadingDegrees() + 90);
+                correction = MOErioAuto.getCorrection();
+
+                robot.setDrivePower(1.0*(correction),-1.0*correction);
+
+                if(Math.abs(robot.getHeadingDegrees()+90) < 0.5){
+                    robot.setDrivePower(0,0);
+                    autoStep++;
+                    robot.resetYaw();
+                    MOErioAuto.resetError();
+                }
+                break;
+            case 6:
+                MOErioAuto.setHeading(robot.getHeadingDegrees());
+                correction = MOErioAuto.getCorrection();
+                robot.setDrivePower(0.3*(1 + correction),0.3*(1 - correction));
+
+                if(robot.lidar[0] <= 545+moementumCorrection){
+                    autoStep++;
+                }
+
                 break;
                 /*robot.resetDriveEncoder();
                 robot.setDrivePower((0.3)*(1 + correction),(0.3)*(1 - correction));
@@ -137,7 +162,10 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 if (robot.getDistanceLeftInches() == /*x4) {
                     robot.stopDriving();
                 }*/
-            case 5:
+            case 7:
+                robot.stopDriving();
+                break;
+            case 8:
                 louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) / z;
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
@@ -149,7 +177,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                     robot.resetDriveEncoders();
                 }
                 break;
-            case 6:
+            case 9:
                 louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) * z;
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
@@ -161,7 +189,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                     robot.resetDriveEncoders();
                 }
                 break;
-            case 7:
+            case 10:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower((0.4)*(1 + correction),(0.4)*(1 - correction));
@@ -170,10 +198,11 @@ public class MOErioCargoSideAuto extends GenericAuto {
                     autoStep++;
                     robot.resetYaw();
                 }
-            case 8:
+            case 11:
                 MOErioAuto.setHeading((robot.getHeadingDegrees() - 90)*0.9);
                 correction = MOErioAuto.getCorrection();
                 //je ne sais pas
+                /*
                 temp_correction = correction * -0.5;
                 if (temp_correction > 0) temp_correction += 0.20;
                 if (temp_correction < 0) temp_correction -= 0.20;
@@ -185,7 +214,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 ) {
                     autoStep=4;
                 }
-                break;
+                break;*/
 
         }
         }
