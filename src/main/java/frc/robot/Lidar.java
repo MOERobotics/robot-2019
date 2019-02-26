@@ -52,8 +52,9 @@ public class Lidar {
                     lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
                 SmartDashboard.putString("lString: ", lString[0]);
             } else {
-                lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
-                SmartDashboard.putString("lString: ", lString[0]);
+                if (lidarString.indexOf(" ") != -1)
+                    lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
+                //SmartDashboard.putString("lString: ", lString[0]);
             }
 
             //parsings substrings

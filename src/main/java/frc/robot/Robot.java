@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
     private MOErio         robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new MOErioCargoSideAuto();
+	private GenericAuto    autoProgram   = new MOErioCargoFrontAuto();
 
 	//lidar
 	SerialPort Blinky;
@@ -67,7 +67,6 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic () {
 		SmartDashboard.putString ("Robot Class"        , robotHardware.getClass().getSimpleName() );
 		SmartDashboard.putString ("Auto Class"         , autoProgram.getClass().getName()   );
-		SmartDashboard.putString ("AAAAAAAAAAAAAAA"         , "AAAAAAAAAAAAAAAAAAAAA"   );
 		SmartDashboard.putNumber ("Yaw: "              , robotHardware.getHeadingDegrees()        );
 		SmartDashboard.putNumber ("Roll: "             , robotHardware.getRollDegrees()           );
 		SmartDashboard.putNumber ("Pitch: "            , robotHardware.getPitchDegrees()          );

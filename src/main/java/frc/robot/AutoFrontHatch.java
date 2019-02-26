@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class AutoFrontHatch extends GenericAuto {
 
     //P = 0.06, I = 0.001, D = 0.0
-    PIDModule arcPid = new PIDModule(0.06, 0.001,0.0);
+//    PIDModule arcPid = new PIDModule(0.06, 0.001,0.0);
+    PIDModule arcPid = new PIDModule(0.0, 0.00,0.0);
     double z = 1.34;
 
     //right front hatch s = 72in then 65in for the second arc...
@@ -67,11 +68,8 @@ public class AutoFrontHatch extends GenericAuto {
                 }
                 break;
             case 2:
-                if(robot.getHeadingDegrees() < 0){
-                    robot.turnRightInplace(0.2);
-                } else if (robot.getHeadingDegrees() > 0) {
-                    robot.turnLeftInplace(0.2);
-                } else {
+                robot.setDrivePower(0.2,0.2);
+                if (robot.getDistanceLeftInches() > 8){
                     autoStep++;
                 }
                 break;
