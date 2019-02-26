@@ -19,7 +19,7 @@ public class AutoFrontHatch extends GenericAuto {
     public void init() {
         arcPid.resetError();
         arcPid.setHeading(0);
-        autoStep = 0;
+        autoStep = 2;
         robot.resetDriveEncoders();
         robot.resetYaw();
         pixyCam.init();
@@ -43,7 +43,7 @@ public class AutoFrontHatch extends GenericAuto {
         SmartDashboard.putNumber("the magic", louWizardry);
         SmartDashboard.putNumber("Z", z);
         switch (autoStep) {
-            case 0:
+            /*case 0:
                 arcPid.setHeading(louWizardry) ;
                 double correction = arcPid.getCorrection();
 
@@ -69,19 +69,25 @@ public class AutoFrontHatch extends GenericAuto {
                     autoStep++;
                     robot.resetDriveEncoders();
                 }
-                break;
+                break;*/
             case 2:
-                if(robot.getHeadingDegrees() < 0){
+                robot.setDrivePower(0.2,0.2);
+                if(robot.getDistanceLeftInches() >= 12){
+                    autoStep++;
+                    robot.resetDriveEncoders();
+                }
+                /*if(robot.getHeadingDegrees() < 0){
                     robot.turnRightInplace(0.2);
                 } else if (robot.getHeadingDegrees() > 0) {
                     robot.turnLeftInplace(0.2);
                 } else {
                     autoStep++;
                 }
-                break;
+                break;*/
             case 3:
                 //get pixycam data
                 Pixy2Line.Vector[] vec = pixyCam.getLastVector();
+                Pixy2Line.Vector aVec;
                 if(vec != null && vec.length > 0){
                     //Print first vector found coords to smartdashboard
                     System.out.println(vec[0].toString());
@@ -89,7 +95,16 @@ public class AutoFrontHatch extends GenericAuto {
                     SmartDashboard.putNumber("PixyVec X1", vec[0].getX1());
                     SmartDashboard.putNumber("PixyVec Y0", vec[0].getY0());
                     SmartDashboard.putNumber("PixyVec Y1", vec[0].getY1());
+                    aVec = vec[0];
+                }else { return; }
+                //Pixy resolution 320x300
+                //X/2 = 160 with a margin of 40 : 140 < X < 160 is optimal range (NEED TO CALCULATE)
+                if(140 < aVec.getX1() && aVec.getX1() < 180){
+                    System.out.println("[PixyCam] Robot is in optimal place, Go forward");
                     autoStep++;
+                }else{
+                    int diff = 160-aVec.getX1();
+                    System.out.println("[PixyCam] Robot needs to turn: " + Integer.toString(diff));
                 }
             case 4:
                 robot.stopDriving();
