@@ -32,10 +32,7 @@ public class PixyCam implements Runnable{
             //get vectors
             try{
                 pixyCam.getLine().getAllFeatures();
-                Pixy2Line.Vector[] tmp = pixyCam.getLine().getVectors();
-                synchronized (this) {
-                    this.vec = tmp;
-                }
+                this.vec = pixyCam.getLine().getVectors();
             }catch(Exception e){
                 e.printStackTrace();
             }
