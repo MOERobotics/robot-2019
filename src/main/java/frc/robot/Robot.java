@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
+import io.github.pseudoresonance.pixy2api.Pixy2Line;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -21,10 +22,16 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private SuperMOEva     robotHardware = new SuperMOEva();
+	private GenericRobot   robotHardware = new CaMOElot();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	private GenericAuto    autoProgram   = new DriveStraightAuto();
+
+	public PixyCam pixy = new PixyCam() {{
+		init();
+		run();
+		start();
+	}};
 
 	//lidar
 	//SerialPort Blinky;
@@ -55,6 +62,8 @@ public class Robot extends TimedRobot {
     }
     */
 	}
+
+
 
 	@Override
 	public void robotPeriodic () {
@@ -91,9 +100,35 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
 
 
+		StringBuilder pixyOutput = new StringBuilder();
+
+		pixyOutput.append("[");
+		Pixy2Line.Vector[] vectors = pixy.vec;
+		for (Pixy2Line.Vector vec : vectors) {
+			pixyOutput.append(String.format(
+				"{"+
+					"X0: %d, "+
+					"Y0: %d, "+
+					"X1: %d, "+
+					"Y1: %d"+
+				"}",
+				vec.getX0(),
+				vec.getY0(),
+				vec.getX1(),
+				vec.getY1()
+			));
+		}
+		pixyOutput.append("]");
+
+
+		SmartDashboard.putString("PixyInfo: ", pixyOutput.toString());
+
+
 
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
 		autoProgram.printSmartDashboard();
+
+
 
 
 		if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
@@ -174,8 +209,8 @@ public class Robot extends TimedRobot {
 		else                                    robotHardware.climb    (0.0);
 
 
-		if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
-		else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
+		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
+		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
 

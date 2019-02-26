@@ -12,6 +12,8 @@ public class PixyCam implements Runnable{
 
     Pixy2Line.Vector[] vec;
 
+    private Pixy2Line.Vector[] sillyNullVector = new Pixy2Line.Vector[0];
+
     public void init(){
         //Init pixycam
         pixyCam.init();
@@ -32,7 +34,9 @@ public class PixyCam implements Runnable{
             //get vectors
             try{
                 pixyCam.getLine().getAllFeatures();
-                this.vec = pixyCam.getLine().getVectors();
+                Pixy2Line.Vector[] tmp = pixyCam.getLine().getVectors();
+                if (tmp == null) tmp = sillyNullVector;
+                vec =tmp;
             }catch(Exception e){
                 e.printStackTrace();
             }
