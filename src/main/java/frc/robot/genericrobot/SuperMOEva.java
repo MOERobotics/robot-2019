@@ -4,10 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import com.revrobotics.CANDigitalInput;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.*;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
@@ -46,12 +43,14 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderTur;//  = new CANEncoder(turret);
     CANEncoder encoderArm  = new CANEncoder(arm);
 
+    CANPIDController armPID = new CANPIDController(arm);
+
     //Cargo/Hatch
     TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
     TalonSRX rollR = new TalonSRX(10) {{setNeutralMode(NeutralMode.Brake);}};
 
     Solenoid spearShaft = new Solenoid(2); //extend
-    Solenoid spearHook  = new Solenoid(3); //grab
+    Solenoid spearHook  = new Solenoid(3); //extend
     Solenoid betaClimb  = new Solenoid(4); //grab
     Solenoid betaClimb2 = new Solenoid(5); //grab
 
@@ -161,6 +160,7 @@ public class SuperMOEva extends GenericRobot {
     public void enableElevatorLimits(boolean enabled) {
         elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
         elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+
     }
 
     @Override
@@ -191,6 +191,13 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void setArmInternal(double power) {
         arm.set(power);
+
+        //idk man
+        double maxV = 2000, maxA = 1500, minV = 0, allowedErr = 5;
+        armPID.setSmartMotionMaxVelocity(maxV, 0);
+        armPID.setSmartMotionMinOutputVelocity(minV, 0);
+        armPID.setSmartMotionMaxAccel(maxA, 0);
+        armPID.setSmartMotionAllowedClosedLoopError(allowedErr, 0);
     }
 
     @Override

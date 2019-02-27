@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
@@ -197,7 +196,6 @@ public class Robot extends TimedRobot {
 		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
 		else                                    robotHardware.climb    (0.0);
 
-
 		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
 		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
@@ -252,6 +250,8 @@ public class Robot extends TimedRobot {
 		else if (elevatorPower > 0) elevatorPower -= 0.3;
 		else if (elevatorPower < 0) elevatorPower += 0.3;
 		robotHardware.driveElevator(elevatorPower*0.8);
+
+
 
 		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		switch (controlPadDirection) {

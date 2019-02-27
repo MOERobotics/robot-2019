@@ -12,6 +12,7 @@ public class Lidar {
     public static void init(SerialPort Blinky) {
         SmartDashboard.putString("Resetting the port: ", "Start");
         Blinky.reset();
+        SmartDashboard.putString("Resetting the port: ", "Done");
     }
 
     public static void getLidar(GenericRobot us, SerialPort Blinky) {
@@ -28,12 +29,13 @@ public class Lidar {
         //reading string from Blinky
         try {
             lidarString = new String(Blinky.readString());
-            System.out.println("Straight from Blinky: " + lidarString + ";");
-            SmartDashboard.putString("Straight from Blinky: ", lidarString);
+            //System.out.println("Straight from Blinky: " + lidarString + ";");
+            //SmartDashboard.putString("Straight from Blinky: ", lidarString);
             SmartDashboard.putString("We caught an error on reading the port", "");
+            if (lidarString.indexOf("65536") != -1) Blinky.reset();
         } catch (Exception e) {
-            exception = "exception " + e;
-            System.out.println("booo " + exception);
+            exception = "" + e;
+            //System.out.println("booo " + exception);
             SmartDashboard.putString("We caught an error on reading the port", exception);
         }
 
@@ -50,16 +52,14 @@ public class Lidar {
 
                 else if (space == -1)
                     lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
-                SmartDashboard.putString("lString: ", lString[0]);
             } else {
-                lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
-                SmartDashboard.putString("lString: ", lString[0]);
+                if (lidarString.indexOf(" ") > 0)
+                    lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
             }
 
             //parsings substrings
             try {
                 l[0] = Integer.parseInt(lString[0]);
-                SmartDashboard.putString("Lidar 0 parsing error: ", "");
             } catch (Exception e) {
                 exception = "ERROR " + e;
                 SmartDashboard.putString("Lidar 0 parsing error: ", exception);
