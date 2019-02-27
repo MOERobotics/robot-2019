@@ -3,6 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import javax.swing.plaf.basic.BasicSplitPaneUI;
+
 public class MOErioCargoSideAuto extends GenericAuto {
 
     PIDModule MOErioAuto = new PIDModule(0.06,0.001,0);
@@ -12,6 +14,36 @@ public class MOErioCargoSideAuto extends GenericAuto {
     boolean LeftSide = false;
     double correction =0;
     double moementumCorrection = 147;
+    double zEffective;
+
+
+    public void setDrivePowerHands(double left, double right, double correction, boolean Handedness) {
+        if (!Handedness)
+        {
+            robot.setDrivePower(left*(1+correction),right*(1-correction));
+        }
+        else
+        {
+            robot.setDrivePower(right * (1 + correction), left * (1 - correction));
+        }
+    }
+
+    public double getDistanceLeftInchesHands(boolean Handedness) {
+        if (!Handedness) {
+            return (robot.getDistanceLeftInches());
+        } else {
+            return (robot.getDistanceRightInches());
+        }
+    }
+    public double getDistanceRightInchesHands(boolean Handedness) {
+        if (!Handedness) {
+            return (robot.getDistanceRightInches());
+        } else {
+            return (robot.getDistanceLeftInches());
+        }
+    }
+
+
     @Override
     public void init() {
         autoStep = -2;
@@ -20,6 +52,16 @@ public class MOErioCargoSideAuto extends GenericAuto {
         MOErioAuto.resetError();
         MOErioAuto.setHeading(0);
         startTime = System.currentTimeMillis();
+
+        if (LeftSide)
+        {
+            zEffective = 1/z;
+        }
+        else
+        {
+            zEffective = z;
+        }
+
     }
 
     @Override
@@ -41,7 +83,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
     public void run() {
         double leftDistance = robot.getDistanceLeftInches();
         double rightDistance = robot.getDistanceRightInches();
-        louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) * z;
+        louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) * zEffective;
 
         switch (autoStep) {
             case -2:
@@ -62,11 +104,13 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 robot.setDrivePower((0.5)*(1 + correction),(0.5)*(1 - correction));
 
                 if(Math.abs(robot.getDistanceLeftInches()) >= 48) {
+                    /* Let's remove this once we've tested left and right sides.
                     if (LeftSide) {
                         autoStep = 5;
                     } else {
                         autoStep=0;
                     }
+                */
                     robot.resetDriveEncoders();
                 }
                 break;
@@ -75,24 +119,27 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
-                robot.setDrivePower((0.5)*(1 + correction),(0.3)*(1 - correction));
+                //robot.setDrivePower((0.5)*(1 + correction),(0.3)*(1 - correction));
+                setDrivePowerHands(0.5,0.3,correction,LeftSide);
 
                 /* long now = System.currentTimeMillis();
                 long endTime = startTime ;
                 MOErioArc.setHeading(robot.getHeadingDegrees() - (dT * yawRate));*/
 
-                if (Math.abs(robot.getDistanceLeftInches()) >= 72 /*x1*/) {
+                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= 72 /*x1*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                 }
                 break;
             case 1:
-                louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) / z;
+                louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) / zEffective;
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
-                robot.setDrivePower((0.3)*(1 + correction),(0.5)*(1 - correction));
+//                robot.setDrivePower((0.3)*(1 + correction),(0.5)*(1 - correction));
+                setDrivePowerHands(0.3,0.5,correction,LeftSide);
 
-                if (Math.abs(robot.getDistanceLeftInches()) >= 43 / z /*x2*/) {
+
+                if (Math.abs(getDistanceLeftInchesHands(LeftSide) >= 43 / zEffective /*x2*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                 }
