@@ -139,7 +139,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 setDrivePowerHands(0.3,0.5,correction,LeftSide);
 
 
-                if (Math.abs(getDistanceLeftInchesHands(LeftSide) >= 43 / zEffective /*x2*/) {
+                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= 43 / zEffective /*x2*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                 }
