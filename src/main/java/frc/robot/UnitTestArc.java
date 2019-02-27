@@ -1,12 +1,16 @@
-/* Unit testing for a turn in place maneuver. */
+//Unit testing for a controlled arc
+
+//This should carry the robot through a 90 arc having an outer radius of 66.5 inches.
 
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class UnitTestTurn extends GenericAuto {
+public class UnitTestArc extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
+    double LouWizardry;
+    double correction;
     long startTime = 0;
 
     @Override
@@ -36,6 +40,8 @@ public class UnitTestTurn extends GenericAuto {
         double leftDistance = robot.getDistanceLeftInches();
         double rightDistance = robot.getDistanceRightInches();
 
+        LouWizardry = 66.5*robot.getHeadingDegrees()/180*3.1415972 - leftDistance;
+
         switch (autoStep) {
             case -2:
                 MOErioAuto.resetError();
@@ -48,22 +54,26 @@ public class UnitTestTurn extends GenericAuto {
                 }
                 break;
             case -1:
-                MOErioAuto.setHeading(robot.getHeadingDegrees());
+                MOErioAuto.setHeading(LouWizardry);
+                correction = MOErioAuto.getCorrection();
 
-                robot.setDrivePower(0.5, -0.5);
+                //correction negative, left motor decrease, correction positive, left motor power increase
+                robot.setDrivePower((0.5)*(1 + correction),(0.3)*(1 - correction));
 
                 if (robot.getHeadingDegrees() > 80) {
-                    MOErioAuto.resetError();
                     autoStep++;
                 }
                 break;
             case 0:
-                MOErioAuto.setHeading(robot.getHeadingDegrees()-90);
-                double correction = MOErioAuto.getCorrection();
-                robot.setDrivePower(0.5*correction,-0.5*correction);
+                MOErioAuto.setHeading(LouWizardry);
+                correction = MOErioAuto.getCorrection();
 
-                if (Math.abs(robot.getHeadingDegrees()-90) < 0.5)
-                    ++autoStep;
+                //correction negative, left motor decrease, correction positive, left motor power increase
+                robot.setDrivePower((0.3)*(1 + correction),(0.1)*(1 - correction));
+
+                if (robot.getHeadingDegrees() > 90) {
+                    autoStep++;
+                }
                 break;
             case 1:
                 robot.stopDriving();

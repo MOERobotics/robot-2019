@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
 	private SuperMOEva     robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	private GenericAuto    autoProgram   = new UnitTestTurn();
 
 	//lidar
 	//SerialPort Blinky;
