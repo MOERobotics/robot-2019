@@ -49,10 +49,11 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
     TalonSRX rollR = new TalonSRX(10) {{setNeutralMode(NeutralMode.Brake);}};
 
-    Solenoid spearShaft = new Solenoid(2); //extend
-    Solenoid spearHook  = new Solenoid(3); //extend
-    Solenoid betaClimb  = new Solenoid(4); //grab
-    Solenoid betaClimb2 = new Solenoid(5); //grab
+    Solenoid spearShaft = new Solenoid(6); //extend
+    Solenoid spearHook  = new Solenoid(5); //grab
+    Solenoid floorPickup = new Solenoid(7);
+    Solenoid betaClimb;//  = new Solenoid(4);
+    Solenoid betaClimb2;// = new Solenoid(5);
 
     //Hab Lifter
     CANSparkMax froggerSA ;//= new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -160,12 +161,16 @@ public class SuperMOEva extends GenericRobot {
     public void enableElevatorLimits(boolean enabled) {
         elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
         elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-
     }
 
     @Override
     public boolean isElevForwardLimitEnabled() {
         return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+    }
+
+    @Override
+    public void shiftFloorPickupInternal(boolean out) {
+        floorPickup.set(out);
     }
 
     @Override

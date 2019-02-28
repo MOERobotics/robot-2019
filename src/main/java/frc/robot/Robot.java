@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
 		robotHardware.enableElevatorLimits(true);
 		robotHardware.enableArmLimits(true);
 		robotHardware.shiftLow();
+		robotHardware.floorPickupIn();
 
 		//opening serial port
 		if (!PortOpen) {
@@ -70,13 +71,13 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber ("Left Encoder: "     , robotHardware.getDistanceLeftInches()    );
 		SmartDashboard.putNumber ("Right Encoder: "    , robotHardware.getDistanceRightInches()   );
 		SmartDashboard.putNumber ("Arm Encoder: "      , robotHardware.getArmEncoderCount()       );
-		SmartDashboard.putNumber ("Turret Encoder: "   , robotHardware.getTurretEncoderCount()    );
+		//SmartDashboard.putNumber ("Turret Encoder: "   , robotHardware.getTurretEncoderCount()    );
 		SmartDashboard.putNumber ("Elevator Encoder: " , robotHardware.getElevatorEncoderCount()  );
 
 		SmartDashboard.putNumber ("Left Drive Power: " , robotHardware.getLeftDrivePower()        );
 		SmartDashboard.putNumber ("Right Drive Power: ", robotHardware.getRightDrivePower()       );
 		SmartDashboard.putNumber ("Arm Power: "        , robotHardware.getArmPower()              );
-		SmartDashboard.putNumber ("Turret Power: "     , robotHardware.getTurretPower()           );
+		//SmartDashboard.putNumber ("Turret Power: "     , robotHardware.getTurretPower()           );
 		SmartDashboard.putNumber ("Elevator Power: "   , robotHardware.getElevatorPower()         );
 		SmartDashboard.putNumber ("Roller Power: "     , robotHardware.getRollerPower()           );
 		SmartDashboard.putNumber ("Climber Power: "    , robotHardware.getClimbPower()            );
@@ -92,6 +93,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putString("Shifter State: ", robotHardware.getShifterSolenoidState().name());
 		SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
 		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
+		SmartDashboard.putBoolean("Floor Pickup State: ", robotHardware.getFloorPickupState());
 
 		SmartDashboard.putBoolean("Elevator Forward Limit Enabled: ", robotHardware.isElevForwardLimitEnabled());
 		SmartDashboard.putBoolean("At Elevator Forward Limit: ", robotHardware.atElevForwardLimit());
@@ -111,7 +113,7 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getRawButtonPressed (14)) robotHardware.setSafetyOverride(true);
 		if (leftJoystick.getRawButtonReleased(14)) robotHardware.setSafetyOverride(false);
 
-		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
+		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 	}
 
 	@Override
@@ -127,10 +129,9 @@ public class Robot extends TimedRobot {
 			robotHardware.resetDriveEncoders();
 		}
 
-		if (leftJoystick.getRawButton(5)) autoProgram = new AutoFrontHatch();
-		else if (leftJoystick.getRawButton(6)) autoProgram = new AutoRocket();
-		else if (leftJoystick.getRawButton(7)) autoProgram = new AutoSideHatch();
-
+		if (leftJoystick.getRawButton(5)) autoProgram = new UnitTestArc();
+		else if (leftJoystick.getRawButton(6)) autoProgram = new UnitTestTurn();
+		else if (leftJoystick.getRawButton(7)) autoProgram = new UnitTestHatch();
 	}
 
 	@Override
@@ -209,7 +210,11 @@ public class Robot extends TimedRobot {
 		if      (functionStick.getAButton()) robotHardware.spearHook  ();
 		else if (functionStick.getBButton()) robotHardware.spearUnhook();
 
-		//roller
+		//floorPickup
+		if (functionStick.getStartButtonPressed()) robotHardware.floorPickupOut();
+		else if (functionStick.getStartButtonReleased()) robotHardware.floorPickupIn();
+
+		//Roller
 		//TODO: bumpers
 		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
 		else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollOut(0.5);
@@ -219,8 +224,7 @@ public class Robot extends TimedRobot {
 		double armPower    = functionStick.getY(Hand.kRight);
 		double turretPower = functionStick.getX(Hand.kRight);
 
-		//arm
-		//Right stick, up/down rotates.
+		//arm - Right stick, up/down rotates.
 		if (
 			Math.abs(armPower) < 0.3 ||
 			Math.abs(armPower) < Math.abs(turretPower)
@@ -229,8 +233,7 @@ public class Robot extends TimedRobot {
 		else if (armPower < 0) armPower += 0.3;
 		robotHardware.driveArm(-armPower*0.5);
 
-		//turret
-		//Right stick, left/right rotates.
+		//turret - Right stick, left/right rotates.
 		if (
 			Math.abs(turretPower) < 0.3 ||
 			Math.abs(turretPower) < Math.abs(armPower)
