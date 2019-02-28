@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
 		robotHardware.enableElevatorLimits(true);
 		robotHardware.enableArmLimits(true);
 		robotHardware.shiftLow();
-		robotHardware.floorPickupIn();
+		robotHardware.floorPickupUp();
 
 		//opening serial port
 		if (!PortOpen) {
@@ -52,9 +52,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putString("I caught: ", exception);
 			PortOpen = false;
 		  }
-
 		}
-
 		//if (PortOpen) Lidar.init(Blinky);
 
 	}
@@ -210,10 +208,6 @@ public class Robot extends TimedRobot {
 		if      (functionStick.getAButton()) robotHardware.spearHook  ();
 		else if (functionStick.getBButton()) robotHardware.spearUnhook();
 
-		//floorPickup
-		if (functionStick.getStartButtonPressed()) robotHardware.floorPickupOut();
-		else if (functionStick.getStartButtonReleased()) robotHardware.floorPickupIn();
-
 		//Roller
 		//TODO: bumpers
 		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
@@ -255,7 +249,6 @@ public class Robot extends TimedRobot {
 		robotHardware.driveElevator(elevatorPower*0.8);
 
 
-
 		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		switch (controlPadDirection) {
 			case EAST:
@@ -269,8 +262,6 @@ public class Robot extends TimedRobot {
 			default:
 				break;
 		}
-
-
 	}
 
 	public enum POVDirection {

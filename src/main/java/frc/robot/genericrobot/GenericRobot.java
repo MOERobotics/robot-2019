@@ -166,8 +166,8 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
 	//Floor Hatch Grab
-	public void floorPickupIn() { shiftFloorPickup(false); }
-	public void floorPickupOut() { shiftFloorPickup( true); }
+	public void floorPickupUp() { shiftFloorPickup(false); }
+	public void floorPickupDown() { shiftFloorPickup( true); }
 	public void shiftFloorPickup(boolean out) {
 		this.floorPickupState = out;
 		shiftFloorPickupInternal(out);
