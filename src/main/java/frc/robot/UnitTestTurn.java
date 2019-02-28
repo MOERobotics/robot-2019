@@ -61,7 +61,7 @@ public class UnitTestTurn extends GenericAuto {
             case 0:
                 MOErioAuto.setHeading(robot.getHeadingDegrees()-90);
                 double correction = MOErioAuto.getCorrection();
-                robot.setDrivePower(0.5*correction,-0.5*correction);
+                robot.setDrivePower(correction,-correction);
 
                 if ( (Math.abs(robot.getHeadingDegrees()-90) < 0.5) && (turncounter >4) ) {
                     ++autoStep;

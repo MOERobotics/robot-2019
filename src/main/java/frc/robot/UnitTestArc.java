@@ -40,7 +40,7 @@ public class UnitTestArc extends GenericAuto {
         double leftDistance = robot.getDistanceLeftInches();
         double rightDistance = robot.getDistanceRightInches();
 
-        LouWizardry = 66.5*robot.getHeadingDegrees()/180*3.1415972 - leftDistance;
+        LouWizardry = 66.5*robot.getHeadingDegrees()/180*3.1415972 - Math.abs(leftDistance);
 
         switch (autoStep) {
             case -2:
@@ -60,7 +60,7 @@ public class UnitTestArc extends GenericAuto {
                 //correction negative, left motor decrease, correction positive, left motor power increase
                 robot.setDrivePower((0.5)*(1 + correction),(0.3)*(1 - correction));
 
-                if (robot.getHeadingDegrees() > 80) {
+                if (robot.getHeadingDegrees() > 70) {
                     autoStep++;
                 }
                 break;
@@ -69,7 +69,7 @@ public class UnitTestArc extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
-                robot.setDrivePower((0.3)*(1 + correction),(0.1)*(1 - correction));
+                robot.setDrivePower((0.3)*(90-robot.getHeadingDegrees())/20*(1 + correction),(0.1)*(90-robot.getHeadingDegrees())/20*(1 - correction));
 
                 if (robot.getHeadingDegrees() > 90) {
                     autoStep++;
