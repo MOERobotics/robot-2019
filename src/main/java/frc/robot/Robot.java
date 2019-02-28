@@ -14,6 +14,8 @@ import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
 import io.github.pseudoresonance.pixy2api.Pixy2Line;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.cscore.UsbCamera;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -22,10 +24,11 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new CaMOElot();
+	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	UsbCamera cam1;
 
 	public PixyCam pixy = new PixyCam() {{
 		init();
@@ -44,6 +47,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+
+		cam1 = CameraServer.getInstance().startAutomaticCapture(0);
+
 		autoProgram.robot = robotHardware;
 /*
     //opening serial port
