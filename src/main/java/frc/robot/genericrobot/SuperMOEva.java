@@ -31,6 +31,7 @@ public class SuperMOEva extends GenericRobot {
     Encoder encoderR = new Encoder(2, 3, true, EncodingType.k4X); //falcon only
     //Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X); //supermoeva
 
+    long startTime;
 
     DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
 
@@ -49,9 +50,9 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
     TalonSRX rollR = new TalonSRX(10) {{setNeutralMode(NeutralMode.Brake);}};
 
-    Solenoid spearShaft = new Solenoid(6); //extend
-    Solenoid spearHook  = new Solenoid(5); //grab
-    Solenoid floorPickup = new Solenoid(7);
+    Solenoid spearHook  = new Solenoid(2); //grab
+    Solenoid spearShaft = new Solenoid(3); //extend
+    Solenoid floorPickup = new Solenoid(4);
     Solenoid betaClimb;//  = new Solenoid(4);
     Solenoid betaClimb2;// = new Solenoid(5);
 
@@ -159,33 +160,32 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void enableElevatorLimits(boolean enabled) {
-        elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        /*elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);*/
     }
 
     @Override
     public boolean isElevForwardLimitEnabled() {
-        return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
-    }
-
-    @Override
-    public void shiftFloorPickupInternal(boolean out) {
-        floorPickup.set(out);
+        return false;
+        //return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     @Override
     public boolean isElevReverseLimitEnabled() {
-        return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;
+        //return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     @Override
     public boolean atElevForwardLimit() {
-        return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
     @Override
     public boolean atElevReverseLimit() {
-        return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
     @Override
@@ -207,28 +207,32 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void enableArmLimits(boolean enabled) {
-        arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        /*arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);*/
     }
 
     @Override
     public boolean isArmForwardLimitEnabled() {
-        return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;
+        //return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     @Override
     public boolean isArmReverseLimitEnabled() {
-        return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;
+        //return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     @Override
     public boolean atArmForwardLimit() {
-        return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
     @Override
     public boolean atArmReverseLimit() {
-        return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
    //Cargo/Hatch
@@ -246,6 +250,11 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void shiftSpearHookInternal(boolean out) {
         spearHook.set(out);
+    }
+
+    @Override
+    public void shiftFloorPickupInternal(boolean out) {
+        floorPickup.set(out);
     }
 
     //Hab Climb
@@ -275,6 +284,37 @@ public class SuperMOEva extends GenericRobot {
         } else if (power < 0) {
             betaClimb.set(false);
         }
+    }
+
+    //@Override
+    public void grabberOpenCombo(int grabStep) {
+        switch (grabStep) {
+            case 0:
+                spearOut();
+                startTime = System.currentTimeMillis();
+                grabStep = 1;
+                break;
+            case 1:
+                if (System.currentTimeMillis() >= startTime + 1000) {
+                    spearHook();
+                    startTime = System.currentTimeMillis();
+                    grabStep = 2;
+                }
+                break;
+            case 2:
+                if (System.currentTimeMillis() >= startTime + 250) spearIn();
+                grabStep = 0;
+                break;
+        }
+    }
+
+    //@Override
+    public void grabberClosedCombo() {
+         /*spearOut();
+        spearHook();
+        startTime = System.currentTimeMillis();
+        if (System.currentTimeMillis() >= startTime + 1000) spearHook();
+        spearIn();*/
     }
 
     //Safety Check

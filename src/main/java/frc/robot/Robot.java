@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
@@ -19,8 +20,7 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	//private SuperMOEva robotHardware = new SuperMOEva();
-	private MOErio     robotHardware = new MOErio();
+	private SuperMOEva     robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	private GenericAuto    autoProgram   = new UnitTestTurn();
@@ -30,6 +30,9 @@ public class Robot extends TimedRobot {
 	boolean PortOpen = false;
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
+
+	long startTime;
+	int grabStep;
 
 
 	@Override
@@ -54,6 +57,8 @@ public class Robot extends TimedRobot {
 		  }
 		}
 		//if (PortOpen) Lidar.init(Blinky);
+		CameraServer.getInstance().startAutomaticCapture("nice!", 0);
+		//CameraServer.getInstance().startAutomaticCapture();
 
 	}
 
@@ -147,6 +152,7 @@ public class Robot extends TimedRobot {
 	public void teleopInit () {
 		robotHardware.enableElevatorLimits(true);
 		robotHardware.enableArmLimits(true);
+		grabStep = 0;
 	}
 
 	@Override
@@ -208,10 +214,68 @@ public class Robot extends TimedRobot {
 		if      (functionStick.getAButton()) robotHardware.spearHook  ();
 		else if (functionStick.getBButton()) robotHardware.spearUnhook();
 
+
+		//to free up some buttons - acts like a switch?
+		/*if (functionStick.getXButton()) {
+			if (robotHardware.getSpearShaftState() == false) robotHardware.spearOut();
+			else robotHardware.spearIn();
+		}
+
+		if (functionStick.getYButton()) {
+			if (robotHardware.getSpearHookState() == false) robotHardware.spearUnhook();
+			else robotHardware.spearHook();
+		}*/
+
+		//combo moves
+		/*if (functionStick.getAButton()) {
+			//extend, open, retract
+			switch (grabStep) {
+				case 0:
+					robotHardware.spearOut();
+					startTime = System.currentTimeMillis();
+					grabStep = 1;
+					break;
+				case 1:
+					if (System.currentTimeMillis() >= startTime + 1000) {
+						robotHardware.spearUnhook();
+						startTime = System.currentTimeMillis();
+						grabStep = 2;
+					}
+					break;
+				case 2:
+					if (System.currentTimeMillis() >= startTime + 250) robotHardware.spearIn();
+					grabStep = 0;
+					break;
+
+			}
+		} else if (functionStick.getBButton()) {
+			//extend, close, retract
+			switch (grabStep) {
+				case 0:
+					robotHardware.spearOut();
+					startTime = System.currentTimeMillis();
+					grabStep = 1;
+					break;
+				case 1:
+					if (System.currentTimeMillis() >= startTime + 1000) {
+						robotHardware.spearHook();
+						startTime = System.currentTimeMillis();
+						grabStep = 2;
+					}
+					break;
+				case 2:
+					if (System.currentTimeMillis() >= startTime + 250) robotHardware.spearIn();
+					grabStep = 0;
+					break;
+			}
+
+		} else if (functionStick.getXButton()) robotHardware.floorPickupUp();
+		else if (functionStick.getYButton()) robotHardware.floorPickupDown();*/
+
 		//Roller
 		//TODO: bumpers
-		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
-		else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollOut(0.5);
+		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
+		else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
 		else                                           robotHardware.driveRoller(0.0);
 
 
@@ -255,9 +319,13 @@ public class Robot extends TimedRobot {
 			case WEST:
 			case NORTHWEST:
 			case NORTH:
+				robotHardware.floorPickupUp();
+				break;
 			case NORTHEAST:
 			case SOUTHWEST:
 			case SOUTH:
+				robotHardware.floorPickupDown();
+				break;
 			case SOUTHEAST:
 			default:
 				break;

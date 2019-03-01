@@ -165,6 +165,10 @@ public abstract class GenericRobot {
 	public boolean getSpearHookState() {return spearHookState;}
 	//</editor-fold>
 
+	//combos
+	//public abstract void grabberOpenCombo();
+	//public abstract void grabberClosedCombo();
+
 	//Floor Hatch Grab
 	public void floorPickupUp() { shiftFloorPickup(false); }
 	public void floorPickupDown() { shiftFloorPickup( true); }
