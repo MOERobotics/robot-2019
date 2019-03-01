@@ -10,9 +10,53 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     long startTime = 0;
     double z = 1.81;
-    boolean LeftSide = false;
+    int LeftSide = 1;
+    //-1 is left, 1 is right
+    int turncounter = 0;
     //z = 1.67 for left = 0.5 right = 0.15 power
     //z = 1.33 for 0.5 and 0.3
+
+    public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
+        if (!(Handedness==-1))
+        {
+            robot.setDrivePower(left*(1 + correction),right*(1 - correction));
+        }
+        else
+        {
+            robot.setDrivePower(right * (1 + correction), left * (1 - correction));
+        }
+    }
+
+    public double getDistanceLeftInchesHands(int Handedness) {
+        if (!(Handedness==-1)) {
+            return (Math.abs(robot.getDistanceLeftInches()));
+        } else {
+            return (Math.abs(robot.getDistanceRightInches()));
+        }
+    }
+    public double getDistanceRightInchesHands(int Handedness) {
+        if (!(Handedness==-1)) {
+            return (Math.abs(robot.getDistanceRightInches()));
+        } else {
+            return (Math.abs(robot.getDistanceLeftInches()));
+        }
+    }
+
+    //always pass in negative degrees
+    public boolean reachedHeadingHands(int degrees, int Handedness){
+        if(Handedness==1) {
+            if(robot.getHeadingDegrees() <= degrees){
+                return true;
+            }
+        } else if(Handedness==-1) {
+            if(robot.getHeadingDegrees() >= degrees * Handedness){
+                return true;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
 
 @Override
 public void printSmartDashboard() {
@@ -47,7 +91,7 @@ public void printSmartDashboard() {
     public void run() {
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
-        double louWizardry = rightDistance - leftDistance / z;
+        double louWizardry = getDistanceRightInchesHands(LeftSide) - getDistanceLeftInchesHands(LeftSide) / z;
 
         switch (autoStep) {
             case -2:
@@ -57,22 +101,18 @@ public void printSmartDashboard() {
                 if (System.currentTimeMillis() >= startTime + 100) {
                     MOErioAuto.resetError();
                     robot.resetYaw();
-                    if (LeftSide) {
-                        autoStep = 4;
-                    } else {
-                        autoStep = -1;
+                    autoStep++;
                     }
-                }
                 break;
             case -1:
                 MOErioAuto.setHeading(louWizardry);
                 double correction = MOErioAuto.getCorrection();
 
-                robot.setDrivePower(-0.5*(1-correction),-0.1*(1+correction));
-                if(Math.abs(robot.getDistanceRightInches()) >= 69.6/z){
+                setDrivePowerHands(-0.5,-0.1,correction,LeftSide);
+                if(getDistanceRightInchesHands(LeftSide) >= 69.6/z){
                     autoStep++;
                     robot.resetDriveEncoders();
-                    MOErioAuto.setHeading(robot.getHeadingDegrees() - 45);
+                    MOErioAuto.setHeading(robot.getHeadingDegrees() - 45*LeftSide);
                     MOErioAuto.resetError();
                 }
                 break;
@@ -81,20 +121,20 @@ public void printSmartDashboard() {
 
                 robot.setDrivePower(-0.5*(1-correction), -0.5*(1+correction));
 
-                if(Math.abs(robot.getDistanceRightInches()) >= 43+20){
+                if(getDistanceRightInchesHands(LeftSide) >= 43+20){
                     autoStep++;
                     robot.resetDriveEncoders();
 
                 }
                 break;
             case 1:
-                louWizardry = rightDistance - leftDistance * z;
+                louWizardry = getDistanceRightInchesHands(LeftSide) - getDistanceLeftInchesHands(LeftSide) * z;
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
 
-                robot.setDrivePower(-0.1*(1-correction), -0.5*(1+correction));
+                setDrivePowerHands(-0.1,-0.5,correction,LeftSide);
 
-                if(Math.abs(robot.getDistanceRightInches()) >= 69.6 /*it was 59.7 before(Lou's math)*/){
+                if(getDistanceRightInchesHands(LeftSide) >= 69.6 /*it was 59.7 before(Lou's math)*/){
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.setHeading(robot.getHeadingDegrees());
@@ -113,6 +153,13 @@ public void printSmartDashboard() {
             case 3:
                 robot.stopDriving();
                 break;
+
+
+
+
+
+
+            /*Retired cases*/
             case 4:
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();

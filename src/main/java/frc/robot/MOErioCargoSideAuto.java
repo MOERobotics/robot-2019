@@ -13,6 +13,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
     double louWizardry = 0;
     int LeftSide = 1;
     //-1 is left, 1 is right
+    int turncounter = 0;
     double correction =0;
     double moementumCorrection = 147;
     double zEffective;
@@ -32,17 +33,33 @@ public class MOErioCargoSideAuto extends GenericAuto {
 
     public double getDistanceLeftInchesHands(int Handedness) {
         if (!(Handedness==-1)) {
-            return (robot.getDistanceLeftInches());
+            return (Math.abs(robot.getDistanceLeftInches()));
         } else {
-            return (robot.getDistanceRightInches());
+            return (Math.abs(robot.getDistanceRightInches()));
         }
     }
     public double getDistanceRightInchesHands(int Handedness) {
         if (!(Handedness==-1)) {
-            return (robot.getDistanceRightInches());
+            return (Math.abs(robot.getDistanceRightInches()));
         } else {
-            return (robot.getDistanceLeftInches());
+            return (Math.abs(robot.getDistanceLeftInches()));
         }
+    }
+
+    //always pass in negative degrees
+    public boolean reachedHeadingHands(int degrees, int Handedness){
+        if(Handedness==1) {
+            if(robot.getHeadingDegrees() <= degrees){
+                return true;
+            }
+        } else if(Handedness==-1) {
+            if(robot.getHeadingDegrees() >= degrees * Handedness){
+                return true;
+            }
+        } else {
+            return false;
+        }
+        return false;
     }
 
 
@@ -85,7 +102,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
     public void run() {
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
-        louWizardry = leftDistance - rightDistance * zEffective;
+        louWizardry = getDistanceLeftInchesHands(LeftSide) - getDistanceRightInchesHands(LeftSide) * z;
 
         switch (autoStep) {
             case -2:
@@ -133,20 +150,20 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 //robot.setDrivePower((0.5)*(1 + correction),(0.3)*(1 - correction));
                 setDrivePowerHands(0.5,0.3,correction,LeftSide);
 
-                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= 72 /*x1*/) {
+                if (getDistanceLeftInchesHands(LeftSide) >= 72 /*x1*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                 }
                 break;
             case 1:
-                louWizardry = leftDistance - rightDistance / zEffective;
+                louWizardry = getDistanceLeftInchesHands(LeftSide) - getDistanceRightInchesHands(LeftSide) / z;
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
 //                robot.setDrivePower((0.3)*(1 + correction),(0.5)*(1 - correction));
                 setDrivePowerHands(0.3,0.5,correction,LeftSide);
 
 
-                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= 43 / zEffective /*x2*/) {
+                if (getDistanceLeftInchesHands(LeftSide) >= 43 / zEffective /*x2*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                 }
@@ -161,8 +178,8 @@ public class MOErioCargoSideAuto extends GenericAuto {
                     MOErioAuto.resetError();
                 }
                 break;
+            /*
             case 3:
-                /*
                 MOErioAuto.setHeading((robot.getHeadingDegrees() - -90)*0.9);
                 correction = MOErioAuto.getCorrection();
                 double temp_correction = correction * -0.5;
@@ -175,7 +192,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                     correction > -0.3
                 ) {
                     autoStep++;
-                }*/
+                }
                 robot.setDrivePower(-0.45*LeftSide,0.45*LeftSide);
                 //robot.turnLeftInplace(0.45);
                 if(robot.getHeadingDegrees() <= -80*LeftSide){
@@ -193,7 +210,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 MOErioAuto.setHeading(robot.getHeadingDegrees() + 90*LeftSide);
                 correction = MOErioAuto.getCorrection();
 
-                /*oWO*/setDrivePowerHands(1.0,-1.0, correction, LeftSide);
+                setDrivePowerHands(1.0,-1.0, correction, LeftSide);
 
                 if(Math.abs(robot.getHeadingDegrees()+90*LeftSide) < 0.5){
                     robot.setDrivePower(0,0);
@@ -201,13 +218,43 @@ public class MOErioCargoSideAuto extends GenericAuto {
                     robot.resetYaw();
                     MOErioAuto.resetError();
                 }
+                break;*/
+            case 3:
+                MOErioAuto.setHeading(robot.getHeadingDegrees());
+
+                robot.setDrivePower(-0.5*LeftSide, 0.5*LeftSide);
+
+                if (reachedHeadingHands(-80,LeftSide)) {
+                    MOErioAuto.resetError();
+                    autoStep++;
+                }
+                break;
+            case 4:
+                MOErioAuto.setHeading(robot.getHeadingDegrees()+90*LeftSide);
+                double correction = MOErioAuto.getCorrection();
+                robot.setDrivePower(correction*LeftSide,-correction*LeftSide);
+
+                if ( (Math.abs(robot.getHeadingDegrees()+90*LeftSide) < 0.5) && (turncounter >4) ) {
+                    ++autoStep;
+                }
+                else if (Math.abs(robot.getHeadingDegrees()+90*LeftSide) < 0.5)
+                {
+                    ++turncounter;
+                }
+                else {
+                    turncounter = 0;
+                }
+                break;
+            case 5:
+                autoStep++;
+                MOErioAuto.resetError();
                 break;
             case 6:
-                MOErioAuto.setHeading(robot.getHeadingDegrees());
+                MOErioAuto.setHeading(robot.getHeadingDegrees()+90*LeftSide);
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.3*(1 + correction),0.3*(1 - correction));
 
-                if(robot.lidar[0] <= 545+moementumCorrection){
+                if(robot.lidar[0] <= 545-25.4+moementumCorrection){
                     autoStep++;
                 }
 
