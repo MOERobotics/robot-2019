@@ -2,9 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
-//rightmost level 1
-public class AutoFrontHatch extends GenericAuto {
+public class AutoTurnInPlace extends GenericAuto {
 
     //P = 0.06, I = 0.001, D = 0.0
     PIDModule arcPid = new PIDModule(0.06, 0.001,0.0);
@@ -21,7 +19,6 @@ public class AutoFrontHatch extends GenericAuto {
         autoStep = 0;
         robot.resetDriveEncoders();
         robot.resetYaw();
-
     }
 
     @Override
@@ -67,16 +64,25 @@ public class AutoFrontHatch extends GenericAuto {
                 }
                 break;
             case 2:
-                robot.setDrivePower(0.2,0.2);
-                if (robot.getDistanceLeftInches() > 8){
+                if(robot.getHeadingDegrees() < 0){
+                    robot.turnRightInplace(0.2);
+                } else if (robot.getHeadingDegrees() > 0) {
+                    robot.turnLeftInplace(0.2);
+                } else {
+                    robot.resetYaw();
                     autoStep++;
                 }
                 break;
-
             case 3:
+                if (robot.getHeadingDegrees()>90)
+                {
+                    autoStep++;
+                }
+                
+                break;
+            case 4:
                 robot.stopDriving();
         }
     }
-
 }
 

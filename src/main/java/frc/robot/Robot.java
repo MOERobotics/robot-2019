@@ -17,7 +17,9 @@ import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
+import javax.sound.sampled.Port;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,6 +41,10 @@ public class Robot extends TimedRobot {
 	//lidar
 	SerialPort Blinky;
 	boolean PortOpen = false;
+
+	//drive elevator
+	static final double upperElevator = 1;
+	static final double bottomElevator = -0.6;
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
@@ -70,7 +76,7 @@ public class Robot extends TimedRobot {
 
     }
 
-		//if (PortOpen) Lidar.init(Blinky);
+		if (PortOpen) Lidar.init(Blinky);
 		cam1 = CameraServer.getInstance().startAutomaticCapture("nice!", 0);
 		//CameraServer.getInstance().startAutomaticCapture();
 
@@ -117,6 +123,17 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Arm Reverse Limit Enabled: ", robotHardware.isArmReverseLimitEnabled());
         SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
 
+		String modified = "fail";
+		try {
+			modified = new Date(
+                Robot
+                    .class
+                    .getResource("Main.class")
+                    .openConnection()
+                    .getLastModified()
+			).toString();
+		} catch (Exception ignored) {}
+		SmartDashboard.putString("modifiedDate: ", modified);
 
 
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
@@ -144,10 +161,6 @@ public class Robot extends TimedRobot {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
 		}
-
-		if      (leftJoystick.getRawButton(5)) autoProgram = new UnitTestArc();
-		else if (leftJoystick.getRawButton(6)) autoProgram = new UnitTestTurn();
-		else if (leftJoystick.getRawButton(7)) autoProgram = new UnitTestHatch();
 	}
 
 	@Override
