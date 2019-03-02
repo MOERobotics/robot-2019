@@ -8,6 +8,7 @@
 package frc.robot;
 
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import edu.wpi.first.cameraserver.CameraServer.*;
 
 public class Robot extends TimedRobot {
 
@@ -44,6 +46,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
+
+		/* Launch the camera server. */
+		CameraServer.getInstance().startAutomaticCapture();
 
     //opening serial port
     if (!PortOpen) {
