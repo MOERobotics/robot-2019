@@ -117,37 +117,12 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Arm Reverse Limit Enabled: ", robotHardware.isArmReverseLimitEnabled());
         SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
 
-		StringBuilder pixyOutput = new StringBuilder();
-
-		pixyOutput.append("[");
-		Pixy2Line.Vector[] vectors = pixy.vec;
-		for (Pixy2Line.Vector vec : vectors) {
-			pixyOutput.append(String.format(
-				"{"+
-					"X0: %d, "+
-					"Y0: %d, "+
-					"X1: %d, "+
-					"Y1: %d"+
-				"}",
-				vec.getX0(),
-				vec.getY0(),
-				vec.getX1(),
-				vec.getY1()
-			));
-		}
-		pixyOutput.append("]");
-
-
-		SmartDashboard.putString("PixyInfo: ", pixyOutput.toString());
-
 
 
 		SmartDashboard.putNumber("autostep: "         , autoProgram.autoStep                   );
 		autoProgram.printSmartDashboard();
 
-
-
-
+		SmartDashboard.putString("PixyInfo: ", pixy.toString());
 		if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
 		if (leftJoystick.getRawButtonPressed (14)) robotHardware.setSafetyOverride(true);

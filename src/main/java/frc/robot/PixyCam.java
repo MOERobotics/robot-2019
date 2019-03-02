@@ -36,7 +36,7 @@ public class PixyCam implements Runnable{
                 pixyCam.getLine().getAllFeatures();
                 Pixy2Line.Vector[] tmp = pixyCam.getLine().getVectors();
                 if (tmp == null) tmp = sillyNullVector;
-                vec =tmp;
+                vec = tmp;
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -49,5 +49,37 @@ public class PixyCam implements Runnable{
         synchronized (this) {
             return vec;
         }
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder pixyOutput = new StringBuilder();
+
+        pixyOutput.append("[");
+        boolean first = true;
+        //copy ptr
+        Pixy2Line.Vector[] vectors = this.vec;
+        for (Pixy2Line.Vector vec : vectors) {
+            if (!first) pixyOutput.append(",");
+            pixyOutput.append(String.format(
+                    "{"+
+                            "X0: %d, "+
+                            "Y0: %d, "+
+                            "X1: %d, "+
+                            "Y1: %d"+
+                            "}",
+                    vec.getX0(),
+                    vec.getY0(),
+                    vec.getX1(),
+                    vec.getY1()
+            ));
+            first=false;
+        }
+        pixyOutput.append("]");
+
+
+        return pixyOutput.toString();
+
     }
 }
