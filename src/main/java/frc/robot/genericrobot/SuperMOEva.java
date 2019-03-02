@@ -29,6 +29,7 @@ public class SuperMOEva extends GenericRobot {
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
     Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X);
 
+    long startTime;
     DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
 
     //Turret
@@ -46,8 +47,9 @@ public class SuperMOEva extends GenericRobot {
 
     Solenoid spearShaft = new Solenoid(2); //extend
     Solenoid spearHook  = new Solenoid(3); //grab
-    Solenoid betaClimb  = new Solenoid(4); //grab
-    Solenoid betaClimb2 = new Solenoid(5); //grab
+    Solenoid floorPickup = new Solenoid(4);
+    Solenoid betaClimb  ;//= new Solenoid(4); //grab
+    Solenoid betaClimb2 ;//= new Solenoid(5); //grab
 
     //Hab Lifter
     CANSparkMax froggerSA ;//= new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -214,8 +216,13 @@ public class SuperMOEva extends GenericRobot {
         spearHook.set(out);
     }
 
+    @Override
+    public void shiftFloorPickupInternal(boolean out) {
+        floorPickup.set(out);
+    }
+
     //Hab Climb
-/* rip frogger 2019-2019
+    /* rip frogger 2019-2019
     public void climbInternal(double power) {
         double deltaEncoder =
             encoderFrogL.getPosition() -
@@ -233,8 +240,7 @@ public class SuperMOEva extends GenericRobot {
         froggerSB.set( leftPower);
         froggerFA.set(rightPower);
         froggerFB.set(rightPower);
-    }
-*/
+    }*/
 
     public void climbInternal(double power) {
         if (power > 0) {
@@ -243,6 +249,38 @@ public class SuperMOEva extends GenericRobot {
             betaClimb.set(false);
         }
     }
+
+    //@Override
+    public void grabberOpenCombo(int grabStep) {
+        switch (grabStep) {
+            case 0:
+                spearOut();
+                startTime = System.currentTimeMillis();
+                grabStep = 1;
+                break;
+            case 1:
+                if (System.currentTimeMillis() >= startTime + 1000) {
+                    spearHook();
+                    startTime = System.currentTimeMillis();
+                    grabStep = 2;
+                }
+                break;
+            case 2:
+                if (System.currentTimeMillis() >= startTime + 250) spearIn();
+                grabStep = 0;
+                break;
+        }
+    }
+
+    //@Override
+    public void grabberClosedCombo() {
+         /*spearOut();
+        spearHook();
+        startTime = System.currentTimeMillis();
+        if (System.currentTimeMillis() >= startTime + 1000) spearHook();
+        spearIn();*/
+    }
+
     //Safety Check
     @Override
     public void checkSafety() {
@@ -268,12 +306,12 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isTurretRight() {
-        return !getSafetyOverride() && getTurretEncoderCount() >= 110;
-    }
+        return false;
+     }
 
     @Override
     public boolean isTurretLeft() {
-        return !getSafetyOverride() && getTurretEncoderCount() <= -5;
+        return false;
     }
 
     @Override

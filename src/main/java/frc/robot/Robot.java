@@ -42,16 +42,18 @@ public class Robot extends TimedRobot {
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
+	long startTime;
+	int grabStep;
+
 
 	@Override
 	public void robotInit() {
-
-		cam1 = CameraServer.getInstance().startAutomaticCapture(0);
 
 		autoProgram.robot = robotHardware;
 		robotHardware.enableElevatorLimits(true);
 		robotHardware.enableArmLimits(true);
 		robotHardware.shiftLow();
+		robotHardware.floorPickupUp();
 
     //opening serial port
     if (!PortOpen) {
@@ -69,6 +71,8 @@ public class Robot extends TimedRobot {
     }
 
 		//if (PortOpen) Lidar.init(Blinky);
+		cam1 = CameraServer.getInstance().startAutomaticCapture("nice!", 0);
+		//CameraServer.getInstance().startAutomaticCapture();
 
 	}
 
@@ -83,29 +87,25 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber ("Left Encoder: "     , robotHardware.getDistanceLeftInches()    );
 		SmartDashboard.putNumber ("Right Encoder: "    , robotHardware.getDistanceRightInches()   );
 		SmartDashboard.putNumber ("Arm Encoder: "      , robotHardware.getArmEncoderCount()       );
-		SmartDashboard.putNumber ("Turret Encoder: "   , robotHardware.getTurretEncoderCount()    );
 		SmartDashboard.putNumber ("Elevator Encoder: " , robotHardware.getElevatorEncoderCount()  );
 
 		SmartDashboard.putNumber ("Left Drive Power: " , robotHardware.getLeftDrivePower()        );
 		SmartDashboard.putNumber ("Right Drive Power: ", robotHardware.getRightDrivePower()       );
 		SmartDashboard.putNumber ("Arm Power: "        , robotHardware.getArmPower()              );
-		SmartDashboard.putNumber ("Turret Power: "     , robotHardware.getTurretPower()           );
 		SmartDashboard.putNumber ("Elevator Power: "   , robotHardware.getElevatorPower()         );
 		SmartDashboard.putNumber ("Roller Power: "     , robotHardware.getRollerPower()           );
 		SmartDashboard.putNumber ("Climber Power: "    , robotHardware.getClimbPower()            );
 
-		SmartDashboard.putBoolean("Is ArmDown"         , robotHardware.isArmDown()                );
-		SmartDashboard.putBoolean("Is ArmUp"           , robotHardware.isArmUp()                  );
-		SmartDashboard.putBoolean("Is Elevator Down"   , robotHardware.isElevatorDown()           );
-		SmartDashboard.putBoolean("Is Elevator Up"     , robotHardware.isElevatorUp()             );
-		SmartDashboard.putBoolean("Is Turret Left"     , robotHardware.isTurretLeft()             );
-		SmartDashboard.putBoolean("Is Turret Right"    , robotHardware.isTurretRight()            );
+		SmartDashboard.putBoolean("Is ArmDown: "         , robotHardware.isArmDown()                );
+		SmartDashboard.putBoolean("Is ArmUp: "           , robotHardware.isArmUp()                  );
+		SmartDashboard.putBoolean("Is Elevator Down: "   , robotHardware.isElevatorDown()           );
+		SmartDashboard.putBoolean("Is Elevator Up: "     , robotHardware.isElevatorUp()             );
 		SmartDashboard.putBoolean("SAFETY MOEVERRIDE"  , robotHardware.getSafetyOverride()        );
 
 		SmartDashboard.putString("Shifter State: ", robotHardware.getShifterSolenoidState().name());
 		SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
 		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
-
+		SmartDashboard.putBoolean("Floor Pickup State: ", robotHardware.getFloorPickupState());
 
         SmartDashboard.putBoolean("Elevator Forward Limit Enabled: ", robotHardware.isElevForwardLimitEnabled());
         SmartDashboard.putBoolean("At Elevator Forward Limit: ", robotHardware.atElevForwardLimit());
@@ -170,10 +170,9 @@ public class Robot extends TimedRobot {
 			robotHardware.resetDriveEncoders();
 		}
 
-		if (leftJoystick.getRawButton(5)) autoProgram = new AutoFrontHatch();
-		else if (leftJoystick.getRawButton(6)) autoProgram = new AutoRocket();
-		else if (leftJoystick.getRawButton(7)) autoProgram = new AutoSideHatch();
-
+		if      (leftJoystick.getRawButton(5)) autoProgram = new UnitTestArc();
+		else if (leftJoystick.getRawButton(6)) autoProgram = new UnitTestTurn();
+		else if (leftJoystick.getRawButton(7)) autoProgram = new UnitTestHatch();
 	}
 
 	@Override
@@ -191,6 +190,7 @@ public class Robot extends TimedRobot {
 	public void teleopInit () {
 		//robotHardware.enableElevatorLimits(true);
 		//robotHardware.enableArmLimits(true);
+		grabStep = 0;
 	}
 
 	@Override
@@ -257,35 +257,23 @@ public class Robot extends TimedRobot {
 
 		//roller
 		//TODO: bumpers
-		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
-		else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollOut(0.5);
+		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
+		else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
 		else                                           robotHardware.driveRoller(0.0);
 
 
 
 
 		double armPower    = functionStick.getY(Hand.kRight);
-		double turretPower = functionStick.getX(Hand.kRight);
 
 		//arm
 		//Right stick, up/down rotates.
 		if (
-			Math.abs(armPower) < 0.3 ||
-			Math.abs(armPower) < Math.abs(turretPower)
+			Math.abs(armPower) < 0.3
 		) armPower = 0;
 		else if (armPower > 0) armPower -= 0.3;
 		else if (armPower < 0) armPower += 0.3;
 		robotHardware.driveArm(-armPower*0.5);
-
-		//turret
-		//Right stick, left/right rotates.
-		if (
-			Math.abs(turretPower) < 0.3 ||
-			Math.abs(turretPower) < Math.abs(armPower)
-		) turretPower = 0;
-		else if (turretPower > 0) turretPower -= 0.3;
-		else if (turretPower < 0) turretPower += 0.3;
-		robotHardware.driveTurret(turretPower*0.5);
 
 		//elevator
 		double elevatorPower =
@@ -301,14 +289,18 @@ public class Robot extends TimedRobot {
 
 		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		switch (controlPadDirection) {
+			case NORTH:
+				robotHardware.floorPickupUp();
+				break;
+			case SOUTH:
+				robotHardware.floorPickupDown();
+				break;
 			case EAST:
 			case WEST:
 			case NORTHWEST:
-			case NORTH:
+			case SOUTHEAST:
 			case NORTHEAST:
 			case SOUTHWEST:
-			case SOUTH:
-			case SOUTHEAST:
 			default:
 				break;
 		}

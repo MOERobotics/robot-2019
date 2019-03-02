@@ -167,4 +167,9 @@ public class CaMOElot extends GenericRobot {
     public void climbInternal(double power) {
 
     }
+
+    @Override
+    public void shiftFloorPickupInternal(boolean out) {
+
+    }
 }

@@ -16,6 +16,7 @@ public abstract class GenericRobot {
 	private double       climbPower;
     private boolean spearShaftState;
     private boolean  spearHookState;
+    private boolean floorPickupState;
 
 	private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
 
@@ -163,6 +164,20 @@ public abstract class GenericRobot {
 	public abstract void shiftSpearHookInternal(boolean out);
 	public boolean getSpearHookState() {return spearHookState;}
 	//</editor-fold>
+
+	//combos
+	//public abstract void grabberOpenCombo();
+	//public abstract void grabberClosedCombo();
+
+	//Floor Hatch Grab
+	public void floorPickupUp() { shiftFloorPickup(false); }
+	public void floorPickupDown() { shiftFloorPickup( true); }
+	public void shiftFloorPickup(boolean out) {
+		this.floorPickupState = out;
+		shiftFloorPickupInternal(out);
+	}
+	public void shiftFloorPickupInternal(boolean out) {};
+	public boolean getFloorPickupState() {return floorPickupState;}
 
 	//Habitat Climb <editor-fold>
 	public void climbUp  (double power) {climb(-power);}
