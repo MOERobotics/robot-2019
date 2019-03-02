@@ -85,7 +85,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
     public void run() {
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
-        louWizardry = leftDistance - rightDistance / zEffective;
+//LFR        louWizardry = leftDistance - rightDistance / zEffective;
 
         switch (autoStep) {
             case -2:
@@ -122,13 +122,16 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                 break;
 
             case 0:
+                louWizardry = leftDistance - rightDistance / zEffective;
+
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
                 setDrivePowerHands(0.1,0.5,correction,LeftSide);
 
-                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= (57) / z /*x1*/) {
+//LFR                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= (57) / z /*x1*/) {
+                if (Math.abs(getDistanceRightInchesHands(LeftSide)) >= (57) /*x1*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.resetError();
@@ -167,7 +170,8 @@ public class MOErioCargoFrontAuto extends GenericAuto {
             case 2:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
-                robot.setDrivePower(correction*LeftSide,-correction*LeftSide);
+//LFR                robot.setDrivePower(correction*LeftSide,-correction*LeftSide);
+                robot.setDrivePower(correction,-correction);
 
                 if ( (Math.abs(robot.getHeadingDegrees()) < 0.5) && (turncounter >4) ) {
                     ++autoStep;
@@ -190,6 +194,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                     autoStep++;
                 }*/
 
+                // LFR -- Huh?
                 if(leftDistance >= 545/24.5){
                     autoStep++;
                 }
