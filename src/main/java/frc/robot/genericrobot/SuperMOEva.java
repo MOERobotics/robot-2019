@@ -48,10 +48,10 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
     TalonSRX rollR = new TalonSRX(10) {{setNeutralMode(NeutralMode.Brake);}};
 
-    Solenoid spearShaft = new Solenoid(5); //extend
-    Solenoid spearHook  = new Solenoid(6); //grab
-    Solenoid betaClimb  = new Solenoid(7); //grab
-    Solenoid betaClimb2 = new Solenoid(3); //grab
+    Solenoid spearShaft = new Solenoid(2); //extend
+    Solenoid spearHook  = new Solenoid(3); //grab
+    Solenoid betaClimb  = new Solenoid(4); //grab
+    Solenoid betaClimb2 = new Solenoid(5); //grab
 
     //Hab Lifter
     CANSparkMax froggerSA ;//= new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
