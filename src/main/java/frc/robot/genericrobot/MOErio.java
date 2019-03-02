@@ -31,6 +31,11 @@ public class MOErio extends GenericRobot {
     DigitalInput elevatorTopLimitSwitch    = new DigitalInput(7);
 
     @Override
+    public int numSensors() {
+        return 1;
+    }
+
+    @Override
     public void shiftSpearShaftInternal(boolean out) {
 
     }

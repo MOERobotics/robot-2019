@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import com.revrobotics.CANDigitalInput;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
@@ -12,8 +13,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 
-//import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
@@ -21,10 +20,10 @@ public class SuperMOEva extends GenericRobot {
 
 
     //Drive
-    TalonSRX driveFreeA    = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveFreeB    = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveSupportA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
-    TalonSRX driveSupportB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveLA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveLB = new TalonSRX(13) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveRA = new TalonSRX(14) {{setNeutralMode(NeutralMode.Brake);}};
+    TalonSRX driveRB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
 
     AHRS navX = new AHRS(SPI.Port.kMXP, (byte) 50);
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
@@ -34,15 +33,12 @@ public class SuperMOEva extends GenericRobot {
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax turret   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
+    //CANSparkMax turret   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm      = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     CANEncoder encoderElev = new CANEncoder(elevator);
-    CANEncoder encoderTur  = new CANEncoder(turret);
+    //CANEncoder encoderTur  = new CANEncoder(turret);
     CANEncoder encoderArm  = new CANEncoder(arm);
-
-    //DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
-    //DigitalInput elevatorTopLimitSwitch = new DigitalInput(7);
 
     //Cargo/Hatch
     TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
@@ -63,22 +59,28 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderFrogR ;//= new CANEncoder(froggerFA);
 
     {//not sure which side is inverted
-        driveFreeA.setInverted(true);
-        driveFreeB.setInverted(true);
+        driveLA.setInverted(true);
+        driveLB.setInverted(true);
         rollL.setInverted(true);
         arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
         elevator.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        turret.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        //turret.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    }
+
+    //lidar
+    @Override
+    public int numSensors() {
+        return 8;
     }
 
 
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
-        driveSupportA.set(ControlMode.PercentOutput, leftMotor);
-        driveSupportB.set(ControlMode.PercentOutput, leftMotor);
+        driveRA.set(ControlMode.PercentOutput, leftMotor);
+        driveRB.set(ControlMode.PercentOutput, leftMotor);
 
-        driveFreeA.set(ControlMode.PercentOutput, rightMotor);
-        driveFreeB.set(ControlMode.PercentOutput, rightMotor);
+        driveLA.set(ControlMode.PercentOutput, rightMotor);
+        driveLB.set(ControlMode.PercentOutput, rightMotor);
     }
 
     //shifting
@@ -87,24 +89,6 @@ public class SuperMOEva extends GenericRobot {
         shifter.set(value);
     }
 
-    //testing individual motors
-    public void driveSA(double power) {
-        driveSupportA.set(ControlMode.PercentOutput, power);
-    }
-
-    public void driveSB(double power) {
-        driveSupportB.set(ControlMode.PercentOutput, power);
-    }
-
-    public void driveFA(double power) {
-        driveFreeA.set(ControlMode.PercentOutput, power);
-    }
-
-    public void driveFB(double power) {
-        driveFreeB.set(ControlMode.PercentOutput, power);
-    }
-
-    //fin
 
     @Override
     public double getDistanceLeftInches() {
@@ -152,13 +136,65 @@ public class SuperMOEva extends GenericRobot {
     }
 
     @Override
+    public void enableElevatorLimits(boolean enabled) {
+        elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+    }
+
+    @Override
+    public boolean isElevForwardLimitEnabled() {
+        return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+    }
+
+    @Override
+    public boolean isElevReverseLimitEnabled() {
+        return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+    }
+
+    @Override
+    public boolean atElevForwardLimit() {
+        return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+    }
+
+    @Override
+    public boolean atElevReverseLimit() {
+        return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+    }
+
+    @Override
     public void setTurretInternal(double power) {
-        turret.set(power);
+        //turret.set(power);
     }
 
     @Override
     public void setArmInternal(double power) {
         arm.set(power);
+    }
+
+    @Override
+    public void enableArmLimits(boolean enabled) {
+        arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+    }
+
+    @Override
+    public boolean isArmForwardLimitEnabled() {
+        return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+    }
+
+    @Override
+    public boolean isArmReverseLimitEnabled() {
+        return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+    }
+
+    @Override
+    public boolean atArmForwardLimit() {
+        return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+    }
+
+    @Override
+    public boolean atArmReverseLimit() {
+        return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
    //Cargo/Hatch
@@ -258,7 +294,8 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public double getTurretEncoderCountInternal() {
-        return encoderTur.getPosition();
+        return 0;
+        //return encoderTur.getPosition();
     }
 
     @Override

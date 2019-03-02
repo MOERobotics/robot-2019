@@ -24,6 +24,10 @@ public abstract class GenericRobot {
     private double  elevatorEncoderOffset = 0;
     private boolean   totalSafetyOverride = false;
 
+    //lidar
+	public abstract int numSensors();
+	public int[] lidar = new int[numSensors()];
+
 	//checking for things
 	public abstract double getDistanceLeftInches();
 	public abstract double getDistanceRightInches();
@@ -63,8 +67,8 @@ public abstract class GenericRobot {
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);
 
 	//shifting
-	public void shiftHigh () { shiftDrive(DoubleSolenoid.Value.kReverse); }
-	public void shiftLow  () { shiftDrive(DoubleSolenoid.Value.kForward); }
+	public void shiftHigh () { shiftDrive(DoubleSolenoid.Value.kForward); }
+	public void shiftLow  () { shiftDrive(DoubleSolenoid.Value.kReverse); }
 
 	public void shiftDrive(DoubleSolenoid.Value value) {
 		this.shifterSolenoidValue = value;
@@ -88,7 +92,12 @@ public abstract class GenericRobot {
 	public       boolean isElevatorUp     () {return         false;}
 	public       boolean isElevatorDown   () {return         false;}
 	public final double  getElevatorPower () {return elevatorPower;}
+	public       void    enableElevatorLimits(boolean enabled) {}
     protected abstract void setElevatorInternal(double power);
+	public boolean isElevForwardLimitEnabled() {return false;}
+	public boolean isElevReverseLimitEnabled() {return false;}
+	public boolean atElevForwardLimit() {return false;}
+	public boolean atElevReverseLimit() {return false;}
 	//</editor-fold>
 
     //Turret <editor-fold>
@@ -117,6 +126,11 @@ public abstract class GenericRobot {
 	public       boolean isArmDown   () {return    false;}
 	public final double  getArmPower () {return armPower;}
 	protected abstract void setArmInternal(double power);
+    public void    enableArmLimits(boolean enabled) {}
+    public boolean isArmForwardLimitEnabled() {return false;}
+    public boolean isArmReverseLimitEnabled() {return false;}
+    public boolean atArmForwardLimit() {return false;}
+    public boolean atArmReverseLimit() {return false;}
 	//</editor-fold>
 
     //Roller <editor-fold>
@@ -161,10 +175,10 @@ public abstract class GenericRobot {
 	public double getClimbPower() {return this.climbPower;}
 
     //Temporary for SuperMOEva testing
-    public void driveSA(double power) {};
+    /*public void driveSA(double power) {};
     public void driveSB(double power) {};
     public void driveFA(double power) {};
-    public void driveFB(double power) {};
+    public void driveFB(double power) {};*/
 
     public void setOffsets() {
     	this.armEncoderOffset = getArmEncoderCountInternal();

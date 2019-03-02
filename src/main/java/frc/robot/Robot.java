@@ -37,10 +37,8 @@ public class Robot extends TimedRobot {
 	}};
 
 	//lidar
-	//SerialPort Blinky;
-	// boolean PortOpen = false;
-	// public static int numSensors = 8;
-	// public static int[] lidar = new int[numSensors];
+	SerialPort Blinky;
+	boolean PortOpen = false;
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
@@ -51,7 +49,10 @@ public class Robot extends TimedRobot {
 		cam1 = CameraServer.getInstance().startAutomaticCapture(0);
 
 		autoProgram.robot = robotHardware;
-/*
+		robotHardware.enableElevatorLimits(true);
+		robotHardware.enableArmLimits(true);
+		robotHardware.shiftLow();
+
     //opening serial port
     if (!PortOpen) {
       PortOpen = true;
@@ -66,10 +67,10 @@ public class Robot extends TimedRobot {
       }
 
     }
-    */
+
+		//if (PortOpen) Lidar.init(Blinky);
+
 	}
-
-
 
 	@Override
 	public void robotPeriodic () {
@@ -106,6 +107,16 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
 
 
+        SmartDashboard.putBoolean("Elevator Forward Limit Enabled: ", robotHardware.isElevForwardLimitEnabled());
+        SmartDashboard.putBoolean("At Elevator Forward Limit: ", robotHardware.atElevForwardLimit());
+        SmartDashboard.putBoolean("Elevator Reverse Limit Enabled: ", robotHardware.isElevReverseLimitEnabled());
+        SmartDashboard.putBoolean("At Elevator Reverse Limit: ", robotHardware.atElevReverseLimit());
+
+        SmartDashboard.putBoolean("Arm Forward Limit Enabled: ", robotHardware.isArmForwardLimitEnabled());
+        SmartDashboard.putBoolean("At Arm Forward Limit: ", robotHardware.atArmForwardLimit());
+        SmartDashboard.putBoolean("Arm Reverse Limit Enabled: ", robotHardware.isArmReverseLimitEnabled());
+        SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
+
 		StringBuilder pixyOutput = new StringBuilder();
 
 		pixyOutput.append("[");
@@ -141,6 +152,8 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
 		if (leftJoystick.getRawButtonPressed (14)) robotHardware.setSafetyOverride(true);
 		if (leftJoystick.getRawButtonReleased(14)) robotHardware.setSafetyOverride(false);
+
+		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 	}
 
 	@Override
@@ -156,6 +169,11 @@ public class Robot extends TimedRobot {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
 		}
+
+		if (leftJoystick.getRawButton(5)) autoProgram = new AutoFrontHatch();
+		else if (leftJoystick.getRawButton(6)) autoProgram = new AutoRocket();
+		else if (leftJoystick.getRawButton(7)) autoProgram = new AutoSideHatch();
+
 	}
 
 	@Override
@@ -171,6 +189,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit () {
+		//robotHardware.enableElevatorLimits(true);
+		//robotHardware.enableArmLimits(true);
 	}
 
 	@Override
@@ -186,6 +206,12 @@ public class Robot extends TimedRobot {
 		//else if (leftJoystick.getRawButton(6))  robotHardware.driveSB(0.5);
 		//else if (leftJoystick.getRawButton(7))  robotHardware.driveFA(0.5);
 		//else if (leftJoystick.getRawButton(8))  robotHardware.driveFB(0.5);
+
+		 else if (leftJoystick.getRawButton(5)) robotHardware.enableElevatorLimits(false);
+		 else if (leftJoystick.getRawButton(6)) robotHardware.enableArmLimits(false);
+		 else if (leftJoystick.getRawButton(7)) robotHardware.enableElevatorLimits(true);
+		 else if (leftJoystick.getRawButton(8)) robotHardware.enableArmLimits(true);
+
 
 		//Manual Control
 		else {
