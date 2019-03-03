@@ -185,6 +185,23 @@ public class Robot extends TimedRobot {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
 		}
+
+		if (leftJoystick.getRawButton(5)){
+			autoProgram = new UnitTestArc();
+			autoProgram.robot = robotHardware;
+		}
+		else if (leftJoystick.getRawButton(6)){
+			autoProgram = new UnitTestTurn();
+			autoProgram.robot = robotHardware;
+		}
+		else if (leftJoystick.getRawButton(7)){
+			autoProgram = new UnitTestHatch();
+			autoProgram.robot = robotHardware;
+		}
+		else if (leftJoystick.getRawButton(8)){
+			autoProgram = new DriveStraightAuto();
+			autoProgram.robot = robotHardware;
+		}
 	}
 
 	@Override
