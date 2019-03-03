@@ -120,15 +120,12 @@ public class CaMOElot extends GenericRobot {
 
     double fakeArmEncoder = 0;
     double fakeElevatorEncoder = 0;
-    double fakeTurretEncoder = 0;
 
     double fakeArmPower = 0;
     double fakeElevatorPower = 0;
-    double fakeTurretPower = 0;
 
 	@Override
 	public void checkSafety() {
-		fakeTurretEncoder   += fakeTurretPower;
 		fakeArmEncoder      += fakeArmPower;
 		fakeElevatorEncoder += fakeElevatorPower;
 	}
@@ -139,11 +136,6 @@ public class CaMOElot extends GenericRobot {
 	}
 
 	@Override
-	protected void setTurretInternal(double power) {
-		fakeTurretPower = power;
-	}
-
-	@Override
 	protected void setArmInternal(double power) {
 		fakeArmPower = power;
 	}
@@ -151,11 +143,6 @@ public class CaMOElot extends GenericRobot {
     @Override
     public double getElevatorEncoderCountInternal() {
         return fakeElevatorEncoder;
-    }
-
-    @Override
-    public double getTurretEncoderCountInternal() {
-        return fakeTurretEncoder;
     }
 
     @Override

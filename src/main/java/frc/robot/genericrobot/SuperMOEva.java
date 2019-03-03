@@ -34,11 +34,9 @@ public class SuperMOEva extends GenericRobot {
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
-    //CANSparkMax turret   = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm      = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     CANEncoder encoderElev = new CANEncoder(elevator);
-    //CANEncoder encoderTur  = new CANEncoder(turret);
     CANEncoder encoderArm  = new CANEncoder(arm);
 
     //Cargo/Hatch
@@ -114,7 +112,6 @@ public class SuperMOEva extends GenericRobot {
     public void stopEverything() {
         setDrivePowerInternal(0,0);
         setElevatorInternal(0);
-        setTurretInternal(0);
         setArmInternal(0);
     }
 
@@ -166,10 +163,6 @@ public class SuperMOEva extends GenericRobot {
         return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
-    @Override
-    public void setTurretInternal(double power) {
-        //turret.set(power);
-    }
 
     @Override
     public void setArmInternal(double power) {
@@ -290,10 +283,6 @@ public class SuperMOEva extends GenericRobot {
 
         if (isElevatorUp  ()) driveElevator(0);
         if (isElevatorDown()) driveElevator(0);
-
-        if (isTurretRight()) driveTurret(0);
-        if (isTurretLeft ()) driveTurret(0);
-
         if (isArmUp  ()) driveArm(0);
         if (isArmDown()) driveArm(0);
 
@@ -306,16 +295,6 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isElevatorDown() { return !getSafetyOverride() && getElevatorEncoderCount() <= -30; }
-
-    @Override
-    public boolean isTurretRight() {
-        return false;
-     }
-
-    @Override
-    public boolean isTurretLeft() {
-        return false;
-    }
 
     @Override
     public boolean isArmUp() {
@@ -331,12 +310,6 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public double getElevatorEncoderCountInternal() {
         return encoderElev.getPosition();
-    }
-
-    @Override
-    public double getTurretEncoderCountInternal() {
-        return 0;
-        //return encoderTur.getPosition();
     }
 
     @Override

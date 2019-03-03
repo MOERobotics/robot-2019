@@ -67,10 +67,6 @@ public class MOErio extends GenericRobot {
         elevator.set(ControlMode.PercentOutput, power);
     }
 
-    @Override
-    protected void setTurretInternal(double power) {
-        //no turret!
-    }
 
     @Override
     protected void setArmInternal(double power) {
@@ -129,11 +125,6 @@ public class MOErio extends GenericRobot {
     @Override
     public double getElevatorEncoderCountInternal() {
         return encoderElevator.get();
-    }
-
-    @Override
-    public double getTurretEncoderCountInternal() {
-        return 0;
     }
 
     @Override

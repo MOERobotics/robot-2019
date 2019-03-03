@@ -10,7 +10,6 @@ public abstract class GenericRobot {
     private double        leftPower;
     private double       rightPower;
     private double    elevatorPower;
-    private double      turretPower;
     private double         armPower;
     private double      rollerPower;
 	private double       climbPower;
@@ -22,7 +21,6 @@ public abstract class GenericRobot {
 	private GearRatio driveGearRatio = GearRatio.UNSET;
 
     private double       armEncoderOffset = 0;
-    private double    turretEncoderOffset = 0;
     private double  elevatorEncoderOffset = 0;
     private boolean   totalSafetyOverride = false;
 
@@ -37,7 +35,6 @@ public abstract class GenericRobot {
 	public abstract double getPitchDegrees();
 	public abstract double getRollDegrees();
 	public abstract double getElevatorEncoderCountInternal();
-	public abstract double getTurretEncoderCountInternal();
 	public abstract double getArmEncoderCountInternal();
 
 	//stopping and resetting
@@ -48,7 +45,6 @@ public abstract class GenericRobot {
 		stopDriving();
 		driveElevator(0);
 		driveArm(0);
-		driveTurret(0);
 	}
 	public void stopDriving() {
 		setDrivePower(0,0);
@@ -100,20 +96,6 @@ public abstract class GenericRobot {
 	public boolean atElevReverseLimit() {return false;}
 	//</editor-fold>
 
-    //Turret <editor-fold>
-    public final void    turretLeft     (double power) {driveTurret( power);}
-    public final void    turretRight    (double power) {driveTurret(-power);}
-    public final void    driveTurret    (double power) {
-        this.turretPower = power;
-        if      (isTurretRight() && power > 0)  setTurretInternal(  0.0);
-        else if (isTurretLeft () && power < 0)  setTurretInternal(  0.0);
-        else                                    setTurretInternal(power);
-    }
-	public       boolean isTurretRight  () {return       false;}
-	public       boolean isTurretLeft   () {return       false;}
-	public final double  getTurretPower () {return turretPower;}
-	protected abstract void setTurretInternal(double power);
-	//</editor-fold>
 
     //Arm <editor-fold>
     public final void    driveArm    (double power)  {
@@ -197,13 +179,11 @@ public abstract class GenericRobot {
     public void setOffsets() {
     	this.armEncoderOffset = getArmEncoderCountInternal();
     	this.elevatorEncoderOffset = getElevatorEncoderCountInternal();
-    	this.turretEncoderOffset = getTurretEncoderCountInternal();
 	}
 
 	public void clearOffsets() {
     	this.armEncoderOffset = 0;
     	this.elevatorEncoderOffset = 0;
-    	this.turretEncoderOffset = 0;
 	}
 
 	public void setSafetyOverride(boolean state) {
@@ -218,8 +198,6 @@ public abstract class GenericRobot {
 	public double getElevatorEncoderCount() {
 		return getElevatorEncoderCountInternal() - elevatorEncoderOffset;
 	}
-	public double getTurretEncoderCount() {
-		return getTurretEncoderCountInternal() - turretEncoderOffset;
 
 	public enum GearRatio {
     	HIGH,
