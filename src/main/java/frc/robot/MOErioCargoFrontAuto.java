@@ -11,7 +11,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
     long startTime = 0;
     double z = 1.81;
     double louWizardry = 0;
-    int LeftSide = -1;
+    int LeftSide = 1;
     int turncounter = 0;
     boolean levelTwo = false;
     double moementumCorrection = 147;
@@ -78,6 +78,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
         SmartDashboard.putNumber("i am so angry right now", 6);
         SmartDashboard.putNumber("Left Side", LeftSide);
+        SmartDashboard.putNumber("Arc Lengths: ", 49);
     }
 
 
@@ -118,9 +119,12 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                 } else if(leftDistance >= 46-8) {
                     autoStep++;
                     robot.resetDriveEncoders();
+                    MOErioAuto.resetError();
                 }
                 break;
 
+            /*Right Side: we make a left turning arc*/
+            /*Left Side: we make a right turning arc*/
             case 0:
                 louWizardry = leftDistance - rightDistance / zEffective;
 
@@ -131,13 +135,15 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                 setDrivePowerHands(0.1,0.5,correction,LeftSide);
 
 //LFR                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= (57) / z /*x1*/) {
-                if (Math.abs(getDistanceRightInchesHands(LeftSide)) >= (57) /*x1*/) {
+                if (Math.abs(getDistanceRightInchesHands(LeftSide)) >= (49) /*x1*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.resetError();
                 }
                 break;
 
+            /*Right Side: make a right turning arc*/
+            /*Left Side: make a left turning arc*/
             case 1:
                 louWizardry = leftDistance - rightDistance * zEffective;
                 MOErioAuto.setHeading(louWizardry);
@@ -145,9 +151,9 @@ public class MOErioCargoFrontAuto extends GenericAuto {
 
                 setDrivePowerHands(0.5, 0.1,correction,LeftSide);
 
-                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= 57){
-                    autoStep++;
-                    robot.resetDriveEncoders();
+                if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= 49){
+                    autoStep=4;
+                    //robot.resetDriveEncoders();
                     MOErioAuto.resetError();
                 }
                 break;

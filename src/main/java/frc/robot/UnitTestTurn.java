@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class UnitTestTurn extends GenericAuto {
-    PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
+    PIDModuleLucy MOErioAuto = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
     int turncounter = 0;
 
@@ -31,6 +31,7 @@ public class UnitTestTurn extends GenericAuto {
         SmartDashboard.putNumber("Current Time: ", System.currentTimeMillis());
         SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
+        SmartDashboard.putNumber("turncounter", turncounter);
     }
 
     public void run() {
@@ -53,15 +54,16 @@ public class UnitTestTurn extends GenericAuto {
 
                 robot.setDrivePower(0.5, -0.5);
 
-                if (robot.getHeadingDegrees() > 80) {
+                if (robot.getHeadingDegrees() > 70) {
                     MOErioAuto.resetError();
-                    autoStep++;
+                    ++autoStep;
                 }
                 break;
             case 0:
                 MOErioAuto.setHeading(robot.getHeadingDegrees()-90);
                 double correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(correction,-correction);
+//                robot.setDrivePower(Math.signum(correction)*(Math.abs(correction)+0.1),-Math.signum(correction)*(Math.abs(correction)+0.1));
 
                 if ( (Math.abs(robot.getHeadingDegrees()-90) < 0.5) && (turncounter >4) ) {
                     ++autoStep;
