@@ -6,8 +6,7 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 
 
-
-public class PIDModule{
+public class PIDModuleLucy {
     public double getInput      () {return  input; }
     public double getCorrection () {return output; }
     public void   setHeading    (double input) {this.input = input;  }
@@ -24,7 +23,7 @@ public class PIDModule{
     public final double kP, kI, kD;
     public final PIDController pidController;
 
-    public PIDModule (
+    public PIDModuleLucy(
             double kP,
             double kI,
             double kD
@@ -43,15 +42,15 @@ public class PIDModule{
                 internal
         );
         this.pidController.setInputRange(-180,180);
-        this.pidController.setOutputRange(-1,1);
+        this.pidController.setOutputRange(-0.5,0.5);
         this.pidController.setContinuous(true);
         this.pidController.reset();
         this.pidController.enable();
     }
 
     private class PIDModuleInternal implements PIDSource, PIDOutput{
-        PIDModule parent;
-        PIDModuleInternal(PIDModule parent){
+        PIDModuleLucy parent;
+        PIDModuleInternal(PIDModuleLucy parent){
             this.parent = parent;
         }
 
