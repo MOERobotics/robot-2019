@@ -111,9 +111,9 @@ public class CaMOElot extends GenericRobot {
 
     }
 
+    //shifting
     @Override
-    public void shiftDriveInternal(DoubleSolenoid.Value value) {
-
+    public void shiftDriveInternal(GearRatio ratio) {
     }
 
 	//Fake some parts

@@ -60,7 +60,7 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderFrogL ;//= new CANEncoder(froggerSA);
     CANEncoder encoderFrogR ;//= new CANEncoder(froggerFA);
 
-    {//not sure which side is inverted
+    {
         driveLA.setInverted(true);
         driveLB.setInverted(true);
         rollL.setInverted(true);
@@ -87,8 +87,11 @@ public class SuperMOEva extends GenericRobot {
 
     //shifting
     @Override
-    public void shiftDriveInternal(DoubleSolenoid.Value value) {
-        shifter.set(value);
+    public void shiftDriveInternal(GearRatio ratio) {
+        switch (ratio) {
+            case HIGH: shifter.set(DoubleSolenoid.Value.kForward); break;
+            case LOW:  shifter.set(DoubleSolenoid.Value.kReverse); break;
+        }
     }
 
 

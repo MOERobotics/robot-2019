@@ -19,6 +19,7 @@ public abstract class GenericRobot {
     private boolean floorPickupState;
 
 	private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
+	private GearRatio driveGearRatio = GearRatio.UNSET;
 
     private double       armEncoderOffset = 0;
     private double    turretEncoderOffset = 0;
@@ -68,16 +69,14 @@ public abstract class GenericRobot {
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);
 
 	//shifting
-	public void shiftHigh () { shiftDrive(DoubleSolenoid.Value.kForward); }
-	public void shiftLow  () { shiftDrive(DoubleSolenoid.Value.kReverse); }
-
-	public void shiftDrive(DoubleSolenoid.Value value) {
-		this.shifterSolenoidValue = value;
+	public void shiftHigh () { shiftDrive(GearRatio.HIGH); }
+	public void shiftLow  () { shiftDrive(GearRatio.LOW ); }
+	public void shiftDrive(GearRatio value) {
+		this.driveGearRatio = value;
 		shiftDriveInternal(value);
 	}
-
-	public abstract void shiftDriveInternal(DoubleSolenoid.Value value);
-	public DoubleSolenoid.Value getShifterSolenoidState() { return shifterSolenoidValue; }
+	public abstract void shiftDriveInternal(GearRatio ratio);
+	public GearRatio getShifterSolenoidState() { return driveGearRatio; }
 
 	//</editor-fold>
 
@@ -221,6 +220,11 @@ public abstract class GenericRobot {
 	}
 	public double getTurretEncoderCount() {
 		return getTurretEncoderCountInternal() - turretEncoderOffset;
+
+	public enum GearRatio {
+    	HIGH,
+		LOW,
+		UNSET;
 	}
 
 }

@@ -146,10 +146,11 @@ public class MOErio extends GenericRobot {
         return navx.getPitch();
     }
 
+    //shifting
     @Override
-    public void shiftDriveInternal(DoubleSolenoid.Value value) {
-
+    public void shiftDriveInternal(GearRatio ratio) {
     }
+
 
     @Override
     public double getRollDegrees() {
