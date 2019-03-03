@@ -21,8 +21,8 @@ public class Lidar {
         String lidarString = "", exception = "";
         String[] lString = new String[us.numSensors()];
 
-        Pattern p = Pattern.compile("-");
-        Matcher ma = p.matcher(lidarString);
+        /*Pattern p = Pattern.compile("-");
+        Matcher ma = p.matcher(lidarString);*/
         int[] l = new int[us.numSensors()];
 
         //reading string from Blinky
@@ -38,8 +38,16 @@ public class Lidar {
         }
 
         if (!lidarString.equals("")) {
+            if (lidarString.indexOf("1-") == lidarString.length() - 2) {
+                lString[1] = lidarString.substring(0, lidarString.indexOf("0-")).trim();
+                lString[0] = lidarString.substring(lidarString.indexOf("0-") + 2, lidarString.lastIndexOf(" ")).trim();
+            } else if (lidarString.indexOf("0-") == lidarString.length() - 2) {
+                lString[0] = lidarString.substring(0, lidarString.indexOf("1-")).trim();
+                lString[1] = lidarString.substring(lidarString.indexOf("1-") + 2, lidarString.lastIndexOf(" ")).trim();
+            }
+
             //splitting
-            if (ma.find()) {
+            /*if (ma.find()) {
                 String numStr = lidarString.substring(ma.start() - 1, ma.start()).trim();
 
                 num = Integer.parseInt(numStr);
@@ -55,7 +63,7 @@ public class Lidar {
                 if (lidarString.indexOf(" ") != -1)
                 lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
                 //SmartDashboard.putString("lString: ", lString[0]);
-            }
+            }*/
 
 
             //TODO: guys for loops are a thing please use them this hurts
@@ -68,14 +76,14 @@ public class Lidar {
                 SmartDashboard.putString("Lidar 0 parsing error: ", exception);
             }
 
-            /*try {
+            try {
                 l[1] = Integer.parseInt(lString[1]);
             } catch (Exception e) {
                 exception = "ERROR " + e;
                 SmartDashboard.putString("Lidar 1 parsing error: ", exception);
             }
 
-            try {
+            /*try {
                 l[2] = Integer.parseInt(lString[2]);
             } catch (Exception e) {
                 exception = "ERROR " + e;
@@ -118,8 +126,8 @@ public class Lidar {
             }*/
 
             SmartDashboard.putNumber("Lidar 0: ", l[0]);
-            /*SmartDashboard.putNumber("Lidar 1: ", l[1]);
-            SmartDashboard.putNumber("Lidar 2: ", l[2]);
+            SmartDashboard.putNumber("Lidar 1: ", l[1]);
+            /*SmartDashboard.putNumber("Lidar 2: ", l[2]);
             SmartDashboard.putNumber("Lidar 3: ", l[3]);
             SmartDashboard.putNumber("Lidar 4: ", l[4]);
             SmartDashboard.putNumber("Lidar 5: ", l[5]);
@@ -127,8 +135,8 @@ public class Lidar {
             SmartDashboard.putNumber("Lidar 7: ", l[7]);*/
 
             us.lidar[0] = l[0];
-            /*us.lidar[1] = l[1];
-            us.lidar[2] = l[2];
+            us.lidar[1] = l[1];
+            /*us.lidar[2] = l[2];
             us.lidar[3] = l[3];
             us.lidar[4] = l[4];
             us.lidar[5] = l[5];

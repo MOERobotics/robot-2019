@@ -14,11 +14,12 @@ import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
 import io.github.pseudoresonance.pixy2api.Pixy2Line;
-import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
 import javax.sound.sampled.Port;
 import java.util.Arrays;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
@@ -51,34 +52,31 @@ public class Robot extends TimedRobot {
 	long startTime;
 	int grabStep;
 
-
 	@Override
 	public void robotInit() {
-
 		autoProgram.robot = robotHardware;
 		robotHardware.enableElevatorLimits(true);
 		robotHardware.enableArmLimits(true);
 		robotHardware.shiftLow();
 		robotHardware.floorPickupUp();
 
-    //opening serial port
-    if (!PortOpen) {
-      PortOpen = true;
+		//opening serial port
+		if (!PortOpen) {
+		  PortOpen = true;
 
-      try {
-        Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
-        SmartDashboard.putString("Open serial port: ", "Success!");
-      } catch (Exception e) {
-        String exception = e + "";
-        SmartDashboard.putString("I caught: ", exception);
-        PortOpen = false;
-      }
+		  try {
+			Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
+			SmartDashboard.putString("Open serial port: ", "Success!");
+		  } catch (Exception e) {
+			String exception = e + "";
+			SmartDashboard.putString("I caught: ", exception);
+			PortOpen = false;
+		  }
 
-    }
+		}
 
 		if (PortOpen) Lidar.init(Blinky);
-		cam1 = CameraServer.getInstance().startAutomaticCapture("nice!", 0);
-		//CameraServer.getInstance().startAutomaticCapture();
+		CameraServer.getInstance().startAutomaticCapture();
 
 	}
 
@@ -161,6 +159,23 @@ public class Robot extends TimedRobot {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
 		}
+
+		if (leftJoystick.getRawButton(5)){
+			autoProgram = new UnitTestArc();
+			autoProgram.robot = robotHardware;
+		}
+		else if (leftJoystick.getRawButton(6)){
+			autoProgram = new UnitTestTurn();
+			autoProgram.robot = robotHardware;
+		}
+		else if (leftJoystick.getRawButton(7)){
+			autoProgram = new UnitTestHatch();
+			autoProgram.robot = robotHardware;
+		}
+		else if (leftJoystick.getRawButton(8)){
+			autoProgram = new DriveStraightAuto();
+			autoProgram.robot = robotHardware;
+		}
 	}
 
 	@Override
@@ -184,9 +199,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic () {
 		//Driving Adjustments
-		     if (leftJoystick.getTrigger()   )  robotHardware.moveForward     (.25);
-		else if (leftJoystick.getRawButton(3))  robotHardware.moveBackward    (.25);
+		if (leftJoystick.getTrigger()   )  robotHardware.moveForward     (.25);
 		else if (leftJoystick.getRawButton(2))  robotHardware.turnLeftInplace (.25);
+		else if (leftJoystick.getRawButton(3))  robotHardware.moveBackward    (.25);
 		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.25);
 
 		//Individual motors (For testing)
@@ -238,18 +253,67 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
 
 		//hatchGrab
-		if      (functionStick.getXButton()) robotHardware.spearIn    ();
-		else if (functionStick.getYButton()) robotHardware.spearOut   ();
-		if      (functionStick.getAButton()) robotHardware.spearHook  ();
-		else if (functionStick.getBButton()) robotHardware.spearUnhook();
+		/*if      (functionStick.getBButton()) robotHardware.spearIn    ();
+		else if (functionStick.getAButton()) robotHardware.spearOut   ();
+		if      (functionStick.getXButton()) robotHardware.spearHook  ();
+		else if (functionStick.getYButton()) robotHardware.spearUnhook();*/
+
+		if (functionStick.getAButton()) {
+			//extend, open, retract
+			switch (grabStep) {
+				case 0:
+					robotHardware.spearOut();
+					startTime = System.currentTimeMillis();
+					grabStep = 1;
+					break;
+				case 1:
+					if (System.currentTimeMillis() >= startTime + 1000) {
+						robotHardware.spearUnhook();
+						startTime = System.currentTimeMillis();
+						grabStep = 2;
+					}
+					break;
+				case 2:
+					if (System.currentTimeMillis() >= startTime + 250) robotHardware.spearIn();
+					grabStep = 0;
+					break;
+			}
+		} else if (functionStick.getBButton()) {
+			//extend, close, retract
+			switch (grabStep) {
+				case 0:
+					robotHardware.spearOut();
+					startTime = System.currentTimeMillis();
+					grabStep = 1;
+					break;
+				case 1:
+					if (System.currentTimeMillis() >= startTime + 1000) {
+						robotHardware.spearHook();
+						startTime = System.currentTimeMillis();
+						grabStep = 2;
+					}
+					break;
+				case 2:
+					if (System.currentTimeMillis() >= startTime + 250) robotHardware.spearIn();
+					grabStep = 0;
+					break;
+			}
+		} else if (functionStick.getXButton()) {
+			if (robotHardware.getSpearHookState() == true) robotHardware.spearHook();
+			else robotHardware.spearUnhook();
+		} else if (functionStick.getYButton()) {
+			if (robotHardware.getSpearShaftState() == true) robotHardware.spearIn();
+			else robotHardware.spearOut();
+		}
+
+		/*else if (functionStick.getXButton()) robotHardware.floorPickupUp();
+		else if (functionStick.getYButton()) robotHardware.floorPickupDown();*/
 
 		//roller
 		//TODO: bumpers
 		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
 		else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
 		else                                           robotHardware.driveRoller(0.0);
-
-
 
 
 		double armPower    = functionStick.getY(Hand.kRight);
