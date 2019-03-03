@@ -17,7 +17,6 @@ import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
-import javax.sound.sampled.Port;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -77,13 +76,38 @@ public class Robot extends TimedRobot {
     }
 
 		if (PortOpen) Lidar.init(Blinky);
-		cam1 = CameraServer.getInstance().startAutomaticCapture("nice!", 0);
+		cam1 = edu.wpi.first.cameraserver.CameraServer.getInstance().startAutomaticCapture("nice!", 0);
+		cam1.setConnectVerbose(255);
+
+		cam1.setFPS(fps);
+		cam1.setResolution(width,height);
+
+
 		//CameraServer.getInstance().startAutomaticCapture();
 
 	}
 
+	int width = 640, height = 480, fps=30;
 	@Override
 	public void robotPeriodic () {
+		int new_width  = (int)SmartDashboard.getNumber("width",0);
+		int new_height = (int)SmartDashboard.getNumber("height",0);
+		int new_fps    = (int)SmartDashboard.getNumber("fps",0);
+
+		if (
+			new_width  != width  ||
+			new_height != height ||
+			new_fps    != fps
+		) {
+			cam1.setFPS(new_fps);
+			cam1.setResolution(new_width,new_height);
+		}
+		SmartDashboard.putNumber("actual width",width = new_width);
+		SmartDashboard.putNumber("actual height",height = new_height);
+		SmartDashboard.putNumber("actual fps",fps = new_fps);
+
+
+
 		SmartDashboard.putString ("Robot Class"        , robotHardware.getClass().getSimpleName() );
 		SmartDashboard.putString ("Auto Class"         , autoProgram.getClass().getSimpleName()   );
 
