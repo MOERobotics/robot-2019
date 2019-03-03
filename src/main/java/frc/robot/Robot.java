@@ -208,10 +208,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic () {
 		//Driving Adjustments
-		     if (leftJoystick.getTrigger()   )  robotHardware.moveForward     (.25);
-		else if (leftJoystick.getRawButton(3))  robotHardware.moveBackward    (.25);
-		else if (leftJoystick.getRawButton(2))  robotHardware.turnLeftInplace (.25);
-		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.25);
+		     if (leftJoystick.getTrigger()   )  robotHardware.moveForward     (.28);
+		else if (leftJoystick.getRawButton(3))  robotHardware.moveBackward    (.28);
+		else if (leftJoystick.getRawButton(2))  robotHardware.turnLeftInplace (.45);
+		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.45);
 
 		//Individual motors (For testing)
 		//else if (leftJoystick.getRawButton(5))  robotHardware.driveSA(0.5);
