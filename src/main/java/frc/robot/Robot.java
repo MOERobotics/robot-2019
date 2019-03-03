@@ -121,6 +121,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Arm Reverse Limit Enabled: ", robotHardware.isArmReverseLimitEnabled());
         SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
 
+        SmartDashboard.putNumber("Frogger Power: ", robotHardware.getClimbPower());
+        SmartDashboard.putNumber("FroggerL Encoder: ", robotHardware.getClimberLEncoderCount());
+		SmartDashboard.putNumber("FroggerR Encoder: ", robotHardware.getClimberREncoderCount());
+
 		String modified = "fail";
 		try {
 			modified = new Date(
@@ -174,6 +178,12 @@ public class Robot extends TimedRobot {
 		}
 		else if (leftJoystick.getRawButton(8)){
 			autoProgram = new DriveStraightAuto();
+			autoProgram.robot = robotHardware;
+		} else if (leftJoystick.getRawButton(9)){
+			autoProgram = new UnitTestMoementumCorrection();
+			autoProgram.robot = robotHardware;
+		} else if (leftJoystick.getRawButton(10)){
+			autoProgram = new MOErioCargoFrontAuto();
 			autoProgram.robot = robotHardware;
 		}
 	}
@@ -253,12 +263,12 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
 
 		//hatchGrab
-		/*if      (functionStick.getBButton()) robotHardware.spearIn    ();
+		if      (functionStick.getBButton()) robotHardware.spearIn    ();
 		else if (functionStick.getAButton()) robotHardware.spearOut   ();
 		if      (functionStick.getXButton()) robotHardware.spearHook  ();
-		else if (functionStick.getYButton()) robotHardware.spearUnhook();*/
+		else if (functionStick.getYButton()) robotHardware.spearUnhook();
 
-		if (functionStick.getAButton()) {
+		/*if (functionStick.getAButton()) {
 			//extend, open, retract
 			switch (grabStep) {
 				case 0:
@@ -304,7 +314,7 @@ public class Robot extends TimedRobot {
 		} else if (functionStick.getYButton()) {
 			if (robotHardware.getSpearShaftState() == true) robotHardware.spearIn();
 			else robotHardware.spearOut();
-		}
+		}*/
 
 		/*else if (functionStick.getXButton()) robotHardware.floorPickupUp();
 		else if (functionStick.getYButton()) robotHardware.floorPickupDown();*/

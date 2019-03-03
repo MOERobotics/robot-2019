@@ -8,6 +8,7 @@ public class MOErioCargoFrontAuto extends GenericAuto {
     //1.67 for 0.5 0.15 power
     //1.33 for 0.5 0.3 power
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
+    PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
     double z = 1.81;
     double louWizardry = 0;
@@ -152,9 +153,9 @@ public class MOErioCargoFrontAuto extends GenericAuto {
                 setDrivePowerHands(0.5, 0.1,correction,LeftSide);
 
                 if (Math.abs(getDistanceLeftInchesHands(LeftSide)) >= 49){
-                    autoStep=4;
+                    ++autoStep;
                     //robot.resetDriveEncoders();
-                    MOErioAuto.resetError();
+                    MOErioTurn.resetError();
                 }
                 break;
                 //59.4 in 121 t
@@ -175,11 +176,12 @@ public class MOErioCargoFrontAuto extends GenericAuto {
 
             case 2:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
-                correction = MOErioAuto.getCorrection();
+                correction = MOErioTurn.getCorrection();
 //LFR                robot.setDrivePower(correction*LeftSide,-correction*LeftSide);
                 robot.setDrivePower(correction,-correction);
 
                 if ( (Math.abs(robot.getHeadingDegrees()) < 0.5) && (turncounter >4) ) {
+                    MOErioAuto.resetError();
                     ++autoStep;
                 }
                 else if (Math.abs(robot.getHeadingDegrees()) < 0.5)
@@ -196,14 +198,14 @@ public class MOErioCargoFrontAuto extends GenericAuto {
 
                 robot.setDrivePower((0.3)*(1 + correction),(0.3)*(1 - correction));
 
-                /*if (robot.lidar[0] <= 545+moementumCorrection) {
-                    autoStep++;
-                }*/
-
-                // LFR -- Huh?
-                if(leftDistance >= 545/24.5){
+                if (robot.lidar[0] <= 545+moementumCorrection) {
                     autoStep++;
                 }
+
+                // LFR -- Huh?
+                /*f(leftDistance >= 545/24.5){
+                    autoStep++;
+                }*/
                 break;
             case 4:
                 robot.stopDriving();

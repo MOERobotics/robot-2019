@@ -172,4 +172,15 @@ public class CaMOElot extends GenericRobot {
     public void shiftFloorPickupInternal(boolean out) {
 
     }
+
+    @Override
+    public double getClimberLEncoderCount() {
+        return 0;
+    }
+
+    @Override
+    public double getClimberREncoderCount() {
+        return 0;
+    }
+
 }

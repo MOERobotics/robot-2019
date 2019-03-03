@@ -34,7 +34,7 @@ public class DriveStraightAuto extends GenericAuto {
                 straightPid.setHeading(robot.getHeadingDegrees());
                 double correction = straightPid.getCorrection();
                 //correction negative, left motor increase decrease. correction positive, left motor power increase.
-                robot.setDrivePower(0.3*(1 + correction),0.3*(1 - correction));
+                robot.setDrivePower(0.25*(1 + correction),0.25*(1 - correction));
                 if(robot.getDistanceLeftInches() >= 96) {
                     autoStep++;
                 } else {

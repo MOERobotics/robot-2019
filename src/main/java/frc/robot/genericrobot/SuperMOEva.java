@@ -16,7 +16,8 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
-    final double TICKS_TO_INCHES = 218;
+    //final double TICKS_TO_INCHES = 218;
+    final double TICKS_TO_INCHES = 178;
 
 
     //Drive
@@ -52,13 +53,13 @@ public class SuperMOEva extends GenericRobot {
     Solenoid betaClimb2 ;//= new Solenoid(5); //grab
 
     //Hab Lifter
-    CANSparkMax froggerSA ;//= new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerSB ;//= new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerFA ;//= new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    CANSparkMax froggerFB ;//= new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerLA = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerLB = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerRA = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerRB = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    CANEncoder encoderFrogL ;//= new CANEncoder(froggerSA);
-    CANEncoder encoderFrogR ;//= new CANEncoder(froggerFA);
+    CANEncoder encoderFrogL = new CANEncoder(froggerLA);
+    CANEncoder encoderFrogR = new CANEncoder(froggerRA);
 
     {//not sure which side is inverted
         driveLA.setInverted(true);
@@ -229,8 +230,18 @@ public class SuperMOEva extends GenericRobot {
         floorPickup.set(out);
     }
 
+    @Override
+    public double getClimberLEncoderCount() {
+        return encoderFrogL.getPosition();
+    }
+
+    @Override
+    public double getClimberREncoderCount() {
+        return encoderFrogR.getPosition();
+    }
+
     //Hab Climb
-    /* rip frogger 2019-2019
+    //rip frogger 2019-2019
     public void climbInternal(double power) {
         double deltaEncoder =
             encoderFrogL.getPosition() -
@@ -244,55 +255,23 @@ public class SuperMOEva extends GenericRobot {
         if (power > 0 && deltaEncoder < 10) {
             rightPower = 0;
         }
-        froggerSA.set( leftPower);
-        froggerSB.set( leftPower);
-        froggerFA.set(rightPower);
-        froggerFB.set(rightPower);
-    }*/
+        froggerLA.set( leftPower);
+        froggerLB.set( leftPower);
+        froggerRA.set(rightPower);
+        froggerRB.set(rightPower);
+    }
 
-    public void climbInternal(double power) {
+    /*public void climbInternal(double power) {
         if (power > 0) {
             betaClimb.set(true);
         } else if (power < 0) {
             betaClimb.set(false);
         }
-    }
-
-    //@Override
-    public void grabberOpenCombo(int grabStep) {
-        switch (grabStep) {
-            case 0:
-                spearOut();
-                startTime = System.currentTimeMillis();
-                grabStep = 1;
-                break;
-            case 1:
-                if (System.currentTimeMillis() >= startTime + 1000) {
-                    spearHook();
-                    startTime = System.currentTimeMillis();
-                    grabStep = 2;
-                }
-                break;
-            case 2:
-                if (System.currentTimeMillis() >= startTime + 250) spearIn();
-                grabStep = 0;
-                break;
-        }
-    }
-
-    //@Override
-    public void grabberClosedCombo() {
-         /*spearOut();
-        spearHook();
-        startTime = System.currentTimeMillis();
-        if (System.currentTimeMillis() >= startTime + 1000) spearHook();
-        spearIn();*/
-    }
+    }*/
 
     //Safety Check
     @Override
     public void checkSafety() {
-
         if (isElevatorUp  ()) driveElevator(0);
         if (isElevatorDown()) driveElevator(0);
 

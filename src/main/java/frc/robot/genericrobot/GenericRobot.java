@@ -68,8 +68,8 @@ public abstract class GenericRobot {
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);
 
 	//shifting
-	public void shiftHigh () { shiftDrive(DoubleSolenoid.Value.kForward); }
-	public void shiftLow  () { shiftDrive(DoubleSolenoid.Value.kReverse); }
+	public void shiftHigh () { shiftDrive(DoubleSolenoid.Value.kReverse); }
+	public void shiftLow  () { shiftDrive(DoubleSolenoid.Value.kForward); }
 
 	public void shiftDrive(DoubleSolenoid.Value value) {
 		this.shifterSolenoidValue = value;
@@ -187,6 +187,8 @@ public abstract class GenericRobot {
 		climbInternal(power);
 	}
 	public abstract void climbInternal(double power);
+	public abstract double getClimberLEncoderCount();
+	public abstract double getClimberREncoderCount();
 	public double getClimbPower() {return this.climbPower;}
 
     //Temporary for SuperMOEva testing

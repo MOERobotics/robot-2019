@@ -160,4 +160,14 @@ public class MOErio extends GenericRobot {
     public void climbInternal(double power) {
 
     }
+
+    @Override
+    public double getClimberLEncoderCount() {
+        return 0;
+    }
+
+    @Override
+    public double getClimberREncoderCount() {
+        return 0;
+    }
 }
