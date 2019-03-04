@@ -170,4 +170,7 @@ public class MOErio extends GenericRobot {
     public double getClimberREncoderCount() {
         return 0;
     }
+    public  void climbSupportUp(double power){}
+    public  void climbFreeUp(double power){}
+    public  void climb2(boolean state){}
 }

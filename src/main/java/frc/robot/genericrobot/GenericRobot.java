@@ -186,7 +186,11 @@ public abstract class GenericRobot {
 		this.climbPower = power;
 		climbInternal(power);
 	}
-	public abstract void climbInternal(double power);
+    public abstract void climbSupportUp(double power);
+    public abstract void climbFreeUp(double power);
+    public abstract void climb2(boolean state);
+
+    public abstract void climbInternal(double power);
 	public abstract double getClimberLEncoderCount();
 	public abstract double getClimberREncoderCount();
 	public double getClimbPower() {return this.climbPower;}

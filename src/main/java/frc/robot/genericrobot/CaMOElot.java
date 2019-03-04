@@ -183,4 +183,7 @@ public class CaMOElot extends GenericRobot {
         return 0;
     }
 
+    public  void climbSupportUp(double power){}
+    public  void climbFreeUp(double power){}
+    public  void climb2(boolean state){}
 }

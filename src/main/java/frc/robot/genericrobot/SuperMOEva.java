@@ -50,10 +50,10 @@ public class SuperMOEva extends GenericRobot {
     Solenoid spearHook  = new Solenoid(3); //grab
     Solenoid floorPickup = new Solenoid(4);
     Solenoid betaClimb  ;//= new Solenoid(4); //grab
-    Solenoid betaClimb2 ;//= new Solenoid(5); //grab
+    Solenoid betaClimb2 = new Solenoid(5); //grab
 
     //Hab Lifter
-    CANSparkMax froggerLA = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
+    CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);//-Brian
     CANSparkMax froggerLB = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax froggerRA = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax froggerRB = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -268,6 +268,22 @@ public class SuperMOEva extends GenericRobot {
             betaClimb.set(false);
         }
     }*/
+
+    public void climbSupportUp(double power) {
+
+        froggerLA.set(power);
+        froggerLB.set(power);
+        froggerRA.set(0);
+        froggerRB.set(0);
+    }
+
+    public void climbFreeUp(double power) {
+
+        froggerLA.set(0);
+        froggerLB.set(0);
+        froggerRA.set(power);
+        froggerRB.set(power);
+    }
 
     //Safety Check
     @Override
