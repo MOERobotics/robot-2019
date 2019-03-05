@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
-		autoProgram.LeftSide = 1;
+		//autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(false); //-Brian
 		robotHardware.enableArmLimits(false); //-Brian
 		robotHardware.shiftLow();
@@ -184,15 +184,15 @@ public class Robot extends TimedRobot {
 			autoProgram = new DriveStraightAuto();
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(9)){
-			autoProgram = new UnitTestMoementumCorrection();
-			autoProgram.robot = robotHardware;
+			//autoProgram = new MOErioCargoFrontAutoBonus();
+			//autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(10)){
 			autoProgram = new MOErioCargoFrontAuto();
 			autoProgram.robot = robotHardware;
 		}
 
-		if (leftJoystick.getRawButton(3)) autoProgram.LeftSide = 1;
-		else if (leftJoystick.getRawButton(4)) autoProgram.LeftSide = -1;
+		/*if (leftJoystick.getRawButton(3)) autoProgram.LeftSide = 1;
+		else if (leftJoystick.getRawButton(4)) autoProgram.LeftSide = -1;*/
 
 
 	}

@@ -10,7 +10,7 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     long startTime = 0;
     double z = 1.81;
-    //int LeftSide = 1;
+    int LeftSide = 1;
     //-1 is left, 1 is right
     int turncounter = 0;
     //z = 1.67 for left = 0.5 right = 0.15 power
