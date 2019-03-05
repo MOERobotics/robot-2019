@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
     private MOErio         robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new UnitTestTurn();
+	private GenericAuto    autoProgram   = new MOErioCargoFrontAutoBonus();
 
 	//lidar
 	SerialPort Blinky;

@@ -8,14 +8,15 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
 public class MOErioCargoSideAuto extends GenericAuto {
 
     PIDModule MOErioAuto = new PIDModule(0.06,0.001,0);
+    PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
     double z = 1.33;
     double louWizardry = 0;
-    int LeftSide = 1;
+    int LeftSide = -1;
     //-1 is left, 1 is right
     int turncounter = 0;
     double correction =0;
-    double moementumCorrection = 147;
+    double moementumCorrection = 50;
     double zEffective;
     boolean levelTwo = false;
 
@@ -96,13 +97,14 @@ public class MOErioCargoSideAuto extends GenericAuto {
         SmartDashboard.putNumber("Z: ",z);
         SmartDashboard.putNumber("Abs Left",  Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
+        SmartDashboard.putNumber("Left Side", LeftSide);
     }
 
     @Override
     public void run() {
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
-        louWizardry = getDistanceLeftInchesHands(LeftSide) - getDistanceRightInchesHands(LeftSide) * z;
+        louWizardry = leftDistance - rightDistance * zEffective;
 
         switch (autoStep) {
             case -2:
@@ -142,6 +144,8 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 }
 
                 break;
+            /*Right side- make a right turning arc*/
+            /*Left side- make a left turning arc*/
             case 0:
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
@@ -153,19 +157,23 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 if (getDistanceLeftInchesHands(LeftSide) >= 72 /*x1*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
+                    MOErioAuto.resetError();
                 }
                 break;
+            /*Right side- make a left turning arc*/
+            /*Left side- make a right turning arc*/
             case 1:
-                louWizardry = getDistanceLeftInchesHands(LeftSide) - getDistanceRightInchesHands(LeftSide) / z;
+                louWizardry = leftDistance - rightDistance / zEffective;
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
 //                robot.setDrivePower((0.3)*(1 + correction),(0.5)*(1 - correction));
                 setDrivePowerHands(0.3,0.5,correction,LeftSide);
 
 
-                if (getDistanceLeftInchesHands(LeftSide) >= 43 / zEffective /*x2*/) {
+                if (getDistanceRightInchesHands(LeftSide) >= 43 /*x2*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
+                    MOErioAuto.resetError();
                 }
                 break;
             case 2:
@@ -176,6 +184,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 if (leftDistance >= 41+5) {
                     autoStep++;
                     MOErioAuto.resetError();
+                    MOErioTurn.resetError();
                 }
                 break;
             /*
@@ -220,19 +229,19 @@ public class MOErioCargoSideAuto extends GenericAuto {
                 }
                 break;*/
             case 3:
-                MOErioAuto.setHeading(robot.getHeadingDegrees());
+                MOErioTurn.setHeading(robot.getHeadingDegrees());
 
                 robot.setDrivePower(-0.5*LeftSide, 0.5*LeftSide);
 
                 if (reachedHeadingHands(-80,LeftSide)) {
-                    MOErioAuto.resetError();
+                    MOErioTurn.resetError();
                     autoStep++;
                 }
                 break;
             case 4:
-                MOErioAuto.setHeading(robot.getHeadingDegrees()+90*LeftSide);
-                double correction = MOErioAuto.getCorrection();
-                robot.setDrivePower(correction*LeftSide,-correction*LeftSide);
+                MOErioTurn.setHeading(robot.getHeadingDegrees()+90*LeftSide);
+                correction = MOErioTurn.getCorrection();
+                robot.setDrivePower(correction,-correction);
 
                 if ( (Math.abs(robot.getHeadingDegrees()+90*LeftSide) < 0.5) && (turncounter >4) ) {
                     ++autoStep;
@@ -268,6 +277,19 @@ public class MOErioCargoSideAuto extends GenericAuto {
             case 7:
                 robot.stopDriving();
                 break;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             /*LEFT SIDE CASES (RETIRED)*/
             case 8:
