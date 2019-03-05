@@ -11,7 +11,7 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
     long startTime = 0;
     double z = 1.81;
     double louWizardry = 0;
-    int LeftSide = 1;
+    //int LeftSide = 1;
     int turncounter = 0;
     boolean levelTwo = false;
     double moementumCorrection = 50;

@@ -13,7 +13,7 @@ public class MOErioCargoSideGoBackAuto extends GenericAuto {
     long startTime = 0;
     double z = 1.33;
     double louWizardry = 0;
-    int LeftSide = 1;
+    //int LeftSide = 1;
     int turncounter = 0;
     double correction = 0;
     //z = 1.67 for left = 0.5 right = 0.15 power

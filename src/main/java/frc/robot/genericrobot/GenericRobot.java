@@ -21,7 +21,7 @@ public abstract class GenericRobot {
 	private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
 
     private double       armEncoderOffset = 0;
-    private double    turretEncoderOffset = 0;
+    //private double    turretEncoderOffset = 0;
     private double  elevatorEncoderOffset = 0;
     private boolean   totalSafetyOverride = false;
 
@@ -36,7 +36,7 @@ public abstract class GenericRobot {
 	public abstract double getPitchDegrees();
 	public abstract double getRollDegrees();
 	public abstract double getElevatorEncoderCountInternal();
-	public abstract double getTurretEncoderCountInternal();
+	//public abstract double getTurretEncoderCountInternal();
 	public abstract double getArmEncoderCountInternal();
 
 	//stopping and resetting
@@ -47,7 +47,7 @@ public abstract class GenericRobot {
 		stopDriving();
 		driveElevator(0);
 		driveArm(0);
-		driveTurret(0);
+		//driveTurret(0);
 	}
 	public void stopDriving() {
 		setDrivePower(0,0);
@@ -102,7 +102,7 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Turret <editor-fold>
-    public final void    turretLeft     (double power) {driveTurret( power);}
+    /*public final void    turretLeft     (double power) {driveTurret( power);}
     public final void    turretRight    (double power) {driveTurret(-power);}
     public final void    driveTurret    (double power) {
         this.turretPower = power;
@@ -113,7 +113,7 @@ public abstract class GenericRobot {
 	public       boolean isTurretRight  () {return       false;}
 	public       boolean isTurretLeft   () {return       false;}
 	public final double  getTurretPower () {return turretPower;}
-	protected abstract void setTurretInternal(double power);
+	protected abstract void setTurretInternal(double power);*/
 	//</editor-fold>
 
     //Arm <editor-fold>
@@ -204,13 +204,13 @@ public abstract class GenericRobot {
     public void setOffsets() {
     	this.armEncoderOffset = getArmEncoderCountInternal();
     	this.elevatorEncoderOffset = getElevatorEncoderCountInternal();
-    	this.turretEncoderOffset = getTurretEncoderCountInternal();
+    	//this.turretEncoderOffset = getTurretEncoderCountInternal();
 	}
 
 	public void clearOffsets() {
     	this.armEncoderOffset = 0;
     	this.elevatorEncoderOffset = 0;
-    	this.turretEncoderOffset = 0;
+    	//this.turretEncoderOffset = 0;
 	}
 
 	public void setSafetyOverride(boolean state) {
@@ -225,9 +225,9 @@ public abstract class GenericRobot {
 	public double getElevatorEncoderCount() {
 		return getElevatorEncoderCountInternal() - elevatorEncoderOffset;
 	}
-	public double getTurretEncoderCount() {
+	/*public double getTurretEncoderCount() {
 		return getTurretEncoderCountInternal() - turretEncoderOffset;
-	}
+	}*/
 
 }
 

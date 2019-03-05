@@ -8,7 +8,7 @@ public abstract class GenericAuto {
     public abstract void init();
     public abstract void run();
     public GenericRobot robot;
-    //public int LeftSide;
+    public int LeftSide;
 
     private boolean haveWeYelledAtTheCoderYet = false;
     public void printSmartDashboard() {

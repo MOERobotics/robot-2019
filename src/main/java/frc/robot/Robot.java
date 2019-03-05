@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
-		//autoProgram.LeftSide = 1;
+		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(false); //-Brian
 		robotHardware.enableArmLimits(false); //-Brian
 		robotHardware.shiftLow();
@@ -171,31 +171,28 @@ public class Robot extends TimedRobot {
 			robotHardware.resetDriveEncoders();
 		}
 		if (leftJoystick.getRawButton(5)){
+			autoProgram = new MOErioCargoFrontAuto();
+			autoProgram.LeftSide = 1;
+			autoProgram.robot = robotHardware;
+		} else if (leftJoystick.getRawButton(6)){
+			autoProgram = new MOErioCargoFrontAuto();
+			autoProgram.LeftSide = -1;
+			autoProgram.robot = robotHardware;
+		} else if (leftJoystick.getRawButton(7)){
 			autoProgram = new MOErioCargoSideAuto();
+			autoProgram.LeftSide = 1;
 			autoProgram.robot = robotHardware;
-		}
-		else if (leftJoystick.getRawButton(6)){
-			autoProgram = new MOErioCargoSideGoBackAuto();
-			autoProgram.robot = robotHardware;
-		}
-		else if (leftJoystick.getRawButton(7)){
-			autoProgram = new UnitTestHatch();
-			autoProgram.robot = robotHardware;
-		}
-		else if (leftJoystick.getRawButton(8)){
-			autoProgram = new DriveStraightAuto();
+		} else if (leftJoystick.getRawButton(8)){
+			autoProgram = new MOErioCargoSideAuto();
+			autoProgram.LeftSide = -1;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(9)){
-			autoProgram = new MOErioCargoFrontAutoBonus();
+			autoProgram = new DriveStraightAuto();
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(10)){
-			autoProgram = new MOErioCargoFrontAuto();
+			autoProgram = new UnitTestArc();
 			autoProgram.robot = robotHardware;
 		}
-
-		/*if (leftJoystick.getRawButton(3)) autoProgram.LeftSide = 1;
-		else if (leftJoystick.getRawButton(4)) autoProgram.LeftSide = -1;*/
-
 
 	}
 
@@ -326,9 +323,6 @@ public class Robot extends TimedRobot {
 					break;
 			}
 		}*/
-
-		/*else if (functionStick.getXButton()) robotHardware.floorPickupUp();
-		else if (functionStick.getYButton()) robotHardware.floorPickupDown();*/
 
 		//roller
 		//TODO: bumpers
