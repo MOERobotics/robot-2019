@@ -146,6 +146,8 @@ public class Robot extends TimedRobot {
             autoProgram.printSmartDashboard();
 
             SmartDashboard.putString("PixyInfo: ", pixy.toString());
+
+			SmartDashboard.putNumber("GRABSTEP: ", grabStep);
         }
 		if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
@@ -169,11 +171,11 @@ public class Robot extends TimedRobot {
 			robotHardware.resetDriveEncoders();
 		}
 		if (leftJoystick.getRawButton(5)){
-			autoProgram = new UnitTestArc();
+			autoProgram = new MOErioCargoSideAuto();
 			autoProgram.robot = robotHardware;
 		}
 		else if (leftJoystick.getRawButton(6)){
-			autoProgram = new UnitTestTurn();
+			autoProgram = new MOErioCargoSideGoBackAuto();
 			autoProgram.robot = robotHardware;
 		}
 		else if (leftJoystick.getRawButton(7)){
@@ -184,8 +186,8 @@ public class Robot extends TimedRobot {
 			autoProgram = new DriveStraightAuto();
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(9)){
-			//autoProgram = new MOErioCargoFrontAutoBonus();
-			//autoProgram.robot = robotHardware;
+			autoProgram = new MOErioCargoFrontAutoBonus();
+			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(10)){
 			autoProgram = new MOErioCargoFrontAuto();
 			autoProgram.robot = robotHardware;
@@ -289,7 +291,7 @@ public class Robot extends TimedRobot {
 				case 0:
 					robotHardware.spearOut();
 					startTime = System.currentTimeMillis();
-					grabStep = 1;
+					if (robotHardware.getSpearShaftState() == true) grabStep = 1;
 					break;
 				case 1:
 					if (System.currentTimeMillis() >= startTime + 1000) {
@@ -309,7 +311,7 @@ public class Robot extends TimedRobot {
 				case 0:
 					robotHardware.spearOut();
 					startTime = System.currentTimeMillis();
-					grabStep = 1;
+					if (robotHardware.getSpearShaftState() == true) grabStep = 1;
 					break;
 				case 1:
 					if (System.currentTimeMillis() >= startTime + 1000) {
@@ -323,12 +325,6 @@ public class Robot extends TimedRobot {
 					grabStep = 0;
 					break;
 			}
-		} else if (functionStick.getXButton()) {
-			if (robotHardware.getSpearHookState() == true) robotHardware.spearHook();
-			else robotHardware.spearUnhook();
-		} else if (functionStick.getYButton()) {
-			if (robotHardware.getSpearShaftState() == true) robotHardware.spearIn();
-			else robotHardware.spearOut();
 		}*/
 
 		/*else if (functionStick.getXButton()) robotHardware.floorPickupUp();
