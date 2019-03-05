@@ -11,7 +11,7 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
     long startTime = 0;
     double z = 1.33;
     double louWizardry = 0;
-    int LeftSide = 1;
+    //int LeftSide = 1;
     //-1 is left, 1 is right
     int turncounter = 0;
     double correction =0;
@@ -100,7 +100,7 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
         SmartDashboard.putNumber("Z: ",z);
         SmartDashboard.putNumber("Abs Left",  Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
-        SmartDashboard.putNumber("Left Side", LeftSide);
+        //SmartDashboard.putNumber("Left Side", LeftSide);
     }
 
     @Override

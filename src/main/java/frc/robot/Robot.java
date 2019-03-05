@@ -141,8 +141,8 @@ public class Robot extends TimedRobot {
             }
             SmartDashboard.putString("modifiedDate: ", modified);
 
-
             SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
+            SmartDashboard.putNumber("LeftSide: ", autoProgram.LeftSide);
             autoProgram.printSmartDashboard();
 
             SmartDashboard.putString("PixyInfo: ", pixy.toString());
@@ -179,18 +179,20 @@ public class Robot extends TimedRobot {
 			autoProgram.LeftSide = -1;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(7)){
-			autoProgram = new MOErioCargoSideAuto();
+			autoProgram = new MOErioCargoFrontAutoBonus();
 			autoProgram.LeftSide = 1;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(8)){
-			autoProgram = new MOErioCargoSideAuto();
+			autoProgram = new MOErioCargoFrontAutoBonus();
 			autoProgram.LeftSide = -1;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(9)){
-			autoProgram = new DriveStraightAuto();
+			autoProgram = new MOErioCargoSideAutoBonus();
+			autoProgram.LeftSide = 1;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(10)){
-			autoProgram = new UnitTestArc();
+			autoProgram = new MOErioCargoSideAutoBonus();
+			autoProgram.LeftSide = -1;
 			autoProgram.robot = robotHardware;
 		}
 
