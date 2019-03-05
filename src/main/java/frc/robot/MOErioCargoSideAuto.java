@@ -233,7 +233,7 @@ public class MOErioCargoSideAuto extends GenericAuto {
 
                 robot.setDrivePower(-0.5*LeftSide, 0.5*LeftSide);
 
-                if (reachedHeadingHands(-80,LeftSide)) {
+                if (reachedHeadingHands(80,-1*LeftSide)) {
                     MOErioTurn.resetError();
                     autoStep++;
                 }
