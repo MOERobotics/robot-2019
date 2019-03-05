@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
 	private XboxController functionStick = new XboxController(1);
 	private GenericAuto    autoProgram   = new DriveStraightAuto();
 //	UsbCamera cam1;
-    int smartDashCounter =0;
+    int smartDashCounter = 0;
 
 
 	public PixyCam pixy = new PixyCam() {{
@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
+		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(false); //-Brian
 		robotHardware.enableArmLimits(false); //-Brian
 		robotHardware.shiftLow();
@@ -78,9 +79,7 @@ public class Robot extends TimedRobot {
 		}
 
 		if (PortOpen) Lidar.init(Blinky);
-//		CameraServer.getInstance().startAutomaticCapture();
-
-
+		CameraServer.getInstance().startAutomaticCapture();
 	}
 
 	@Override
@@ -126,8 +125,8 @@ public class Robot extends TimedRobot {
             SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
 
             SmartDashboard.putNumber("Frogger Power: ", robotHardware.getClimbPower());
-            SmartDashboard.putNumber("FroggerL Encoder: ", robotHardware.getClimberLEncoderCount());
-            SmartDashboard.putNumber("FroggerR Encoder: ", robotHardware.getClimberREncoderCount());
+            SmartDashboard.putNumber("Frogger Left Encoder: ", robotHardware.getClimberLEncoderCount());
+            SmartDashboard.putNumber("Frogger Right Encoder: ", robotHardware.getClimberREncoderCount());
 
             String modified = "fail";
             try {
@@ -169,7 +168,6 @@ public class Robot extends TimedRobot {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
 		}
-
 		if (leftJoystick.getRawButton(5)){
 			autoProgram = new UnitTestArc();
 			autoProgram.robot = robotHardware;
@@ -192,6 +190,11 @@ public class Robot extends TimedRobot {
 			autoProgram = new MOErioCargoFrontAuto();
 			autoProgram.robot = robotHardware;
 		}
+
+		if (leftJoystick.getRawButton(3)) autoProgram.LeftSide = 1;
+		else if (leftJoystick.getRawButton(4)) autoProgram.LeftSide = -1;
+
+
 	}
 
 	@Override
@@ -255,11 +258,11 @@ public class Robot extends TimedRobot {
 
 		//Climbing
 
-        POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
+        //POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		if      (leftJoystick.getRawButton( 9)) robotHardware.climbUp  (1.0);
 		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
-		else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
-        else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
+		//else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
+		//else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
 
         else                                    robotHardware.climb    (0.0);
 
@@ -361,7 +364,7 @@ public class Robot extends TimedRobot {
 		else if (elevatorPower < 0) elevatorPower += 0.3;
 		robotHardware.driveElevator(elevatorPower*0.8);
 
-//		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
+		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		switch (controlPadDirection) {
 			case NORTH:
 				robotHardware.floorPickupUp();
@@ -370,7 +373,11 @@ public class Robot extends TimedRobot {
 				robotHardware.floorPickupDown();
 				break;
 			case EAST:
+				robotHardware.climbFreeUp(0.3);
+				break;
 			case WEST:
+				robotHardware.climbSupportUp(0.3);
+				break;
 			case NORTHWEST:
 			case SOUTHEAST:
 			case NORTHEAST:
@@ -378,7 +385,6 @@ public class Robot extends TimedRobot {
 			default:
 				break;
 		}
-
 
 	}
 

@@ -115,8 +115,6 @@ public class MOErio extends GenericRobot {
         rollRight.set(ControlMode.PercentOutput, power);
     }
 
-
-
     @Override
     public void checkSafety() {
         if (isElevatorUp()) driveElevator(0);
@@ -124,7 +122,6 @@ public class MOErio extends GenericRobot {
         if (isArmUp()) driveArm(0);
         if (isArmDown()) driveArm(0);
     }
-
 
     @Override
     public double getElevatorEncoderCountInternal() {
