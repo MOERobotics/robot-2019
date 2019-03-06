@@ -4,10 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import com.revrobotics.CANDigitalInput;
-import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.*;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
@@ -37,6 +34,7 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX arm = new TalonSRX(4) {{setNeutralMode(NeutralMode.Brake);}};
 
     CANEncoder encoderElev = new CANEncoder(elevator);
+    //Encoder encoderArm = new Encoder(8, 9, true, EncodingType.k2X);
 
     //Cargo/Hatch
     TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
