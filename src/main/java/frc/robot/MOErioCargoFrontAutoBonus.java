@@ -11,10 +11,10 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
     long startTime = 0;
     double z = 1.81;
     double louWizardry = 0;
-    //int LeftSide = 1;
+    int LeftSide = 1;
     int turncounter = 0;
-    boolean levelTwo = false;
-    double moementumCorrection = 50;
+    boolean levelTwo = true;
+    double moementumCorrection = 100;
     double zEffective;
 
     public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
@@ -60,7 +60,7 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
 
     @Override
     public void init() {
-        autoStep = 4;
+        autoStep = -2;
         robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.setHeading(0);
@@ -91,7 +91,7 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
         SmartDashboard.putNumber("Z: ",z);
         SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
-        SmartDashboard.putNumber("i am so angry right now", 6);
+        SmartDashboard.putBoolean("Level Two", levelTwo);
         SmartDashboard.putNumber("Left Side", LeftSide);
         SmartDashboard.putNumber("Arc Lengths: ", 49);
     }
@@ -233,6 +233,9 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
                     zEffective = z;
                 }
                 autoStep++;
+                robot.resetDriveEncoders();
+                MOErioTurn.resetError();
+                MOErioAuto.resetError();
                 break;
 
             case 5:
@@ -274,7 +277,7 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
 
                 robot.setDrivePower(0.5*LeftSide, -0.5*LeftSide);
 
-                if (reachedHeadingHands(80,LeftSide)) {
+                if (reachedHeadingHands(80,1)) {
                     MOErioTurn.resetError();
                     autoStep++;
                 }

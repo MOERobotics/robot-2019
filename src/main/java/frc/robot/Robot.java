@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new DriveStraightAuto();
+	private GenericAuto    autoProgram   = new MOErioCargoFrontAutoBonus();
 //	UsbCamera cam1;
     int smartDashCounter = 0;
 
@@ -340,12 +340,13 @@ public class Robot extends TimedRobot {
 		if (
 			Math.abs(armPower) < 0.3
 		) armPower = 0;
-		else if (armPower > 0) armPower = 0.3;
-		else if (armPower < 0) armPower = 0.3;
+		else if (armPower > 0) armPower -= 0.3;
+		else if (armPower < 0) armPower += 0.3;
 		//robotHardware.driveArm(-armPower*0.5);
-		robotHardware.driveArm(-armPower);
+		robotHardware.driveArm(-armPower*0.5);
 
 		//elevator
+		//elevator position = -29.7
 		double elevatorPower =
 			functionStick.getTriggerAxis(Hand.kRight) -
 			functionStick.getTriggerAxis(Hand.kLeft );
