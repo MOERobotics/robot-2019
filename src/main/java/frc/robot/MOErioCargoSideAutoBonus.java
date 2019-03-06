@@ -99,7 +99,7 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
         SmartDashboard.putNumber("Z: ",z);
         SmartDashboard.putNumber("Abs Left",  Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
-        //SmartDashboard.putNumber("Left Side", LeftSide);
+        SmartDashboard.putNumber("Left Side", LeftSide);
     }
 
     @Override
