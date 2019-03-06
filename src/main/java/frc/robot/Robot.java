@@ -340,9 +340,10 @@ public class Robot extends TimedRobot {
 		if (
 			Math.abs(armPower) < 0.3
 		) armPower = 0;
-		else if (armPower > 0) armPower -= 0.3;
-		else if (armPower < 0) armPower += 0.3;
-		robotHardware.driveArm(-armPower*0.5);
+		else if (armPower > 0) armPower = 0.3;
+		else if (armPower < 0) armPower = 0.3;
+		//robotHardware.driveArm(-armPower*0.5);
+		robotHardware.driveArm(-armPower);
 
 		//elevator
 		double elevatorPower =
