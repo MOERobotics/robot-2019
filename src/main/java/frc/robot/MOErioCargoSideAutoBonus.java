@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.MOErio;
 
-/*what is happening*/
 public class MOErioCargoSideAutoBonus extends GenericAuto {
 
     PIDModule MOErioAuto = new PIDModule(0.06,0.001,0);
@@ -65,6 +64,7 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
         return false;
     }
 
+    //case 7, bonus begins and normal auto ends
 
     @Override
     public void init() {
@@ -84,7 +84,6 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
         {
             zEffective = z;
         }
-
     }
 
     @Override
@@ -120,6 +119,8 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                     autoStep++;
                 }
                 break;
+
+            /*drive off the HAB*/
             case -1:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
@@ -138,16 +139,14 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                     robot.resetDriveEncoders();
                     }
                 }
-
                 break;
+
             /*Right side- make a right turning arc*/
             /*Left side- make a left turning arc*/
             case 0:
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
 
-                //correction negative, left motor decrease, correction positive, left motor power increase
-                //robot.setDrivePower((0.5)*(1 + correction),(0.3)*(1 - correction));
                 setDrivePowerHands(0.5,0.3,correction,LeftSide);
 
                 if (getDistanceLeftInchesHands(LeftSide) >= 72 /*x1*/) {
@@ -156,15 +155,15 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                     MOErioAuto.resetError();
                 }
                 break;
+
             /*Right side- make a left turning arc*/
             /*Left side- make a right turning arc*/
+            /*you should be sideways to the cargo ship*/
             case 1:
                 louWizardry = leftDistance - rightDistance / zEffective;
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
-//                robot.setDrivePower((0.3)*(1 + correction),(0.5)*(1 - correction));
                 setDrivePowerHands(0.3,0.5,correction,LeftSide);
-
 
                 if (getDistanceRightInchesHands(LeftSide) >= 43 /*x2*/) {
                     autoStep++;
@@ -172,6 +171,8 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                     MOErioAuto.resetError();
                 }
                 break;
+
+            /*roll forward, now in front of hatch*/
             case 2:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
@@ -224,16 +225,22 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                     MOErioAuto.resetError();
                 }
                 break;*/
+
+            /*Right side- turn 90 degrees to the left*/
+            /*Left side- turn 90 degrees to the right*/
+            /*turning towards the hatch*/
             case 3:
                 MOErioTurn.setHeading(robot.getHeadingDegrees());
 
                 robot.setDrivePower(-0.5*LeftSide, 0.5*LeftSide);
 
-                if (reachedHeadingHands(80,-1)) {
+                if (reachedHeadingHands(80,-1*LeftSide)) {
                     MOErioTurn.resetError();
                     autoStep++;
                 }
                 break;
+
+            /*turning cont'd*/
             case 4:
                 MOErioTurn.setHeading(robot.getHeadingDegrees()+90*LeftSide);
                 correction = MOErioTurn.getCorrection();
@@ -250,10 +257,14 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                     turncounter = 0;
                 }
                 break;
+
+            /*random step that could've probably gone into case 4 but whatever*/
             case 5:
                 autoStep++;
                 MOErioAuto.resetError();
                 break;
+
+            /*roll towards the hatch*/
             case 6:
                 MOErioAuto.setHeading(robot.getHeadingDegrees()+90*LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -264,12 +275,9 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 }
 
                 break;
-                /*robot.resetDriveEncoder();
-                robot.setDrivePower((0.3)*(1 + correction),(0.3)*(1 - correction));
 
-                if (robot.getDistanceLeftInches() == /*x4) {
-                    robot.stopDriving();
-                }*/
+            /*bonus begins, set z to 1.77*/
+            /*bonus- go to the loading station*/
             case 7:
                 robot.stopDriving();
                 z = 1.77;
@@ -287,6 +295,7 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 MOErioAuto.resetError();
                 break;
 
+            /*arc backwards to the left, end close and parallel to the rocket*/
             case 8:
                 louWizardry = leftDistance - rightDistance / zEffective;
 
@@ -304,6 +313,7 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 }
                 break;
 
+            /*drive backwards towards the loading station a little*/
             case 9:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
@@ -317,18 +327,21 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 }
                 break;
 
+            /*right side- turn right 90 degrees, face the wall*/
+            /*left side- turn left 90 degrees, face the wall*/
             case 10:
                 MOErioTurn.setHeading(robot.getHeadingDegrees());
 
                 robot.setDrivePower(0.5*LeftSide, -0.5*LeftSide);
 
-                if (reachedHeadingHands(80,1)) {
+                if (reachedHeadingHands(80,1*LeftSide)) {
                     MOErioTurn.resetError();
                     autoStep++;
                     turncounter=0;
                 }
                 break;
 
+            /*turning cont'd*/
             case 11:
                 MOErioTurn.setHeading(robot.getHeadingDegrees()-90*LeftSide);
                 correction = MOErioTurn.getCorrection();
@@ -348,6 +361,7 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 }
                 break;
 
+            /*roll towards the wall*/
             case 12:
                 MOErioAuto.setHeading(robot.getHeadingDegrees()-90*LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -364,16 +378,20 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 }
                 break;
 
+            /*right side- turn right 90 degrees, towards the loading station*/
+            /*left side- turn left 90 degrees, towards the loading station*/
             case 13:
                 MOErioTurn.setHeading(robot.getHeadingDegrees());
 
                 robot.setDrivePower(0.5*LeftSide, -0.5*LeftSide);
 
-                if (reachedHeadingHands(80,1)) {
+                if (reachedHeadingHands(80,1*LeftSide)) {
                     MOErioTurn.resetError();
                     autoStep++;
                 }
                 break;
+
+            /*turning cont'd*/
             case 14:
                 MOErioTurn.setHeading(robot.getHeadingDegrees()-90*LeftSide);
                 correction = MOErioTurn.getCorrection();
@@ -393,6 +411,7 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 }
                 break;
 
+            /*roll forwards, towards the loading station*/
             case 15:
                 MOErioAuto.setHeading(robot.getHeadingDegrees()-90*LeftSide);
                 correction = MOErioAuto.getCorrection();
