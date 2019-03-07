@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new ArmAuto();
+	private GenericAuto    autoProgram   = new UnitTestElevArmPos();
 //	UsbCamera cam1;
     int smartDashCounter = 0;
 
@@ -301,15 +301,20 @@ public class Robot extends TimedRobot {
 
 		//arm
 		//Right stick, up/down rotates.
-		/*if (
+		if (
 			Math.abs(armPower) < 0.2
 		) armPower = 0;
 		else if (armPower > 0) armPower -= 0.2;
+		else if (armPower < 0) armPower += 0.2;
+		robotHardware.driveArm(-armPower);
+
+
+		/*else if (armPower > 0) armPower -= 0.2;
 		else if (armPower < 0) armPower += 0.2;*/
 		//robotHardware.driveArm(-armPower*0.5);
 		/*else if (armPower > 0) armPower = 0.4;
 		else if (armPower < 0) armPower = -0.4;*/
-		robotHardware.driveArm(-armPower);
+
 
 
 		//elevator
@@ -326,7 +331,19 @@ public class Robot extends TimedRobot {
 		robotHardware.driveElevator(elevatorPower*0.8);
 
 		if (functionStick.getStickButton(Hand.kLeft)) {
-			robotHardware.setElevatorOrigin(robotHardware.getElevatorEncoderCount());
+			if (robotHardware.atElevForwardLimit()) {
+				robotHardware.setElevatorOrigin(robotHardware.getElevatorEncoderCount());
+			} else {
+				robotHardware.driveElevator(0.3);
+			}
+			SmartDashboard.putNumber("Elevator Origin: ", robotHardware.getElevatorOrigin());
+
+			if (robotHardware.atArmForwardLimit()) {
+				robotHardware.setArmOrigin(robotHardware.getArmEncoderCount());
+			} else {
+				robotHardware.driveArm(0.3);
+			}
+			SmartDashboard.putNumber("Arm Origin: ", robotHardware.getArmOrigin());
 		}
 
 		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());

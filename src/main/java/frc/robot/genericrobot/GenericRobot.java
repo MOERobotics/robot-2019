@@ -34,6 +34,19 @@ public abstract class GenericRobot {
     	return elevatorOrigin;
 	}
 
+	private double armOrigin;
+	public void setArmOrigin(double origin) {
+		armOrigin = origin;
+	}
+	public double getArmOrigin() {
+		return armOrigin;
+	}
+
+	/*private double elevPos1;
+	private double elevPos2;
+	private double armPos1;
+	private double armPos2;*/
+
     //lidar
 	public abstract int numSensors();
 	public int[] lidar = new int[numSensors()];

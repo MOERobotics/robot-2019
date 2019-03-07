@@ -134,7 +134,7 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void enableElevatorLimits(boolean enabled) {
         elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
     }
 
     @Override
@@ -165,7 +165,7 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void enableArmLimits(boolean enabled) {
         arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
     }
 
     @Override
@@ -286,12 +286,14 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isArmUp() {
-        return !getSafetyOverride() && getArmEncoderCount() >= 100 || atArmForwardLimit();
+        return false;
+        //return !getSafetyOverride() && getArmEncoderCount() >= 100 || atArmForwardLimit();
     }
 
     @Override
     public boolean isArmDown() {
-        return !getSafetyOverride() && getArmEncoderCount() <= -2 || atArmReverseLimit();
+        return false;
+        //return !getSafetyOverride() && getArmEncoderCount() <= -2 || atArmReverseLimit();
     }
 
     @Override
