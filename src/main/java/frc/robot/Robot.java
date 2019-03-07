@@ -8,6 +8,7 @@
 package frc.robot;
 
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
@@ -30,7 +31,7 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new MOErioCargoFrontAutoBonus();
+	private GenericAuto    autoProgram   = new ArmAuto();
 //	UsbCamera cam1;
     int smartDashCounter = 0;
 
@@ -58,8 +59,8 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
 		autoProgram.LeftSide = 1;
-		robotHardware.enableElevatorLimits(false); //-Brian
-		robotHardware.enableArmLimits(false); //-Brian
+		robotHardware.enableElevatorLimits(true); //-Brian
+		robotHardware.enableArmLimits(true); //-Brian
 		robotHardware.shiftLow();
 		robotHardware.floorPickupUp();
 
@@ -142,12 +143,10 @@ public class Robot extends TimedRobot {
             SmartDashboard.putString("modifiedDate: ", modified);
 
             SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
-            SmartDashboard.putNumber("LeftSide: ", autoProgram.LeftSide);
+            SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
             autoProgram.printSmartDashboard();
 
             SmartDashboard.putString("PixyInfo: ", pixy.toString());
-
-			SmartDashboard.putNumber("GRABSTEP: ", grabStep);
         }
 		if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
@@ -195,6 +194,11 @@ public class Robot extends TimedRobot {
 			autoProgram.LeftSide = -1;
 			autoProgram.robot = robotHardware;
 		}
+
+		if (functionStick.getAButton()) robotHardware.enableElevatorLimits(false);
+		else if (functionStick.getBButton()) robotHardware.enableArmLimits(false);
+		else if (functionStick.getXButton()) robotHardware.enableElevatorLimits(true);
+		else if (functionStick.getYButton()) robotHardware.enableArmLimits(true);
 
 	}
 
@@ -284,48 +288,6 @@ public class Robot extends TimedRobot {
 		if      (functionStick.getXButton()) robotHardware.spearHook  ();
 		else if (functionStick.getYButton()) robotHardware.spearUnhook();
 
-		/*if (functionStick.getAButton()) {
-			//extend, open, retract
-			switch (grabStep) {
-				case 0:
-					robotHardware.spearOut();
-					startTime = System.currentTimeMillis();
-					if (robotHardware.getSpearShaftState() == true) grabStep = 1;
-					break;
-				case 1:
-					if (System.currentTimeMillis() >= startTime + 1000) {
-						robotHardware.spearUnhook();
-						startTime = System.currentTimeMillis();
-						grabStep = 2;
-					}
-					break;
-				case 2:
-					if (System.currentTimeMillis() >= startTime + 250) robotHardware.spearIn();
-					grabStep = 0;
-					break;
-			}
-		} else if (functionStick.getBButton()) {
-			//extend, close, retract
-			switch (grabStep) {
-				case 0:
-					robotHardware.spearOut();
-					startTime = System.currentTimeMillis();
-					if (robotHardware.getSpearShaftState() == true) grabStep = 1;
-					break;
-				case 1:
-					if (System.currentTimeMillis() >= startTime + 1000) {
-						robotHardware.spearHook();
-						startTime = System.currentTimeMillis();
-						grabStep = 2;
-					}
-					break;
-				case 2:
-					if (System.currentTimeMillis() >= startTime + 250) robotHardware.spearIn();
-					grabStep = 0;
-					break;
-			}
-		}*/
-
 		//roller
 		//TODO: bumpers
 		if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
@@ -347,9 +309,7 @@ public class Robot extends TimedRobot {
 		//robotHardware.driveArm(-armPower*0.5);
 		/*else if (armPower > 0) armPower = 0.4;
 		else if (armPower < 0) armPower = -0.4;*/
-
 		robotHardware.driveArm(-armPower);
-
 
 
 		//elevator
@@ -364,6 +324,10 @@ public class Robot extends TimedRobot {
 		else if (elevatorPower > 0) elevatorPower -= 0.3;
 		else if (elevatorPower < 0) elevatorPower += 0.3;
 		robotHardware.driveElevator(elevatorPower*0.8);
+
+		if (functionStick.getStickButton(Hand.kLeft)) {
+			robotHardware.setElevatorOrigin(robotHardware.getElevatorEncoderCount());
+		}
 
 		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		switch (controlPadDirection) {

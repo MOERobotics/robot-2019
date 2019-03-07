@@ -25,7 +25,7 @@ public class Lidar {
         try {
             lidarString = new String(Blinky.readString());
             System.out.println("Straight from Blinky: " + lidarString + ";");
-            SmartDashboard.putString("Straight from Blinky: ", lidarString);
+            //SmartDashboard.putString("Straight from Blinky: ", lidarString);
             SmartDashboard.putString("We caught an error on reading the port", "");
         } catch (Exception e) {
             exception = "exception " + e;
@@ -34,21 +34,41 @@ public class Lidar {
         }
 
         if (!lidarString.equals("")) {
-            if (lidarString.indexOf(" ") != -1)
-                lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
+            /*if (lidarString.indexOf(" ") != -1)
+                lString[num] = lidarString.substring(0, lidarString.indexOf(" "));*/
 
-            /*if (lidarString.indexOf("1-") == lidarString.length() - 2) {
-                lString[1] = lidarString.substring(0, lidarString.indexOf("0-")).trim();
-                lString[0] = lidarString.substring(lidarString.indexOf("0-") + 2, lidarString.lastIndexOf(" ")).trim();
+            //46 0-40 1-
+
+            if (lidarString.indexOf("1-") == lidarString.length() - 2) {
+                try {
+                    lString[1] = lidarString.substring(0, lidarString.indexOf("0-")).trim();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                try {
+                    lString[0] = lidarString.substring(lidarString.indexOf("0-") + 2, lidarString.lastIndexOf(" ")).trim();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             } else if (lidarString.indexOf("0-") == lidarString.length() - 2) {
-                lString[0] = lidarString.substring(0, lidarString.indexOf("1-")).trim();
-                lString[1] = lidarString.substring(lidarString.indexOf("1-") + 2, lidarString.lastIndexOf(" ")).trim();
-            } */
+                try {
+                    lString[0] = lidarString.substring(0, lidarString.indexOf("1-")).trim();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                try {
+                    lString[1] = lidarString.substring(lidarString.indexOf("1-") + 2, lidarString.lastIndexOf(" ")).trim();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+
+            //SmartDashboard.putString("l, l0, l1", lidarString + ", " + lString[0] + ", " + lString[1]);
 
             //parsings substrings
             for (i = 0; i < us.numSensors(); i++) {
                 try {
-                    l[i] = Integer.parseInt(lString[0]);
+                    l[i] = Integer.parseInt(lString[i]);
                     SmartDashboard.putString("Lidar " + i + " parsing error: ", "");
                 } catch (Exception e) {
                     exception = "ERROR " + e;
@@ -57,7 +77,7 @@ public class Lidar {
             }
 
             SmartDashboard.putNumber("Lidar 0: ", l[0]);
-            //SmartDashboard.putNumber("Lidar 1: ", l[1]);
+            SmartDashboard.putNumber("Lidar 1: ", l[1]);
             /*SmartDashboard.putNumber("Lidar 2: ", l[2]);
             SmartDashboard.putNumber("Lidar 3: ", l[3]);
             SmartDashboard.putNumber("Lidar 4: ", l[4]);
@@ -66,7 +86,7 @@ public class Lidar {
             SmartDashboard.putNumber("Lidar 7: ", l[7]);*/
 
             us.lidar[0] = l[0];
-            //us.lidar[1] = l[1];
+            us.lidar[1] = l[1];
             /*us.lidar[2] = l[2];
             us.lidar[3] = l[3];
             us.lidar[4] = l[4];
