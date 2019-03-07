@@ -11,7 +11,7 @@ import frc.robot.genericrobot.GenericRobot;
 
 public class MOErio extends GenericRobot {
 
-    final double TICKS_TO_INCHES = 45;
+    final double TICKS_TO_INCHES = 44;
 
     TalonSRX driveLA = new TalonSRX(0) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX driveLB = new TalonSRX(15) {{setNeutralMode(NeutralMode.Brake);}};
@@ -29,6 +29,21 @@ public class MOErio extends GenericRobot {
 
     DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
     DigitalInput elevatorTopLimitSwitch    = new DigitalInput(7);
+
+    @Override
+    public int numSensors() {
+        return 1;
+    }
+
+    @Override
+    public void shiftSpearShaftInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftSpearHookInternal(boolean out) {
+
+    }
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
@@ -50,11 +65,6 @@ public class MOErio extends GenericRobot {
     @Override
     protected void setElevatorInternal(double power) {
         elevator.set(ControlMode.PercentOutput, power);
-    }
-
-    @Override
-    protected void setTurretInternal(double power) {
-        //no turret!
     }
 
     @Override
@@ -100,8 +110,6 @@ public class MOErio extends GenericRobot {
         rollRight.set(ControlMode.PercentOutput, power);
     }
 
-
-
     @Override
     public void checkSafety() {
         if (isElevatorUp()) driveElevator(0);
@@ -110,19 +118,13 @@ public class MOErio extends GenericRobot {
         if (isArmDown()) driveArm(0);
     }
 
-
     @Override
-    public double getElevatorEncoderCount() {
+    public double getElevatorEncoderCountInternal() {
         return encoderElevator.get();
     }
 
     @Override
-    public double getTurretEncoderCount() {
-        return 0;
-    }
-
-    @Override
-    public double getArmEncoderCount() {
+    public double getArmEncoderCountInternal() {
         return encoderWrist.get();
     }
 
@@ -132,7 +134,30 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
+    public void shiftDriveInternal(DoubleSolenoid.Value value) {
+
+    }
+
+    @Override
     public double getRollDegrees() {
         return navx.getRoll();
     }
+
+    @Override
+    public void climbInternal(double power) {
+
+    }
+
+    @Override
+    public double getClimberLEncoderCount() {
+        return 0;
+    }
+
+    @Override
+    public double getClimberREncoderCount() {
+        return 0;
+    }
+    public  void climbSupportUp(double power){}
+    public  void climbFreeUp(double power){}
+    public  void climb2(boolean state){}
 }

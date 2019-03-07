@@ -24,10 +24,11 @@ public class CaMOElot extends GenericRobot {
     private TalonSRX shootMotorA = new TalonSRX(10);
     private TalonSRX shootMotorB = new TalonSRX(11);
 
-    Encoder  encoderL    = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
-    Encoder  encoderR    = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
+    Encoder  encoderL = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
+    Encoder  encoderR = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
+
 
     public CaMOElot() {
         leftMotorA.setNeutralMode(NeutralMode.Brake);
@@ -53,6 +54,10 @@ public class CaMOElot extends GenericRobot {
         rightMotorC.set(ControlMode.PercentOutput, rightMotor);
     }
 
+    @Override
+    public int numSensors() {
+        return 0;
+    }
 
     @Override
     public double getDistanceLeftInches() {
@@ -96,6 +101,21 @@ public class CaMOElot extends GenericRobot {
         shootMotorB.set(ControlMode.PercentOutput,power*0.2);
     }
 
+    @Override
+    public void shiftSpearShaftInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftSpearHookInternal(boolean out) {
+
+    }
+
+    @Override
+    public void shiftDriveInternal(DoubleSolenoid.Value value) {
+
+    }
+
 	//Fake some parts
 
     double fakeArmEncoder = 0;
@@ -119,28 +139,41 @@ public class CaMOElot extends GenericRobot {
 	}
 
 	@Override
-	protected void setTurretInternal(double power) {
-		fakeTurretPower = power;
-	}
-
-	@Override
 	protected void setArmInternal(double power) {
 		fakeArmPower = power;
 	}
 
     @Override
-    public double getElevatorEncoderCount() {
+    public double getElevatorEncoderCountInternal() {
         return fakeElevatorEncoder;
     }
 
     @Override
-    public double getTurretEncoderCount() {
-        return fakeTurretEncoder;
-    }
-
-    @Override
-    public double getArmEncoderCount() {
+    public double getArmEncoderCountInternal() {
         return fakeArmEncoder;
     }
 
+    @Override
+    public void climbInternal(double power) {
+
+    }
+
+    @Override
+    public void shiftFloorPickupInternal(boolean out) {
+
+    }
+
+    @Override
+    public double getClimberLEncoderCount() {
+        return 0;
+    }
+
+    @Override
+    public double getClimberREncoderCount() {
+        return 0;
+    }
+
+    public  void climbSupportUp(double power){}
+    public  void climbFreeUp(double power){}
+    public  void climb2(boolean state){}
 }

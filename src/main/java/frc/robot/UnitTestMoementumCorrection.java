@@ -2,10 +2,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveStraightAuto extends GenericAuto {
+public class UnitTestMoementumCorrection extends GenericAuto {
 
     PIDModule straightPid = new PIDModule(0.06, 0.001,0.0);
     long startTime = 0;
+    int moementumCorrection = 0;
 
     @Override
     public void init() {
@@ -35,7 +36,7 @@ public class DriveStraightAuto extends GenericAuto {
                 double correction = straightPid.getCorrection();
                 //correction negative, left motor increase decrease. correction positive, left motor power increase.
                 robot.setDrivePower(0.3*(1 + correction),0.3*(1 - correction));
-                if(Math.abs(robot.getDistanceLeftInches()) >= 96) {
+                if(robot.lidar[0] <= 545+moementumCorrection) {
                     autoStep++;
                 } else {
                     break;
