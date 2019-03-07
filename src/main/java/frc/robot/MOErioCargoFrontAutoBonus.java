@@ -9,7 +9,7 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
     long startTime = 0;
     double z = 1.81;
     double louWizardry = 0;
-    int LeftSide = 1;
+    //int LeftSide = 1;
     int turncounter = 0;
     boolean levelTwo = true;
     double moementumCorrection = 100;
@@ -302,12 +302,24 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
                 }
                 break;
 
-            /*roll towards the loading station*/
+            /*roll forwards, towards the loading station*/
             case 9:
                 MOErioAuto.setHeading(robot.getHeadingDegrees()-90*LeftSide);
                 correction = MOErioAuto.getCorrection();
 
-                //correction negative, left motor decrease, correction positive, left motor power increase
+                robot.setDrivePower((1.0)*(1 + correction),(1.0)*(1 - correction));
+
+                if(leftDistance >= 108) {
+                    autoStep++;
+                    robot.resetDriveEncoders();
+                    MOErioAuto.resetError();
+                }
+                break;
+
+            case 10:
+                MOErioAuto.setHeading(robot.getHeadingDegrees()-90*LeftSide);
+                correction = MOErioAuto.getCorrection();
+
                 robot.setDrivePower((0.4)*(1 + correction),(0.4)*(1 - correction));
 
                 if(robot.lidar[0] <= 545+moementumCorrection) {
@@ -317,10 +329,9 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
                 }
                 break;
 
-            case 10:
+            case 11:
                 robot.stopDriving();
                 break;
-
 
 
 
