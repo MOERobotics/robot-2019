@@ -63,6 +63,10 @@ public class SuperMOEva extends GenericRobot {
         rollL.setInverted(true);
         //arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
         elevator.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        froggerLA.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        froggerLB.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        froggerRA.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        froggerRB.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
 
     //lidar
@@ -246,7 +250,7 @@ public class SuperMOEva extends GenericRobot {
             froggerLA.set(leftPower);
             froggerLB.set(leftPower);
             froggerRA.set(0.9*rightPower);
-            froggerRB.set(0.9*rightPower);
+            froggerRB.set(0.9 *rightPower);
         } else {
             froggerLA.set(leftPower);
             froggerLB.set(leftPower);
