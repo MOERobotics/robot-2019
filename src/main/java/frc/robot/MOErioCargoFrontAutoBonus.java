@@ -206,7 +206,7 @@ public class MOErioCargoFrontAutoBonus extends GenericAuto {
 
                 robot.setDrivePower((0.3)*(1 + correction),(0.3)*(1 - correction));
 
-                if (robot.lidar[0] <= 545+moementumCorrection) {
+                if (robot.lidar[0] <= 605+moementumCorrection) {
                     autoStep++;
                 }
 
