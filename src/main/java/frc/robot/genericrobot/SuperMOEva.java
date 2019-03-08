@@ -9,6 +9,7 @@ import com.revrobotics.*;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SuperMOEva extends GenericRobot {
 
@@ -236,22 +237,39 @@ public class SuperMOEva extends GenericRobot {
     //Hab Climb
     //rip frogger 2019-2019 //just kidding frogger is alive again! hallelujah
     public void climbInternal(double power) {
-        double deltaEncoder =
-            encoderFrogL.getPosition() -
-            encoderFrogR.getPosition();
+        //double deltaEncoder =
+        //    encoderFrogL.getPosition() -
+        //    encoderFrogR.getPosition();
         double
              leftPower = power,
             rightPower = power;
-        if (power < 0 && deltaEncoder > 10) {
-            leftPower = 0;
+        //if (power < 0 && deltaEncoder > 10) {
+        //    leftPower = 0;
+        //}
+        //if (power > 0 && deltaEncoder < 10) {
+         //   rightPower = 0;
+        //}
+        if (navX.getRoll()<-3) {
+            froggerLA.set(0.9*leftPower);
+            froggerLB.set(0.9*leftPower);
+            froggerRA.set(rightPower);
+            froggerRB.set(rightPower);
         }
-        if (power > 0 && deltaEncoder < 10) {
-            rightPower = 0;
+        else if (navX.getRoll()>3) {
+            froggerLA.set(leftPower);
+            froggerLB.set(leftPower);
+            froggerRA.set(0.9*rightPower);
+            froggerRB.set(0.9 *rightPower);
+        } else {
+            froggerLA.set(leftPower);
+            froggerLB.set(leftPower);
+            froggerRA.set(rightPower);
+            froggerRB.set(rightPower);
         }
-        froggerLA.set( leftPower);
-        froggerLB.set( leftPower);
-        froggerRA.set(rightPower);
-        froggerRB.set(rightPower);
+
+        SmartDashboard.putNumber("Left Power", leftPower);
+        SmartDashboard.putNumber("Right Power", rightPower);
+
     }
 
     /*public void climbInternal(double power) {
