@@ -37,8 +37,6 @@ public class Lidar {
             /*if (lidarString.indexOf(" ") != -1)
                 lString[num] = lidarString.substring(0, lidarString.indexOf(" "));*/
 
-            //46 0-40 1-
-
             if (lidarString.indexOf("1-") == lidarString.length() - 2) {
                 try {
                     lString[1] = lidarString.substring(0, lidarString.indexOf("0-")).trim();
@@ -63,8 +61,6 @@ public class Lidar {
                 }
             }
 
-            //SmartDashboard.putString("l, l0, l1", lidarString + ", " + lString[0] + ", " + lString[1]);
-
             //parsings substrings
             for (i = 0; i < us.numSensors(); i++) {
                 try {
@@ -76,23 +72,10 @@ public class Lidar {
                 }
             }
 
-            SmartDashboard.putNumber("Lidar 0: ", l[0]);
-            SmartDashboard.putNumber("Lidar 1: ", l[1]);
-            /*SmartDashboard.putNumber("Lidar 2: ", l[2]);
-            SmartDashboard.putNumber("Lidar 3: ", l[3]);
-            SmartDashboard.putNumber("Lidar 4: ", l[4]);
-            SmartDashboard.putNumber("Lidar 5: ", l[5]);
-            SmartDashboard.putNumber("Lidar 6: ", l[6]);
-            SmartDashboard.putNumber("Lidar 7: ", l[7]);*/
-
-            us.lidar[0] = l[0];
-            us.lidar[1] = l[1];
-            /*us.lidar[2] = l[2];
-            us.lidar[3] = l[3];
-            us.lidar[4] = l[4];
-            us.lidar[5] = l[5];
-            us.lidar[6] = l[6];
-            us.lidar[7] = l[7];*/
+            for (int j = 0; j < us.numSensors(); j++) {
+                SmartDashboard.putNumber("Lidar " + j + ": ", l[j]);
+                us.lidar[j] = l[j];
+            }
 
         }
     }

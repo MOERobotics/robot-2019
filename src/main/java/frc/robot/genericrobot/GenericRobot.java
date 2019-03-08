@@ -16,7 +16,7 @@ public abstract class GenericRobot {
 	private double       climbPower;
     private boolean spearShaftState;
     private boolean  spearHookState;
-    private boolean floorPickupState;
+    private DoubleSolenoid.Value floorPickupState = DoubleSolenoid.Value.kOff;
 
 	private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
 
@@ -41,11 +41,6 @@ public abstract class GenericRobot {
 	public double getArmOrigin() {
 		return armOrigin;
 	}
-
-	/*private double elevPos1;
-	private double elevPos2;
-	private double armPos1;
-	private double armPos2;*/
 
     //lidar
 	public abstract int numSensors();
@@ -119,8 +114,9 @@ public abstract class GenericRobot {
     protected abstract void setElevatorInternal(double power);
 	public boolean isElevForwardLimitEnabled() {return false;}
 	public boolean isElevReverseLimitEnabled() {return false;}
-	public boolean atElevForwardLimit() {return false;}
-	public boolean atElevReverseLimit() {return false;}
+	/*public boolean atElevForwardLimit() {return false;}
+	public boolean atElevReverseLimit() {return false;}*/
+
 	//</editor-fold>
 
     //Turret <editor-fold>
@@ -152,8 +148,8 @@ public abstract class GenericRobot {
     public void    enableArmLimits(boolean enabled) {}
     public boolean isArmForwardLimitEnabled() {return false;}
     public boolean isArmReverseLimitEnabled() {return false;}
-    public boolean atArmForwardLimit() {return false;}
-    public boolean atArmReverseLimit() {return false;}
+    /*public boolean atArmForwardLimit() {return false;}
+    public boolean atArmReverseLimit() {return false;}*/
 	//</editor-fold>
 
     //Roller <editor-fold>
@@ -192,14 +188,14 @@ public abstract class GenericRobot {
 	//public abstract void grabberClosedCombo();
 
 	//Floor Hatch Grab
-	public void floorPickupUp() { shiftFloorPickup(false); }
-	public void floorPickupDown() { shiftFloorPickup( true); }
-	public void shiftFloorPickup(boolean out) {
+	public void floorPickupUp() { shiftFloorPickup(DoubleSolenoid.Value.kReverse); }
+	public void floorPickupDown() { shiftFloorPickup( DoubleSolenoid.Value.kForward); }
+	public void shiftFloorPickup(DoubleSolenoid.Value out) {
 		this.floorPickupState = out;
 		shiftFloorPickupInternal(out);
 	}
-	public void shiftFloorPickupInternal(boolean out) {};
-	public boolean getFloorPickupState() {return floorPickupState;}
+	public void shiftFloorPickupInternal(DoubleSolenoid.Value out) {};
+	public DoubleSolenoid.Value getFloorPickupState() {return floorPickupState;}
 
 	//Habitat Climb <editor-fold>
 	public void climbUp  (double power) {climb(-power);}

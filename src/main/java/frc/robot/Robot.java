@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
@@ -59,8 +57,8 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
 		autoProgram.LeftSide = 1;
-		robotHardware.enableElevatorLimits(true); //-Brian
-		robotHardware.enableArmLimits(true); //-Brian
+		robotHardware.enableElevatorLimits(false); //-Brian
+		robotHardware.enableArmLimits(false); //-Brian
 		robotHardware.shiftLow();
 		robotHardware.floorPickupUp();
 
@@ -102,7 +100,10 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Arm Power: ", robotHardware.getArmPower());
             SmartDashboard.putNumber("Elevator Power: ", robotHardware.getElevatorPower());
             SmartDashboard.putNumber("Roller Power: ", robotHardware.getRollerPower());
-            SmartDashboard.putNumber("Climber Power: ", robotHardware.getClimbPower());
+            //SmartDashboard.putNumber("Climber Power: ", robotHardware.getClimbPower());
+
+			SmartDashboard.putNumber("Elevator Origin: ", robotHardware.getElevatorOrigin());
+			SmartDashboard.putNumber("Arm Origin: ", robotHardware.getArmOrigin());
 
             SmartDashboard.putBoolean("Is ArmDown: ", robotHardware.isArmDown());
             SmartDashboard.putBoolean("Is ArmUp: ", robotHardware.isArmUp());
@@ -113,17 +114,17 @@ public class Robot extends TimedRobot {
             SmartDashboard.putString("Shifter State: ", robotHardware.getShifterSolenoidState().name());
             SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
             SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
-            SmartDashboard.putBoolean("Floor Pickup State: ", robotHardware.getFloorPickupState());
+            SmartDashboard.putString("Floor Pickup State: ", robotHardware.getFloorPickupState().name());
 
             SmartDashboard.putBoolean("Elevator Forward Limit Enabled: ", robotHardware.isElevForwardLimitEnabled());
-            SmartDashboard.putBoolean("At Elevator Forward Limit: ", robotHardware.atElevForwardLimit());
+            //SmartDashboard.putBoolean("At Elevator Forward Limit: ", robotHardware.atElevForwardLimit());
             SmartDashboard.putBoolean("Elevator Reverse Limit Enabled: ", robotHardware.isElevReverseLimitEnabled());
-            SmartDashboard.putBoolean("At Elevator Reverse Limit: ", robotHardware.atElevReverseLimit());
+            //SmartDashboard.putBoolean("At Elevator Reverse Limit: ", robotHardware.atElevReverseLimit());
 
             SmartDashboard.putBoolean("Arm Forward Limit Enabled: ", robotHardware.isArmForwardLimitEnabled());
-            SmartDashboard.putBoolean("At Arm Forward Limit: ", robotHardware.atArmForwardLimit());
+            //SmartDashboard.putBoolean("At Arm Forward Limit: ", robotHardware.atArmForwardLimit());
             SmartDashboard.putBoolean("Arm Reverse Limit Enabled: ", robotHardware.isArmReverseLimitEnabled());
-            SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
+            //SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
 
             SmartDashboard.putNumber("Frogger Power: ", robotHardware.getClimbPower());
             SmartDashboard.putNumber("Frogger Left Encoder: ", robotHardware.getClimberLEncoderCount());
@@ -160,7 +161,6 @@ public class Robot extends TimedRobot {
 	public void disabledInit () {
 		robotHardware.shiftSpearHook(false);
 		robotHardware.shiftSpearShaft(false);
-
 	}
 
 	@Override
@@ -199,7 +199,6 @@ public class Robot extends TimedRobot {
 		else if (functionStick.getBButton()) robotHardware.enableArmLimits(false);
 		else if (functionStick.getXButton()) robotHardware.enableElevatorLimits(true);
 		else if (functionStick.getYButton()) robotHardware.enableArmLimits(true);
-
 	}
 
 	@Override
@@ -262,18 +261,9 @@ public class Robot extends TimedRobot {
 		}
 
 		//Climbing
-
-        //POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		if      (leftJoystick.getRawButton( 9)) robotHardware.climbUp  (1.0);
 		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
-		//else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
-		//else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
-
         else                                    robotHardware.climb    (0.0);
-
-
-		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
-		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
         if(leftJoystick.getRawButtonPressed(11))    robotHardware.climb2(true);
@@ -308,15 +298,6 @@ public class Robot extends TimedRobot {
 		else if (armPower < 0) armPower += 0.2;
 		robotHardware.driveArm(-armPower);
 
-
-		/*else if (armPower > 0) armPower -= 0.2;
-		else if (armPower < 0) armPower += 0.2;*/
-		//robotHardware.driveArm(-armPower*0.5);
-		/*else if (armPower > 0) armPower = 0.4;
-		else if (armPower < 0) armPower = -0.4;*/
-
-
-
 		//elevator
 		//elevator position = -29.7
 		double elevatorPower =
@@ -331,19 +312,17 @@ public class Robot extends TimedRobot {
 		robotHardware.driveElevator(elevatorPower*0.8);
 
 		if (functionStick.getStickButton(Hand.kLeft)) {
-			if (robotHardware.atElevForwardLimit()) {
+			if (robotHardware.isElevatorUp()) {
 				robotHardware.setElevatorOrigin(robotHardware.getElevatorEncoderCount());
 			} else {
 				robotHardware.driveElevator(0.3);
 			}
-			SmartDashboard.putNumber("Elevator Origin: ", robotHardware.getElevatorOrigin());
 
-			if (robotHardware.atArmForwardLimit()) {
+			if (robotHardware.isArmUp()) {
 				robotHardware.setArmOrigin(robotHardware.getArmEncoderCount());
 			} else {
 				robotHardware.driveArm(0.3);
 			}
-			SmartDashboard.putNumber("Arm Origin: ", robotHardware.getArmOrigin());
 		}
 
 		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
@@ -367,7 +346,6 @@ public class Robot extends TimedRobot {
 			default:
 				break;
 		}
-
 	}
 
 	public enum POVDirection {
