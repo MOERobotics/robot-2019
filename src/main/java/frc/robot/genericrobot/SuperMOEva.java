@@ -269,7 +269,6 @@ public class SuperMOEva extends GenericRobot {
 
         SmartDashboard.putNumber("Left Power", leftPower);
         SmartDashboard.putNumber("Right Power", rightPower);
-
     }
 
     /*public void climbInternal(double power) {
