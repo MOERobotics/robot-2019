@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
-import io.github.pseudoresonance.pixy2api.Pixy2Line;
+//import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
@@ -264,8 +264,10 @@ public class Robot extends TimedRobot {
 		//Climbing
 
         //POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
-		if      (leftJoystick.getRawButton( 9)) robotHardware.climbUp  (1.0);
+		if      (leftJoystick.getRawButton( 9)) robotHardware.climb  (1.0);
 		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
+
+
 		//else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
 		//else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
 
