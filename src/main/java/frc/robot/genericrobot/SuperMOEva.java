@@ -9,6 +9,7 @@ import com.revrobotics.*;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SuperMOEva extends GenericRobot {
 
@@ -235,13 +236,13 @@ public class SuperMOEva extends GenericRobot {
         //if (power > 0 && deltaEncoder < 10) {
          //   rightPower = 0;
         //}
-        if (navX.getRoll()>3) {
+        if (navX.getRoll()<-3) {
             froggerLA.set(0.9*leftPower);
             froggerLB.set(0.9*leftPower);
             froggerRA.set(rightPower);
             froggerRB.set(rightPower);
         }
-        else if (navX.getRoll()<-3) {
+        else if (navX.getRoll()>3) {
             froggerLA.set(leftPower);
             froggerLB.set(leftPower);
             froggerRA.set(0.9*rightPower);
@@ -252,6 +253,10 @@ public class SuperMOEva extends GenericRobot {
             froggerRA.set(rightPower);
             froggerRB.set(rightPower);
         }
+
+        SmartDashboard.putNumber("Left Power", leftPower);
+        SmartDashboard.putNumber("Right Power", rightPower);
+
     }
 
     /*public void climbInternal(double power) {

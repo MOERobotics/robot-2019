@@ -55,6 +55,9 @@ public class Robot extends TimedRobot {
 	long startTime;
 	int grabStep;
 
+	public double ClimbEncoderOrigin = 0;
+	static final double HABheight = 20;
+
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
@@ -64,6 +67,7 @@ public class Robot extends TimedRobot {
 		robotHardware.shiftLow();
 		robotHardware.floorPickupUp();
 
+		ClimbEncoderOrigin = robotHardware.getClimberLEncoderCount();
 		//opening serial port
 		if (!PortOpen) {
 		  PortOpen = true;
@@ -165,7 +169,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic () {
-		if (leftJoystick.getRawButton(2)) {
+//        ClimbEncoderOrigin = robotHardware.getClimberLEncoderCount();
+
+        if (leftJoystick.getRawButton(2)) {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
 		}
@@ -264,14 +270,22 @@ public class Robot extends TimedRobot {
 		//Climbing
 
         //POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
-		if      (leftJoystick.getRawButton( 9)) robotHardware.climb  (1.0);
-		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
+		if (Math.abs(robotHardware.getClimberLEncoderCount()-ClimbEncoderOrigin) < HABheight) {
+            if      (leftJoystick.getRawButton( 9)) robotHardware.climb  (0.5);
+            else if (leftJoystick.getRawButton(10)) robotHardware.climb(-1.0);
 
 
-		//else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
-		//else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
+                //else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
+                //else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
 
-        else                                    robotHardware.climb    (0.0);
+            else                                    robotHardware.climb    (0.0);
+        }
+        if (Math.abs(robotHardware.getClimberLEncoderCount()-ClimbEncoderOrigin) >= HABheight) {
+            if (leftJoystick.getRawButton(10))
+            {
+                robotHardware.climb2(true);
+            }
+        }
 
 
 		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
