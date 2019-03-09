@@ -159,5 +159,11 @@ public class MOErio extends GenericRobot {
     }
     public  void climbSupportUp(double power){}
     public  void climbFreeUp(double power){}
+
+    @Override
+    public void climb2(DoubleSolenoid.Value state) {
+
+    }
+
     public  void climb2(boolean state){}
 }

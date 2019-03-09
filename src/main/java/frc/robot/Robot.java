@@ -107,10 +107,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Arm Power: ", robotHardware.getArmPower());
             SmartDashboard.putNumber("Elevator Power: ", robotHardware.getElevatorPower());
             SmartDashboard.putNumber("Roller Power: ", robotHardware.getRollerPower());
-            //SmartDashboard.putNumber("Climber Power: ", robotHardware.getClimbPower());
-
-			SmartDashboard.putNumber("Elevator Origin: ", robotHardware.getElevatorOrigin());
-			SmartDashboard.putNumber("Arm Origin: ", robotHardware.getArmOrigin());
+            SmartDashboard.putNumber("Climber Power: ", robotHardware.getClimbPower());
 
             SmartDashboard.putBoolean("Is ArmDown: ", robotHardware.isArmDown());
             SmartDashboard.putBoolean("Is ArmUp: ", robotHardware.isArmUp());
@@ -168,6 +165,7 @@ public class Robot extends TimedRobot {
 	public void disabledInit () {
 		robotHardware.shiftSpearHook(false);
 		robotHardware.shiftSpearShaft(false);
+
 	}
 
 	@Override
@@ -287,80 +285,47 @@ public class Robot extends TimedRobot {
 		}
 
 		//Climbing
-        //manual climb
-        if      (leftJoystick.getRawButtonPressed(8)){
-            robotHardware.climb  (0.2);
-            SmartDashboard.putString("BUTTON PRESSED", "8 - GOING UP, FEET DOWN");
-        }
-        else if (leftJoystick.getRawButtonPressed(7)) {
-            robotHardware.climb(-0.2);
-            SmartDashboard.putString("BUTTON PRESSED", "7 - GOING DOWN, FEET UP");
-        }
-        else {
-            robotHardware.climb(0);
-            SmartDashboard.putString("BUTTON PRESSED", "NONE - POWER 0");
-        }
 
-        if (leftJoystick.getRawButtonPressed(5)) {
-            robotHardware.stopEverything();
-            SmartDashboard.putString("BUTTON PRESSED", "5 - KILL - POWER 0");
+		if (leftJoystick.getRawButton(9))
+		{
+			robotHardware.climb(-1.0);
+		}
+		else if (leftJoystick.getRawButton(10))
+		{
+			robotHardware.climb(0.2);
+		}
+		else {
+			robotHardware.climb(0);
+		}
+        //POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
+		/*
+		if (Math.abs(robotHardware.getClimberLEncoderCount()-ClimbEncoderOrigin) < HABheight) {
+            if      (leftJoystick.getRawButton( 9)) robotHardware.climb  (0.5);
+            else if (leftJoystick.getRawButton(10)) robotHardware.climb(-1.0);
 
+
+                //else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
+                //else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
+
+            else                                    robotHardware.climb    (0.0);
         }
-
-        //hab2
-        /*atHabHeight2 = (Math.abs(robotHardware.getClimberLEncoderCount() - ClimbEncoderOrigin)) >= HABheight2;
-        if      (leftJoystick.getRawButtonPressed(8)) robotHardware.climb  (0.5);
-        else if (leftJoystick.getRawButtonPressed(7)) {
-            if (!atHabHeight2) {
-                robotHardware.climb(-1.0);
-                SmartDashboard.putBoolean("Climb 2 State: ", false);
-            } else {
-                robotHardware.climb(0);
-                if (atHabHeight2) {
-                    robotHardware.climb2(true);
-                    SmartDashboard.putBoolean("Climb 2 State: ", true);
-                    //raise the arm
-                }
+        if (Math.abs(robotHardware.getClimberLEncoderCount()-ClimbEncoderOrigin) >= HABheight) {
+            if (leftJoystick.getRawButton(10))
+            {
+                robotHardware.climb2(true);
             }
-        } else {
-            robotHardware.climb(0);
-            SmartDashboard.putBoolean("Climb 2 State: ", false);
-        }*/
+        }
+	*/
 
-        //hab3
-        atHabHeight3 = (Math.abs(robotHardware.getClimberLEncoderCount() - ClimbEncoderOrigin)) >= HABheight3;
-        /*if      (leftJoystick.getRawButtonPressed(10)) robotHardware.climb  (0.5);
-        else if (leftJoystick.getRawButtonPressed(9)) {
-            if (!atHabHeight3) {
-                robotHardware.climb(-1.0);
-                SmartDashboard.putBoolean("Climb 2 State: ", false);
-            } else {
-                robotHardware.climb(0);
-                if (atHabHeight3) {
-                    robotHardware.climb2(true);
-                    SmartDashboard.putBoolean("Climb 2 State: ", true);
-                    //raise the arm
-                }
-            }
-        } else {
-            robotHardware.climb(0);
-            SmartDashboard.putBoolean("Climb 2 State: ", false);
-        }*/
+		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
+		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
-        if(leftJoystick.getRawButtonPressed(11))     robotHardware.climb2(DoubleSolenoid.Value.kForward);
+        if(leftJoystick.getRawButtonPressed(11))    robotHardware.climb2(DoubleSolenoid.Value.kForward);
         if(leftJoystick.getRawButtonReleased(11))    robotHardware.climb2(DoubleSolenoid.Value.kReverse);
 
         if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();
 		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
-
-		/*if (leftJoystick.getRawButton(14)) {
-            robotHardware.enableElevatorLimits(true); //always have opposite
-            robotHardware.enableArmLimits(true);
-        } else {
-            robotHardware.enableElevatorLimits(false);
-            robotHardware.enableArmLimits(false);
-        }*/
 
 		//hatchGrab
 		if      (functionStick.getAButton()) robotHardware.spearIn    ();
@@ -388,18 +353,27 @@ public class Robot extends TimedRobot {
 		else if (armPower < 0) armPower += 0.2;
 		robotHardware.driveArm(-armPower);
 
+
+		/*else if (armPower > 0) armPower -= 0.2;
+		else if (armPower < 0) armPower += 0.2;*/
+		//robotHardware.driveArm(-armPower*0.5);
+		/*else if (armPower > 0) armPower = 0.4;
+		else if (armPower < 0) armPower = -0.4;*/
+
+
+
 		//elevator
 		//elevator position = -29.7
 		double elevatorPower =
 			functionStick.getTriggerAxis(Hand.kRight) -
 			functionStick.getTriggerAxis(Hand.kLeft );
+
 		if (
 				Math.abs(elevatorPower) < 0.3
 		) elevatorPower = 0;
 		else if (elevatorPower > 0) elevatorPower -= 0.3;
 		else if (elevatorPower < 0) elevatorPower += 0.3;
 		robotHardware.driveElevator(elevatorPower*0.8);
-		//robotHardware.driveElevator(0);
 
 		/*if (functionStick.getStickButton(Hand.kLeft)) {
 			if (robotHardware.isElevatorUp()) {
@@ -436,6 +410,7 @@ public class Robot extends TimedRobot {
 			default:
 				break;
 		}
+
 	}
 
 	public enum POVDirection {

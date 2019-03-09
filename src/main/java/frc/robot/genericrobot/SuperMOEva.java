@@ -44,8 +44,8 @@ public class SuperMOEva extends GenericRobot {
     Solenoid spearShaft = new Solenoid(2); //extend
     Solenoid spearHook  = new Solenoid(3); //grab
     Solenoid floorPickup = new Solenoid(4);
-    Solenoid betaClimb  ;//= new Solenoid(4);
-    DoubleSolenoid betaClimb2 = new DoubleSolenoid(5, 6);
+    Solenoid betaClimb  ;//= new Solenoid(4); //grab
+    DoubleSolenoid betaClimb2 = new DoubleSolenoid(5,6);
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);//-Brian
@@ -91,11 +91,6 @@ public class SuperMOEva extends GenericRobot {
         froggerRB.disable();
     }
 
-    @Override
-    public void stopDriving() {
-        setDrivePowerInternal(0,0);
-    }
-
     //shifting
     @Override
     public void shiftDriveInternal(DoubleSolenoid.Value value) {
@@ -137,6 +132,11 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void resetYaw() {
         navX.reset();
+    }
+
+    @Override
+    public void stopDriving() {
+        setDrivePowerInternal(0,0);
     }
 
     //Turret Functions
@@ -239,54 +239,32 @@ public class SuperMOEva extends GenericRobot {
         //    encoderFrogR.getPosition();
         double
              leftPower = power,
-            rightPower = power;
-        //if (power < 0 && deltaEncoder > 10) {
-        //    leftPower = 0;
-        //}
-        //if (power > 0 && deltaEncoder < 10) {
-         //   rightPower = 0;
-        //}
+                rightPower = power;
 
-        if (power < 0) {
-            if (navX.getRoll()<-3) {
-                froggerLA.set(0.9*leftPower);
-                froggerLB.set(0.9*leftPower);
-                froggerRA.set(rightPower);
-                froggerRB.set(rightPower);
-            }
-            else if (navX.getRoll()>3) {
-                froggerLA.set(leftPower);
-                froggerLB.set(leftPower);
-                froggerRA.set(0.9*rightPower);
-                froggerRB.set(0.9 *rightPower);
-            } else {
-                froggerLA.set(leftPower);
-                froggerLB.set(leftPower);
-                froggerRA.set(rightPower);
-                froggerRB.set(rightPower);
-            }
-        } else if (power > 0) {
-            if (navX.getRoll() > 3) {
-                froggerLA.set(0.9*leftPower);
-                froggerLB.set(0.9*leftPower);
-                froggerRA.set(rightPower);
-                froggerRB.set(rightPower);
-            }
-            else if (navX.getRoll() < -3) {
-                froggerLA.set(leftPower);
-                froggerLB.set(leftPower);
-                froggerRA.set(0.9*rightPower);
-                froggerRB.set(0.9 *rightPower);
-            } else {
-                froggerLA.set(leftPower);
-                froggerLB.set(leftPower);
-                froggerRA.set(rightPower);
-                froggerRB.set(rightPower);
+        double angleTol=0.75;
+        double angleOrigin = 2.65;
+
+        if (power<0) {
+            if (navX.getRoll()-angleOrigin < -angleTol) {
+                leftPower = 0.9*leftPower;
+            } else if (navX.getRoll() > angleTol) {
+                rightPower = 0.9*rightPower;
             }
         }
-
+        if (power>0) {
+            if (navX.getRoll() - angleOrigin < -angleTol) {
+                rightPower = 0.9 * rightPower;
+            } else if (navX.getRoll() > angleTol) {
+                leftPower = 0.9 * leftPower;
+            }
+        }
+        froggerLA.set(leftPower);
+        froggerLB.set(leftPower);
+        froggerRA.set(rightPower);
+        froggerRB.set(rightPower);
         SmartDashboard.putNumber("Left Power", leftPower);
         SmartDashboard.putNumber("Right Power", rightPower);
+
     }
 
     /*public void climbInternal(double power) {
@@ -298,6 +276,7 @@ public class SuperMOEva extends GenericRobot {
     }*/
 
     public void climbSupportUp(double power) {
+
         froggerLA.set(power);
         froggerLB.set(power);
         froggerRA.set(0);
@@ -305,6 +284,7 @@ public class SuperMOEva extends GenericRobot {
     }
 
     public void climbFreeUp(double power) {
+
         froggerLA.set(0);
         froggerLB.set(0);
         froggerRA.set(power);
