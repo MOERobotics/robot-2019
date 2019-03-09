@@ -46,7 +46,7 @@ public class SuperMOEva extends GenericRobot {
     Solenoid spearHook  = new Solenoid(3); //grab
     Solenoid floorPickup = new Solenoid(4);
     Solenoid betaClimb  ;//= new Solenoid(4); //grab
-    Solenoid betaClimb2 = new Solenoid(5); //grab
+    DoubleSolenoid betaClimb2 = new DoubleSolenoid(5,6); //grab
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);//-Brian
@@ -237,31 +237,29 @@ public class SuperMOEva extends GenericRobot {
         //    encoderFrogR.getPosition();
         double
              leftPower = power,
-            rightPower = power;
-        //if (power < 0 && deltaEncoder > 10) {
-        //    leftPower = 0;
-        //}
-        //if (power > 0 && deltaEncoder < 10) {
-         //   rightPower = 0;
-        //}
-        if (navX.getRoll()<-3) {
-            froggerLA.set(0.9*leftPower);
-            froggerLB.set(0.9*leftPower);
-            froggerRA.set(rightPower);
-            froggerRB.set(rightPower);
-        }
-        else if (navX.getRoll()>3) {
-            froggerLA.set(leftPower);
-            froggerLB.set(leftPower);
-            froggerRA.set(0.9*rightPower);
-            froggerRB.set(0.9 *rightPower);
-        } else {
-            froggerLA.set(leftPower);
-            froggerLB.set(leftPower);
-            froggerRA.set(rightPower);
-            froggerRB.set(rightPower);
-        }
+                rightPower = power;
 
+        double angleTol=0.75;
+        double angleOrigin = 2.65;
+
+        if (power<0) {
+            if (navX.getRoll()-angleOrigin < -angleTol) {
+                leftPower = 0.9*leftPower;
+            } else if (navX.getRoll() > angleTol) {
+                rightPower = 0.9*rightPower;
+            }
+        }
+        if (power>0) {
+            if (navX.getRoll() - angleOrigin < -angleTol) {
+                rightPower = 0.9 * rightPower;
+            } else if (navX.getRoll() > angleTol) {
+                leftPower = 0.9 * leftPower;
+            }
+        }
+        froggerLA.set(leftPower);
+        froggerLB.set(leftPower);
+        froggerRA.set(rightPower);
+        froggerRB.set(rightPower);
         SmartDashboard.putNumber("Left Power", leftPower);
         SmartDashboard.putNumber("Right Power", rightPower);
 
@@ -343,7 +341,7 @@ public class SuperMOEva extends GenericRobot {
         return navX.getRoll();
     }
 
-    public void climb2(boolean state) {
+    public void climb2(DoubleSolenoid.Value state) {
         betaClimb2.set(state);
     }
 

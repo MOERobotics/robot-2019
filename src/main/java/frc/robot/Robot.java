@@ -211,11 +211,12 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit () {
 		autoProgram.init();
+		teleopInit();
 	}
 
 	@Override
 	public void autonomousPeriodic () {
-		teleopInit();
+		teleopPeriodic();
 		//robotHardware.checkSafety();
 		//autoProgram.run();
 	}
@@ -270,7 +271,20 @@ public class Robot extends TimedRobot {
 
 		//Climbing
 
+		if (leftJoystick.getRawButton(9))
+		{
+			robotHardware.climb(-1.0);
+		}
+		else if (leftJoystick.getRawButton(10))
+		{
+			robotHardware.climb(0.2);
+
+		}
+		else {
+			robotHardware.climb(0);
+		}
         //POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
+		/*
 		if (Math.abs(robotHardware.getClimberLEncoderCount()-ClimbEncoderOrigin) < HABheight) {
             if      (leftJoystick.getRawButton( 9)) robotHardware.climb  (0.5);
             else if (leftJoystick.getRawButton(10)) robotHardware.climb(-1.0);
@@ -287,23 +301,23 @@ public class Robot extends TimedRobot {
                 robotHardware.climb2(true);
             }
         }
-
+	*/
 
 		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
 		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
-        if(leftJoystick.getRawButtonPressed(11))    robotHardware.climb2(true);
-        if(leftJoystick.getRawButtonReleased(11))    robotHardware.climb2(false);
+        if(leftJoystick.getRawButtonPressed(11))    robotHardware.climb2(DoubleSolenoid.Value.kForward);
+        if(leftJoystick.getRawButtonReleased(11))    robotHardware.climb2(DoubleSolenoid.Value.kReverse);
 
         if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();
 		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
 
 		//hatchGrab
-		if      (functionStick.getBButton()) robotHardware.spearIn    ();
-		else if (functionStick.getAButton()) robotHardware.spearOut   ();
-		if      (functionStick.getXButton()) robotHardware.spearHook  ();
-		else if (functionStick.getYButton()) robotHardware.spearUnhook();
+		if      (functionStick.getAButton()) robotHardware.spearIn    ();
+		else if (functionStick.getBButton()) robotHardware.spearOut   ();
+		if      (functionStick.getYButton()) robotHardware.spearHook  ();
+		else if (functionStick.getXButton()) robotHardware.spearUnhook();
 
 		//roller
 		//TODO: bumpers

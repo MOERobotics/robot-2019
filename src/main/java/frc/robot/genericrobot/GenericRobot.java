@@ -210,7 +210,7 @@ public abstract class GenericRobot {
 	}
     public abstract void climbSupportUp(double power);
     public abstract void climbFreeUp(double power);
-    public abstract void climb2(boolean state);
+    public abstract void climb2(DoubleSolenoid.Value state);
 
     public abstract void climbInternal(double power);
 	public abstract double getClimberLEncoderCount();
