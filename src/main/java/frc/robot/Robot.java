@@ -62,8 +62,8 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
 		autoProgram.LeftSide = 1;
-		robotHardware.enableElevatorLimits(true); //-Brian
-		robotHardware.enableArmLimits(true); //-Brian
+		robotHardware.enableElevatorLimits(false); //-Brian
+		robotHardware.enableArmLimits(false); //-Brian
 		robotHardware.shiftLow();
 		robotHardware.floorPickupUp();
 
@@ -215,8 +215,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic () {
-		robotHardware.checkSafety();
-		autoProgram.run();
+		teleopInit();
+		//robotHardware.checkSafety();
+		//autoProgram.run();
 	}
 
 	@Override
