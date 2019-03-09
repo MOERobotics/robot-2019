@@ -42,7 +42,7 @@ public class UnitTestHatch extends GenericAuto {
         switch (autoStep) {
             case 0:
                 if (robot.getElevatorEncoderCount()/TICKS_PER_INCH < 10.75) {
-                    robot.elevatorUp(0.5);
+                    robot.driveElevator(0.5);
                     autoStep = 1;
                 }
                 break;
@@ -58,7 +58,7 @@ public class UnitTestHatch extends GenericAuto {
                 break;
             case 3:
                 if (robot.getElevatorEncoderCount()/TICKS_PER_INCH > 0) {
-                    robot.elevatorUp(0.5);
+                    robot.driveElevator(0.5);
                     autoStep = 4;
                 }
                 break;

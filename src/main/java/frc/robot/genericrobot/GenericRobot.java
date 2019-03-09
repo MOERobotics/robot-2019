@@ -16,7 +16,7 @@ public abstract class GenericRobot {
 	private double       climbPower;
     private boolean spearShaftState;
     private boolean  spearHookState;
-    private DoubleSolenoid.Value floorPickupState = DoubleSolenoid.Value.kOff;
+    private boolean floorPickupState;
 
 	private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
 
@@ -99,8 +99,8 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Elevator <editor-fold>
-    public final void    elevatorUp       (double power) {driveElevator( power);}
-    public final void    elevatorDown     (double power) {driveElevator(-power);}
+    //public final void    elevatorUp       (double power) {driveElevator( power);}
+    //public final void    elevatorDown     (double power) {driveElevator(-power);}
 	public final void    driveElevator    (double power) {
 		this.elevatorPower = power;
 		if      (isElevatorUp  () && power > 0) setElevatorInternal(  0.0);
@@ -188,14 +188,14 @@ public abstract class GenericRobot {
 	//public abstract void grabberClosedCombo();
 
 	//Floor Hatch Grab
-	public void floorPickupUp() { shiftFloorPickup(DoubleSolenoid.Value.kReverse); }
-	public void floorPickupDown() { shiftFloorPickup( DoubleSolenoid.Value.kForward); }
-	public void shiftFloorPickup(DoubleSolenoid.Value out) {
+	public void floorPickupUp() { shiftFloorPickup(false); }
+	public void floorPickupDown() { shiftFloorPickup(true); }
+	public void shiftFloorPickup(boolean out) {
 		this.floorPickupState = out;
 		shiftFloorPickupInternal(out);
 	}
-	public void shiftFloorPickupInternal(DoubleSolenoid.Value out) {};
-	public DoubleSolenoid.Value getFloorPickupState() {return floorPickupState;}
+	public void shiftFloorPickupInternal(boolean out) {};
+	public boolean getFloorPickupState() {return floorPickupState;}
 
 	//Habitat Climb <editor-fold>
 	public void climbUp  (double power) {climb(-power);}
@@ -206,7 +206,7 @@ public abstract class GenericRobot {
 	}
     public abstract void climbSupportUp(double power);
     public abstract void climbFreeUp(double power);
-    public abstract void climb2(boolean state);
+    public abstract void climb2(DoubleSolenoid.Value state);
 
     public abstract void climbInternal(double power);
 	public abstract double getClimberLEncoderCount();

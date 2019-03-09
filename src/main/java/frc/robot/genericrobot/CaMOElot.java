@@ -159,7 +159,7 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
-    public void shiftFloorPickupInternal(DoubleSolenoid.Value out) {
+    public void shiftFloorPickupInternal(boolean out) {
 
     }
 

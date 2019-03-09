@@ -274,7 +274,6 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 if(robot.lidar[0] <= 545-25.4+moementumCorrection){
                     autoStep++;
                 }
-
                 break;
 
             /*bonus begins, set z to 1.77*/
@@ -290,10 +289,12 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
                 {
                     zEffective = z;
                 }
-                autoStep++;
+
                 robot.resetDriveEncoders();
                 MOErioTurn.resetError();
                 MOErioAuto.resetError();
+
+                autoStep++;
                 break;
 
             /*arc backwards to the left, end close and parallel to the rocket*/
