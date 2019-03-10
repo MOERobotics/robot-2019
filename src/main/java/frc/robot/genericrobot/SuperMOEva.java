@@ -156,7 +156,7 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void enableElevatorLimits(boolean enabled) {
         elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
     }
 
     @Override
@@ -186,6 +186,7 @@ public class SuperMOEva extends GenericRobot {
     public void enableArmLimits(boolean enabled) {
         arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
         arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        if (enabled == false) Thread.dumpStack();
     }
 
     @Override
@@ -199,11 +200,13 @@ public class SuperMOEva extends GenericRobot {
     }
 
     public boolean atArmForwardLimit() {
-        return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
     public boolean atArmReverseLimit() {
-        return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
     @Override
@@ -312,25 +315,29 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isElevatorUp() {
-        return false;
+        //return false;
+        return atElevForwardLimit();
         //return (!getSafetyOverride() && (getElevatorEncoderCount() >= 44) || atElevForwardLimit());
     }
 
     @Override
     public boolean isElevatorDown() {
         return false;
+        //return atElevReverseLimit();
         //return !getSafetyOverride() && (getElevatorEncoderCount() <= -30 || atElevReverseLimit());
     }
 
     @Override
     public boolean isArmUp() {
-        return false;
+        //return false;
+        return atArmForwardLimit();
         //return !getSafetyOverride() && (getArmEncoderCount() >= 100 || atArmForwardLimit());
     }
 
     @Override
     public boolean isArmDown() {
-        return false;
+        //return false;
+        return atArmReverseLimit();
         //return !getSafetyOverride() && (getArmEncoderCount() <= -2 || atArmReverseLimit());
     }
 
