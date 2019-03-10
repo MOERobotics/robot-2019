@@ -73,8 +73,10 @@ public class Lidar {
             }
 
             for (int j = 0; j < us.numSensors(); j++) {
-                SmartDashboard.putNumber("Lidar " + j + ": ", l[j]);
-                us.lidar[j] = l[j];
+                if (l[j] != 0) {
+                    SmartDashboard.putNumber("Lidar " + j + ": ", l[j]);
+                    us.lidar[j] = l[j];
+                }
             }
 
         }

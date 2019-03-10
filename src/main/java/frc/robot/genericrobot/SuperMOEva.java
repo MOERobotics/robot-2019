@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
-    final double TICKS_TO_INCHES = 178;
+    final double TICKS_TO_INCHES = 198; //178;
 
     //Drive
     TalonSRX driveLA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
@@ -100,7 +100,7 @@ public class SuperMOEva extends GenericRobot {
     //Encoder/NavX
     @Override
     public double getDistanceLeftInches() {
-        return encoderL.getRaw() / TICKS_TO_INCHES;
+        return -encoderL.getRaw() / TICKS_TO_INCHES;
     }
 
     @Override
@@ -143,8 +143,8 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void setElevatorInternal(double power) {
         elevator.set(power);
-        System.out.println(power);
-        if (power != 0) Thread.dumpStack();
+        //System.out.println(power);
+        //if (power != 0) Thread.dumpStack();
     }
 
     @Override
@@ -264,19 +264,9 @@ public class SuperMOEva extends GenericRobot {
         froggerRB.set(rightPower);
         SmartDashboard.putNumber("Left Power", leftPower);
         SmartDashboard.putNumber("Right Power", rightPower);
-
     }
 
-    /*public void climbInternal(double power) {
-        if (power > 0) {
-            betaClimb.set(true);
-        } else if (power < 0) {
-            betaClimb.set(false);
-        }
-    }*/
-
     public void climbSupportUp(double power) {
-
         froggerLA.set(power);
         froggerLB.set(power);
         froggerRA.set(0);
@@ -284,7 +274,6 @@ public class SuperMOEva extends GenericRobot {
     }
 
     public void climbFreeUp(double power) {
-
         froggerLA.set(0);
         froggerLB.set(0);
         froggerRA.set(power);
@@ -315,7 +304,7 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public boolean isElevatorUp() {
         return false;
-        //return (!getSafetyOverride() && getElevatorEncoderCount() >= 44) || atElevForwardLimit();
+        //return (!getSafetyOverride() && (getElevatorEncoderCount() >= 44) || atElevForwardLimit());
     }
 
     @Override
@@ -326,12 +315,14 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isArmUp() {
-        return !getSafetyOverride() && (getArmEncoderCount() >= 100 || atArmForwardLimit());
+        return false;
+        //return !getSafetyOverride() && (getArmEncoderCount() >= 100 || atArmForwardLimit());
     }
 
     @Override
     public boolean isArmDown() {
-        return !getSafetyOverride() && (getArmEncoderCount() <= -2 || atArmReverseLimit());
+        return false;
+        //return !getSafetyOverride() && (getArmEncoderCount() <= -2 || atArmReverseLimit());
     }
 
     public void climb2(DoubleSolenoid.Value state) {

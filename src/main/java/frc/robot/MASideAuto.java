@@ -14,7 +14,7 @@ public class MASideAuto extends GenericAuto {
     double correction = 0;
     double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = false;
+    boolean levelTwo = true;
 
 
     public void setDrivePowerHands(double left, double right, double correction, int Handedness) {

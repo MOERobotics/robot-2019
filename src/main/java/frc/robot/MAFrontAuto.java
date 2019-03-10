@@ -11,7 +11,7 @@ public class MAFrontAuto extends GenericAuto {
     double louWizardry = 0;
     //int LeftSide = 1;
     int turncounter = 0;
-    boolean levelTwo = false;
+    boolean levelTwo = true;
     double moementumCorrection = 100;
     double zEffective;
 
