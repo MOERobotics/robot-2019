@@ -55,6 +55,11 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
+    public void shiftDriveInternal(boolean value) {
+
+    }
+
+    @Override
     public int numSensors() {
         return 0;
     }
@@ -108,11 +113,6 @@ public class CaMOElot extends GenericRobot {
 
     @Override
     public void shiftSpearHookInternal(boolean out) {
-
-    }
-
-    @Override
-    public void shiftDriveInternal(DoubleSolenoid.Value value) {
 
     }
 
@@ -177,7 +177,12 @@ public class CaMOElot extends GenericRobot {
     public  void climbFreeUp(double power){}
 
     @Override
-    public void climb2(DoubleSolenoid.Value state) {
+    public void climb2Internal(DoubleSolenoid.Value state) {
+
+    }
+
+    @Override
+    public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
 
     }
 

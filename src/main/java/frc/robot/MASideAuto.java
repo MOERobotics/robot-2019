@@ -123,13 +123,15 @@ public class MASideAuto extends GenericAuto {
 
                 if (levelTwo) {
                     if (leftDistance >= 48 * 2) {
-                        autoStep++;
                         robot.resetDriveEncoders();
+                        MOErioAuto.resetError();
+                        autoStep++;
                     }
                 } else {
                     if (leftDistance >= 48) {
-                        autoStep++;
                         robot.resetDriveEncoders();
+                        MOErioAuto.resetError();
+                        autoStep++;
                     }
                 }
                 break;

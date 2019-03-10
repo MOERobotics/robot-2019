@@ -17,8 +17,9 @@ public abstract class GenericRobot {
     private boolean spearShaftState;
     private boolean  spearHookState;
     private boolean floorPickupState;
-
-	private DoubleSolenoid.Value shifterSolenoidValue = DoubleSolenoid.Value.kOff;
+	private boolean shifterSolenoidState;
+	private DoubleSolenoid.Value climbPushForwardzState;
+	private DoubleSolenoid.Value climb2State;
 
     private double       armEncoderOffset = 0;
     //private double    turretEncoderOffset = 0;
@@ -85,16 +86,15 @@ public abstract class GenericRobot {
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);
 
 	//shifting
-	public void shiftHigh () { shiftDrive(DoubleSolenoid.Value.kReverse); }
-	public void shiftLow  () { shiftDrive(DoubleSolenoid.Value.kForward); }
+	public void shiftLow () { shiftDrive(true); }
+	public void shiftHigh  () { shiftDrive(false); }
 
-	public void shiftDrive(DoubleSolenoid.Value value) {
-		this.shifterSolenoidValue = value;
-		shiftDriveInternal(value);
+	public void shiftDrive(boolean state) {
+		this.shifterSolenoidState = state;
+		shiftDriveInternal(state);
 	}
-
-	public abstract void shiftDriveInternal(DoubleSolenoid.Value value);
-	public DoubleSolenoid.Value getShifterSolenoidState() { return shifterSolenoidValue; }
+	public abstract void shiftDriveInternal(boolean value);
+	public boolean getShifterSolenoidState() { return shifterSolenoidState; }
 
 	//</editor-fold>
 
@@ -198,20 +198,36 @@ public abstract class GenericRobot {
 	public boolean getFloorPickupState() {return floorPickupState;}
 
 	//Habitat Climb <editor-fold>
-	public void climbUp  (double power) {climb(-power);}
-	public void climbDown(double power) {climb( power);}
+	//public void climbUp  (double power) {climb(-power);}
+	//public void climbDown(double power) {climb( power);}
 	public void climb(double power) {
 		this.climbPower = power;
 		climbInternal(power);
 	}
+    public abstract void climbInternal(double power);
+    public abstract double getClimberLEncoderCount();
+    public abstract double getClimberREncoderCount();
+    public double getClimbPower() {return this.climbPower;}
+
     public abstract void climbSupportUp(double power);
     public abstract void climbFreeUp(double power);
-    public abstract void climb2(DoubleSolenoid.Value state);
+    public abstract void climb2Internal(DoubleSolenoid.Value state);
+    public void climb2(DoubleSolenoid.Value value) {
+        climb2Internal(value);
+        this.climb2State = value;
+    }
+    public DoubleSolenoid.Value getClimb2State() {
+        return climb2State;
+    }
 
-    public abstract void climbInternal(double power);
-	public abstract double getClimberLEncoderCount();
-	public abstract double getClimberREncoderCount();
-	public double getClimbPower() {return this.climbPower;}
+    public abstract void climbPushForwardzInternal(DoubleSolenoid.Value value);
+    public void climbPushForwardz(DoubleSolenoid.Value value) {
+        climbPushForwardzInternal(value);
+        this.climbPushForwardzState = value;
+    }
+    public DoubleSolenoid.Value getClimbPushForwardzState() {
+        return climbPushForwardzState;
+    }
 
     //Temporary for SuperMOEva testing
     /*public void driveSA(double power) {};

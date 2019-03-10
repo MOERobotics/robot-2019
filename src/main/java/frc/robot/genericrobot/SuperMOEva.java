@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
-    final double TICKS_TO_INCHES = 198; //178;
+    final double TICKS_TO_INCHES = 462;
 
     //Drive
     TalonSRX driveLA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
@@ -26,7 +26,7 @@ public class SuperMOEva extends GenericRobot {
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
     Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X);
 
-    DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
+    Solenoid shifter = new Solenoid(7);
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -46,6 +46,7 @@ public class SuperMOEva extends GenericRobot {
     Solenoid floorPickup = new Solenoid(4);
     Solenoid betaClimb  ;//= new Solenoid(4); //grab
     DoubleSolenoid betaClimb2 = new DoubleSolenoid(5,6);
+    DoubleSolenoid climbForwardz = new DoubleSolenoid(0, 1); //CHECK THIS
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);//-Brian
@@ -55,6 +56,9 @@ public class SuperMOEva extends GenericRobot {
 
     CANEncoder encoderFrogL = new CANEncoder(froggerLA);
     CANEncoder encoderFrogR = new CANEncoder(froggerRA);
+
+    //DigitalInput climbLLimit = new DigitalInput(6); //GET NUMBERS
+    //DigitalInput climbRLimit = new DigitalInput(7);
 
     {
         driveLA.setInverted(true);
@@ -93,19 +97,21 @@ public class SuperMOEva extends GenericRobot {
 
     //shifting
     @Override
-    public void shiftDriveInternal(DoubleSolenoid.Value value) {
-        shifter.set(value);
+    public void shiftDriveInternal(boolean state) {
+        shifter.set(state);
     }
 
     //Encoder/NavX
     @Override
     public double getDistanceLeftInches() {
         return -encoderL.getRaw() / TICKS_TO_INCHES;
+        //8000-some
     }
 
     @Override
     public double getDistanceRightInches() {
         return encoderR.getRaw() / TICKS_TO_INCHES;
+        //6000-some
     }
 
     @Override
@@ -233,6 +239,7 @@ public class SuperMOEva extends GenericRobot {
     }
 
     //Hab Climb
+
     public void climbInternal(double power) {
         //double deltaEncoder =
         //    encoderFrogL.getPosition() -
@@ -243,6 +250,8 @@ public class SuperMOEva extends GenericRobot {
 
         double angleTol=0.75;
         double angleOrigin = 2.65;
+        //if (climbLLimit.get()) leftPower = 0;
+        //if (climbRLimit.get()) rightPower = 0;
 
         if (power<0) {
             if (navX.getRoll()-angleOrigin < -angleTol) {
@@ -262,8 +271,8 @@ public class SuperMOEva extends GenericRobot {
         froggerLB.set(leftPower);
         froggerRA.set(rightPower);
         froggerRB.set(rightPower);
-        SmartDashboard.putNumber("Left Power", leftPower);
-        SmartDashboard.putNumber("Right Power", rightPower);
+        SmartDashboard.putNumber("Left Climb Power", leftPower);
+        SmartDashboard.putNumber("Right Climb Power", rightPower);
     }
 
     public void climbSupportUp(double power) {
@@ -325,8 +334,13 @@ public class SuperMOEva extends GenericRobot {
         //return !getSafetyOverride() && (getArmEncoderCount() <= -2 || atArmReverseLimit());
     }
 
-    public void climb2(DoubleSolenoid.Value state) {
+    public void climb2Internal(DoubleSolenoid.Value state) {
         betaClimb2.set(state);
+    }
+
+    @Override
+    public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
+        climbForwardz.set(value);
     }
 
 }
