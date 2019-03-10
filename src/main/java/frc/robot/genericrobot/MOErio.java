@@ -10,6 +10,10 @@ import com.kauailabs.navx.frc.AHRS;
 import frc.robot.genericrobot.GenericRobot;
 
 public class MOErio extends GenericRobot {
+    @Override
+    public void climb2(DoubleSolenoid.Value state) {
+
+    }
 
     final double TICKS_TO_INCHES = 44;
 

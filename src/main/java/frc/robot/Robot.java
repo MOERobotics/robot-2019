@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
 //	UsbCamera cam1;
     int smartDashCounter = 0;
 
+    private boolean 		footToggle = false;
 
 	public PixyCam pixy = new PixyCam() {{
 		init();
@@ -66,6 +67,8 @@ public class Robot extends TimedRobot {
 		robotHardware.enableArmLimits(false); //-Brian
 		robotHardware.shiftLow();
 		robotHardware.floorPickupUp();
+
+		footToggle = false;
 
 		ClimbEncoderOrigin = robotHardware.getClimberLEncoderCount();
 		//opening serial port
@@ -211,6 +214,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit () {
 		autoProgram.init();
+		footToggle = false;
 		teleopInit();
 	}
 
@@ -226,6 +230,7 @@ public class Robot extends TimedRobot {
 		//robotHardware.enableElevatorLimits(true);
 		//robotHardware.enableArmLimits(true);
 		grabStep = 0;
+		footToggle = false;
 	}
 
 	@Override
@@ -307,8 +312,13 @@ public class Robot extends TimedRobot {
 		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
-        if(leftJoystick.getRawButtonPressed(11))    robotHardware.climb2(DoubleSolenoid.Value.kForward);
-        if(leftJoystick.getRawButtonReleased(11))    robotHardware.climb2(DoubleSolenoid.Value.kReverse);
+        if(leftJoystick.getRawButtonPressed(11)) {
+			footToggle = !footToggle;
+			if (footToggle)
+				robotHardware.climb2(DoubleSolenoid.Value.kForward);
+			else
+				robotHardware.climb2(DoubleSolenoid.Value.kReverse);
+		}
 
         if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();
 		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
