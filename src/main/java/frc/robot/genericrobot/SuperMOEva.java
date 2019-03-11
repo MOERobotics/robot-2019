@@ -9,11 +9,12 @@ import com.revrobotics.*;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
-    final double TICKS_TO_INCHES = 178;
+    final double TICKS_TO_INCHES = 462;
 
     //Drive
     TalonSRX driveLA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
@@ -25,8 +26,7 @@ public class SuperMOEva extends GenericRobot {
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
     Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X);
 
-    long startTime;
-    DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
+    Solenoid shifter = new Solenoid(7);
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -45,7 +45,8 @@ public class SuperMOEva extends GenericRobot {
     Solenoid spearHook  = new Solenoid(3); //grab
     Solenoid floorPickup = new Solenoid(4);
     Solenoid betaClimb  ;//= new Solenoid(4); //grab
-    Solenoid betaClimb2 = new Solenoid(5); //grab
+    DoubleSolenoid betaClimb2 = new DoubleSolenoid(5,6);
+    DoubleSolenoid climbForwardz = new DoubleSolenoid(0, 1); //CHECK THIS
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);//-Brian
@@ -56,12 +57,19 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderFrogL = new CANEncoder(froggerLA);
     CANEncoder encoderFrogR = new CANEncoder(froggerRA);
 
-    {//not sure which side is inverted
+    //DigitalInput climbLLimit = new DigitalInput(6); //GET NUMBERS
+    //DigitalInput climbRLimit = new DigitalInput(7);
+
+    {
         driveLA.setInverted(true);
         driveLB.setInverted(true);
         rollL.setInverted(true);
-        //arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        arm.setIdleMode(CANSparkMax.IdleMode.kBrake);
         elevator.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        froggerLA.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        froggerLB.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        froggerRA.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        froggerRB.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
 
     //lidar
@@ -69,7 +77,6 @@ public class SuperMOEva extends GenericRobot {
     public int numSensors() {
         return 2;
     }
-
 
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
@@ -80,21 +87,31 @@ public class SuperMOEva extends GenericRobot {
         driveLB.set(ControlMode.PercentOutput, rightMotor);
     }
 
-    //shifting
     @Override
-    public void shiftDriveInternal(DoubleSolenoid.Value value) {
-        shifter.set(value);
+    public void stopEverything() {
+        froggerLA.disable();
+        froggerLB.disable();
+        froggerRA.disable();
+        froggerRB.disable();
     }
 
+    //shifting
+    @Override
+    public void shiftDriveInternal(boolean state) {
+        shifter.set(state);
+    }
 
+    //Encoder/NavX
     @Override
     public double getDistanceLeftInches() {
-        return encoderL.getRaw() / TICKS_TO_INCHES;
+        return -encoderL.getRaw() / TICKS_TO_INCHES;
+        //8000-some
     }
 
     @Override
     public double getDistanceRightInches() {
         return encoderR.getRaw() / TICKS_TO_INCHES;
+        //6000-some
     }
 
     @Override
@@ -103,10 +120,13 @@ public class SuperMOEva extends GenericRobot {
     }
 
     @Override
-    public void stopEverything() {
-        setDrivePowerInternal(0,0);
-        setElevatorInternal(0);
-        setArmInternal(0);
+    public double getPitchDegrees() {
+        return navX.getPitch();
+    }
+
+    @Override
+    public double getRollDegrees() {
+        return navX.getRoll();
     }
 
     @Override
@@ -129,6 +149,8 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void setElevatorInternal(double power) {
         elevator.set(power);
+        //System.out.println(power);
+        //if (power != 0) Thread.dumpStack();
     }
 
     @Override
@@ -147,12 +169,10 @@ public class SuperMOEva extends GenericRobot {
         return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
-    @Override
     public boolean atElevForwardLimit() {
         return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
-    @Override
     public boolean atElevReverseLimit() {
         return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
@@ -166,6 +186,7 @@ public class SuperMOEva extends GenericRobot {
     public void enableArmLimits(boolean enabled) {
         arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
         arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        if (enabled == false) Thread.dumpStack();
     }
 
     @Override
@@ -178,14 +199,24 @@ public class SuperMOEva extends GenericRobot {
         return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
-    @Override
     public boolean atArmForwardLimit() {
-        return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+    }
+
+    public boolean atArmReverseLimit() {
+        return false;
+        //return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
     @Override
-    public boolean atArmReverseLimit() {
-        return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+    public double getElevatorEncoderCountInternal() {
+        return encoderElev.getPosition();
+    }
+
+    @Override
+    public double getArmEncoderCountInternal() {
+        return encoderArm.getPosition();
     }
 
    //Cargo/Hatch
@@ -210,6 +241,57 @@ public class SuperMOEva extends GenericRobot {
         floorPickup.set(out);
     }
 
+    //Hab Climb
+
+    public void climbInternal(double power) {
+        //double deltaEncoder =
+        //    encoderFrogL.getPosition() -
+        //    encoderFrogR.getPosition();
+        double
+             leftPower = power,
+                rightPower = power;
+
+        double angleTol=0.75;
+        double angleOrigin = 2.65;
+        //if (climbLLimit.get()) leftPower = 0;
+        //if (climbRLimit.get()) rightPower = 0;
+
+        if (power<0) {
+            if (navX.getRoll()-angleOrigin < -angleTol) {
+                leftPower = 0.9*leftPower;
+            } else if (navX.getRoll() > angleTol) {
+                rightPower = 0.9*rightPower;
+            }
+        }
+        if (power>0) {
+            if (navX.getRoll() - angleOrigin < -angleTol) {
+                rightPower = 0.9 * rightPower;
+            } else if (navX.getRoll() > angleTol) {
+                leftPower = 0.9 * leftPower;
+            }
+        }
+        froggerLA.set(leftPower);
+        froggerLB.set(leftPower);
+        froggerRA.set(rightPower);
+        froggerRB.set(rightPower);
+        SmartDashboard.putNumber("Left Climb Power", leftPower);
+        SmartDashboard.putNumber("Right Climb Power", rightPower);
+    }
+
+    public void climbSupportUp(double power) {
+        froggerLA.set(power);
+        froggerLB.set(power);
+        froggerRA.set(0);
+        froggerRB.set(0);
+    }
+
+    public void climbFreeUp(double power) {
+        froggerLA.set(0);
+        froggerLB.set(0);
+        froggerRA.set(power);
+        froggerRB.set(power);
+    }
+
     @Override
     public double getClimberLEncoderCount() {
         return encoderFrogL.getPosition();
@@ -218,51 +300,6 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public double getClimberREncoderCount() {
         return encoderFrogR.getPosition();
-    }
-
-    //Hab Climb
-    //rip frogger 2019-2019 //just kidding frogger is alive again! hallelujah
-    public void climbInternal(double power) {
-        double deltaEncoder =
-            encoderFrogL.getPosition() -
-            encoderFrogR.getPosition();
-        double
-             leftPower = power,
-            rightPower = power;
-        if (power < 0 && deltaEncoder > 10) {
-            leftPower = 0;
-        }
-        if (power > 0 && deltaEncoder < 10) {
-            rightPower = 0;
-        }
-        froggerLA.set( leftPower);
-        froggerLB.set( leftPower);
-        froggerRA.set(rightPower);
-        froggerRB.set(rightPower);
-    }
-
-    /*public void climbInternal(double power) {
-        if (power > 0) {
-            betaClimb.set(true);
-        } else if (power < 0) {
-            betaClimb.set(false);
-        }
-    }*/
-
-    public void climbSupportUp(double power) {
-
-        froggerLA.set(power);
-        froggerLB.set(power);
-        froggerRA.set(0);
-        froggerRB.set(0);
-    }
-
-    public void climbFreeUp(double power) {
-
-        froggerLA.set(0);
-        froggerLB.set(0);
-        froggerRA.set(power);
-        froggerRB.set(power);
     }
 
     //Safety Check
@@ -278,46 +315,39 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isElevatorUp() {
-        return (!getSafetyOverride() && getElevatorEncoderCount() >= 44) || atElevForwardLimit();
+        //return false;
+        return atElevForwardLimit();
+        //return (!getSafetyOverride() && (getElevatorEncoderCount() >= 44) || atElevForwardLimit());
     }
 
     @Override
-    public boolean isElevatorDown() { return (!getSafetyOverride() && getElevatorEncoderCount() <= -30) || atElevReverseLimit(); }
+    public boolean isElevatorDown() {
+        return false;
+        //return atElevReverseLimit();
+        //return !getSafetyOverride() && (getElevatorEncoderCount() <= -30 || atElevReverseLimit());
+    }
 
     @Override
     public boolean isArmUp() {
-        return false;
-        //return !getSafetyOverride() && getArmEncoderCount() >= 100 || atArmForwardLimit();
+        //return false;
+        return atArmForwardLimit();
+        //return !getSafetyOverride() && (getArmEncoderCount() >= 100 || atArmForwardLimit());
     }
 
     @Override
     public boolean isArmDown() {
-        return false;
-        //return !getSafetyOverride() && getArmEncoderCount() <= -2 || atArmReverseLimit();
+        //return false;
+        return atArmReverseLimit();
+        //return !getSafetyOverride() && (getArmEncoderCount() <= -2 || atArmReverseLimit());
     }
 
-    @Override
-    public double getElevatorEncoderCountInternal() {
-        return encoderElev.getPosition();
-    }
-
-    @Override
-    public double getArmEncoderCountInternal() {
-        return encoderArm.getPosition();
-    }
-
-    @Override
-    public double getPitchDegrees() {
-        return navX.getPitch();
-    }
-
-    @Override
-    public double getRollDegrees() {
-        return navX.getRoll();
-    }
-
-    public void climb2(boolean state) {
+    public void climb2Internal(DoubleSolenoid.Value state) {
         betaClimb2.set(state);
+    }
+
+    @Override
+    public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
+        climbForwardz.set(value);
     }
 
 }

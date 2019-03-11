@@ -63,6 +63,11 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
+    public void shiftDriveInternal(boolean value) {
+
+    }
+
+    @Override
     protected void setElevatorInternal(double power) {
         elevator.set(ControlMode.PercentOutput, power);
     }
@@ -133,10 +138,6 @@ public class MOErio extends GenericRobot {
         return navx.getPitch();
     }
 
-    @Override
-    public void shiftDriveInternal(DoubleSolenoid.Value value) {
-
-    }
 
     @Override
     public double getRollDegrees() {
@@ -159,5 +160,16 @@ public class MOErio extends GenericRobot {
     }
     public  void climbSupportUp(double power){}
     public  void climbFreeUp(double power){}
+
+    @Override
+    public void climb2Internal(DoubleSolenoid.Value state) {
+
+    }
+
+    @Override
+    public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
+
+    }
+
     public  void climb2(boolean state){}
 }

@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
@@ -19,6 +17,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
 import javax.sound.sampled.Port;
+
 import java.util.Arrays;
 
 import java.util.Date;
@@ -31,10 +30,10 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new UnitTestElevArmPos();
+	private GenericAuto    autoProgram   = new MAFrontAuto();
+
 //	UsbCamera cam1;
     int smartDashCounter = 0;
-
 
 	public PixyCam pixy = new PixyCam() {{
 		init();
@@ -46,28 +45,46 @@ public class Robot extends TimedRobot {
 	SerialPort Blinky;
 	boolean PortOpen = false;
 
+	//auto
+    boolean autoEnable = true;
+    //int startAutoStep;
+
 	//drive elevator
 	static final double upperElevator = 1;
 	static final double bottomElevator = -0.6;
 
 	/* kP = 0.1, kI = 8*10^-3, kD = 0.0*/
 
-	long startTime;
-	int grabStep;
+	public double ClimbEncoderOrigin = 0;
+    static final double HABheight2 = 20;
+	static final double HABheight3 = 20;
+	boolean atHabHeight2 = false;
+	boolean atHabHeight3 = false;
+	private boolean footToggle = false;
+	private boolean climbPushToggle = false;
+
+	private boolean joyStickDrive = true;
+    double driveJoyStickX;
+    double driveJoyStickY;
+
+	int step = 1;
+	double currentEncoder;
 
 	@Override
 	public void robotInit() {
+	    //robotHardware.shiftDriveInternal(true);
 		autoProgram.robot = robotHardware;
 		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(true); //-Brian
 		robotHardware.enableArmLimits(true); //-Brian
+        robotHardware.climbPushForwardz(DoubleSolenoid.Value.kOff);
+        robotHardware.climb2(DoubleSolenoid.Value.kOff);
 		robotHardware.shiftLow();
-		robotHardware.floorPickupUp();
+		//robotHardware.floorPickupUp();
 
 		//opening serial port
 		if (!PortOpen) {
 		  PortOpen = true;
-
 		  try {
 			Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
 			SmartDashboard.putString("Open serial port: ", "Success!");
@@ -76,7 +93,6 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putString("I caught: ", exception);
 			PortOpen = false;
 		  }
-
 		}
 
 		if (PortOpen) Lidar.init(Blinky);
@@ -85,6 +101,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic () {
+        //robotHardware.checkSafety();
+
+
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
             SmartDashboard.putString("Robot Class", robotHardware.getClass().getSimpleName());
             SmartDashboard.putString("Auto Class", autoProgram.getClass().getSimpleName());
@@ -92,8 +111,10 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Yaw: ", robotHardware.getHeadingDegrees());
             SmartDashboard.putNumber("Roll: ", robotHardware.getRollDegrees());
             SmartDashboard.putNumber("Pitch: ", robotHardware.getPitchDegrees());
-            SmartDashboard.putNumber("Left Encoder: ", robotHardware.getDistanceLeftInches());
-            SmartDashboard.putNumber("Right Encoder: ", robotHardware.getDistanceRightInches());
+            SmartDashboard.putNumber("Left Encoder (Raw): ", robotHardware.getDistanceLeftInches() * 462);
+            SmartDashboard.putNumber("Right Encoder (Raw): ", robotHardware.getDistanceRightInches() * 462);
+            SmartDashboard.putNumber("Left Encoder (Inches): ", robotHardware.getDistanceLeftInches());
+            SmartDashboard.putNumber("Right Encoder (Inches): ", robotHardware.getDistanceRightInches());
             SmartDashboard.putNumber("Arm Encoder: ", robotHardware.getArmEncoderCount());
             SmartDashboard.putNumber("Elevator Encoder: ", robotHardware.getElevatorEncoderCount());
 
@@ -104,30 +125,36 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Roller Power: ", robotHardware.getRollerPower());
             SmartDashboard.putNumber("Climber Power: ", robotHardware.getClimbPower());
 
+            SmartDashboard.putBoolean("ALEX DRIVE", !joyStickDrive);
+
             SmartDashboard.putBoolean("Is ArmDown: ", robotHardware.isArmDown());
             SmartDashboard.putBoolean("Is ArmUp: ", robotHardware.isArmUp());
             SmartDashboard.putBoolean("Is Elevator Down: ", robotHardware.isElevatorDown());
             SmartDashboard.putBoolean("Is Elevator Up: ", robotHardware.isElevatorUp());
             SmartDashboard.putBoolean("SAFETY MOEVERRIDE", robotHardware.getSafetyOverride());
 
-            SmartDashboard.putString("Shifter State: ", robotHardware.getShifterSolenoidState().name());
+            SmartDashboard.putBoolean("Shifter State: ", robotHardware.getShifterSolenoidState());
             SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
             SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
             SmartDashboard.putBoolean("Floor Pickup State: ", robotHardware.getFloorPickupState());
 
             SmartDashboard.putBoolean("Elevator Forward Limit Enabled: ", robotHardware.isElevForwardLimitEnabled());
-            SmartDashboard.putBoolean("At Elevator Forward Limit: ", robotHardware.atElevForwardLimit());
+            //SmartDashboard.putBoolean("At Elevator Forward Limit: ", robotHardware.atElevForwardLimit());
             SmartDashboard.putBoolean("Elevator Reverse Limit Enabled: ", robotHardware.isElevReverseLimitEnabled());
-            SmartDashboard.putBoolean("At Elevator Reverse Limit: ", robotHardware.atElevReverseLimit());
+            //SmartDashboard.putBoolean("At Elevator Reverse Limit: ", robotHardware.atElevReverseLimit());
 
             SmartDashboard.putBoolean("Arm Forward Limit Enabled: ", robotHardware.isArmForwardLimitEnabled());
-            SmartDashboard.putBoolean("At Arm Forward Limit: ", robotHardware.atArmForwardLimit());
+            //SmartDashboard.putBoolean("At Arm Forward Limit: ", robotHardware.atArmForwardLimit());
             SmartDashboard.putBoolean("Arm Reverse Limit Enabled: ", robotHardware.isArmReverseLimitEnabled());
-            SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
+            //SmartDashboard.putBoolean("At Arm Reverse Limit: ", robotHardware.atArmReverseLimit());
 
             SmartDashboard.putNumber("Frogger Power: ", robotHardware.getClimbPower());
             SmartDashboard.putNumber("Frogger Left Encoder: ", robotHardware.getClimberLEncoderCount());
             SmartDashboard.putNumber("Frogger Right Encoder: ", robotHardware.getClimberREncoderCount());
+            SmartDashboard.putBoolean("Foot Toggle: ", footToggle);
+            SmartDashboard.putString("Climb Push Forwardz State: ", robotHardware.getClimbPushForwardzState().name());
+            SmartDashboard.putBoolean("Climb Push Toggle: ", climbPushToggle);
+            SmartDashboard.putString("Feet Out: ", robotHardware.getClimb2State().name());
 
             String modified = "fail";
             try {
@@ -160,32 +187,46 @@ public class Robot extends TimedRobot {
 	public void disabledInit () {
 		robotHardware.shiftSpearHook(false);
 		robotHardware.shiftSpearShaft(false);
-
 	}
 
 	@Override
 	public void disabledPeriodic () {
-		if (leftJoystick.getRawButton(2)) {
+//        ClimbEncoderOrigin = robotHardware.getClimberLEncoderCount();
+
+        if (leftJoystick.getRawButton(2)) {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
 		}
 		if (leftJoystick.getRawButton(5)){
-			autoProgram = new MOErioCargoFrontAuto();
+			autoProgram = new MAFrontAuto();
 			autoProgram.LeftSide = 1;
+			autoProgram.lastStep = 4;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(6)){
-			autoProgram = new MOErioCargoFrontAuto();
+			autoProgram = new MAFrontAuto();
 			autoProgram.LeftSide = -1;
+			autoProgram.lastStep = 4;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(7)){
-			autoProgram = new MOErioCargoFrontAutoBonus();
+			autoProgram = new MASideAuto();
 			autoProgram.LeftSide = 1;
+            autoProgram.lastStep = 7;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButton(8)){
-			autoProgram = new MOErioCargoFrontAutoBonus();
+			autoProgram = new MASideAuto();
 			autoProgram.LeftSide = -1;
+            autoProgram.lastStep = 7;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButton(9)){
+		} else if (leftJoystick.getRawButton(9)) {
+		    autoProgram = new DriveStraightAuto();
+            autoProgram.robot = robotHardware;
+            autoProgram.lastStep = 1;
+        } else if (leftJoystick.getRawButton(10)) {
+		    autoProgram = new UnitTestArcZ();
+		    autoProgram.robot = robotHardware;
+		    autoProgram.lastStep = 1;
+        }
+		/*else if (leftJoystick.getRawButton(9)){
 			autoProgram = new MOErioCargoSideAutoBonus();
 			autoProgram.LeftSide = 1;
 			autoProgram.robot = robotHardware;
@@ -193,98 +234,190 @@ public class Robot extends TimedRobot {
 			autoProgram = new MOErioCargoSideAutoBonus();
 			autoProgram.LeftSide = -1;
 			autoProgram.robot = robotHardware;
-		}
-
-		if (functionStick.getAButton()) robotHardware.enableElevatorLimits(false);
-		else if (functionStick.getBButton()) robotHardware.enableArmLimits(false);
-		else if (functionStick.getXButton()) robotHardware.enableElevatorLimits(true);
-		else if (functionStick.getYButton()) robotHardware.enableArmLimits(true);
-
+		}*/
 	}
 
 	@Override
 	public void autonomousInit () {
+        autoEnable = false; //change if auto is teleop
 		autoProgram.init();
 	}
 
 	@Override
 	public void autonomousPeriodic () {
-		robotHardware.checkSafety();
-		autoProgram.run();
+	    if (autoEnable) {
+	        autoProgram.run();
+            //startAutoStep = autoProgram.autoStep;
+        } else teleopPeriodic();
+        if ((leftJoystick.getRawButton(6)) || (autoProgram.autoStep == autoProgram.lastStep)) {
+            autoEnable = false;
+            teleopInit();
+        }
 	}
 
 	@Override
 	public void teleopInit () {
-		//robotHardware.enableElevatorLimits(true);
-		//robotHardware.enableArmLimits(true);
-		grabStep = 0;
+        //autoProgram.autoStep = startAutoStep;
+        ClimbEncoderOrigin = robotHardware.getClimberLEncoderCount();
+        atHabHeight3 = false;
+        atHabHeight2 = false;
 	}
 
 	@Override
 	public void teleopPeriodic () {
-		//Driving Adjustments
+	    //initial auto
+        autoEnable = false;
+
+        /*if (autoEnable) {
+            autoProgram.run();
+            if (leftJoystick.getRawButton(6))
+                autoEnable = false;
+        }*/
+
+	    //Driving Adjustments
 		if (leftJoystick.getTrigger()   )  robotHardware.moveForward     (.25);
 		else if (leftJoystick.getRawButton(2))  robotHardware.turnLeftInplace (.25);
-		else if (leftJoystick.getRawButton(3))  robotHardware.moveBackward    (.25);
+		else if (leftJoystick.getRawButton(3)) {
+		    switch (step) {
+                case 1:
+		            currentEncoder = robotHardware.getDistanceLeftInches();
+                    step++;
+                    break;
+                case 2:
+                    if (robotHardware.getDistanceLeftInches() < currentEncoder - 0.25) {
+                        robotHardware.moveBackward(0);
+                        step = 1;
+                    }
+                    else robotHardware.moveBackward    (.25);
+                    break;
+            }
+
+        }
 		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.25);
 
-		//Individual motors (For testing)
+		//Individual motors (For testing) - SET TO COAST IF USED
 		//else if (leftJoystick.getRawButton(5))  robotHardware.driveSA(0.5);
 		//else if (leftJoystick.getRawButton(6))  robotHardware.driveSB(0.5);
 		//else if (leftJoystick.getRawButton(7))  robotHardware.driveFA(0.5);
 		//else if (leftJoystick.getRawButton(8))  robotHardware.driveFB(0.5);
 
-		 else if (leftJoystick.getRawButton(5)) robotHardware.enableElevatorLimits(false);
-		 else if (leftJoystick.getRawButton(6)) robotHardware.enableArmLimits(false);
-		 else if (leftJoystick.getRawButton(7)) robotHardware.enableElevatorLimits(true);
-		 else if (leftJoystick.getRawButton(8)) robotHardware.enableArmLimits(true);
-
-
 		//Manual Control
 		else {
-			double driveJoyStickX =  leftJoystick.getX();
-			double driveJoyStickY = -leftJoystick.getY();
+		    if (joyStickDrive) {
+                driveJoyStickX = leftJoystick.getX();
+                driveJoyStickY = -leftJoystick.getY();
+            } else {
+                driveJoyStickX =  functionStick.getX(Hand.kLeft);
+                driveJoyStickY = -functionStick.getY(Hand.kLeft);
+            }
 
-			if (Math.abs(driveJoyStickY) < 0.05) driveJoyStickY = 0.0;
-			else if (driveJoyStickX > 0) driveJoyStickX -= 0.05;
-			else if (driveJoyStickX < 0) driveJoyStickX += 0.05;
-			//Attempt to drive straight if joystick is within 15% of vertical
-			if (Math.abs(driveJoyStickX) < 0.15) driveJoyStickX = 0.0;
-			else if (driveJoyStickX > 0) driveJoyStickX -= 0.15;
-			else if (driveJoyStickX < 0) driveJoyStickX += 0.15;
-			driveJoyStickY *= 1.052631579;
-			driveJoyStickX *= .85;
+            if (Math.abs(driveJoyStickY) < 0.05) driveJoyStickY = 0.0;
+            else if (driveJoyStickX > 0) driveJoyStickX -= 0.05;
+            else if (driveJoyStickX < 0) driveJoyStickX += 0.05;
+            //Attempt to drive straight if joystick is within 15% of vertical
+            if (Math.abs(driveJoyStickX) < 0.15) driveJoyStickX = 0.0;
+            else if (driveJoyStickX > 0) driveJoyStickX -= 0.15;
+            else if (driveJoyStickX < 0) driveJoyStickX += 0.15;
+            driveJoyStickY *= 1.052631579;
+            driveJoyStickX *= .85;
 
-			double drivePowerLeft  = driveJoyStickY + driveJoyStickX;
-			double drivePowerRight = driveJoyStickY - driveJoyStickX;
+            double drivePowerLeft  = driveJoyStickY + driveJoyStickX;
+            double drivePowerRight = driveJoyStickY - driveJoyStickX;
 
-			robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+            robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
 		}
+
+		if (functionStick.getStickButton(Hand.kLeft)) {
+                joyStickDrive = !joyStickDrive;
+        }
+
+        if (functionStick.getStickButtonPressed(Hand.kRight)) {
+            footToggle = !footToggle;
+            if (footToggle) robotHardware.climb2(DoubleSolenoid.Value.kForward);
+            else robotHardware.climb2(DoubleSolenoid.Value.kReverse);
+        }
+
+        if (leftJoystick.getRawButtonPressed(6)) {
+            climbPushToggle = !climbPushToggle;
+            if (climbPushToggle) robotHardware.climbPushForwardz(DoubleSolenoid.Value.kForward);
+            else robotHardware.climbPushForwardz(DoubleSolenoid.Value.kReverse);
+        }
+
+		if (functionStick.getStartButton()) {
+            switch (step) {
+                case 1:
+                    currentEncoder = robotHardware.getDistanceLeftInches();
+                    step++;
+                    break;
+                case 2:
+                    if (robotHardware.getDistanceLeftInches() < currentEncoder - 0.25) {
+                        robotHardware.moveBackward(0);
+                        step = 1;
+                    }
+                    else robotHardware.moveBackward    (.25);
+                    break;
+            }
+        }
+
+		if (functionStick.getRawButton(7)) {
+		    robotHardware.climb(-1.0);
+        }
 
 		//Climbing
 
+		if (leftJoystick.getRawButton(9))
+		{
+			robotHardware.climb(-1.0);
+		}
+		else if (leftJoystick.getRawButton(10))
+		{
+			robotHardware.climb(0.2);
+		}
+		else {
+			robotHardware.climb(0);
+		}
         //POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
-		if      (leftJoystick.getRawButton( 9)) robotHardware.climbUp  (1.0);
-		else if (leftJoystick.getRawButton(10)) robotHardware.climbDown(0.3);
-		//else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
-		//else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
+		/*
+		if (Math.abs(robotHardware.getClimberLEncoderCount()-ClimbEncoderOrigin) < HABheight) {
+            if      (leftJoystick.getRawButton( 9)) robotHardware.climb  (0.5);
+            else if (leftJoystick.getRawButton(10)) robotHardware.climb(-1.0);
 
-        else                                    robotHardware.climb    (0.0);
 
+                //else if (controlPadDirection == POVDirection.EAST)   robotHardware.climbFreeUp(0.3);
+                //else if (controlPadDirection == POVDirection.WEST)   robotHardware.climbSupportUp(0.3);
+
+            else                                    robotHardware.climb    (0.0);
+        }
+        if (Math.abs(robotHardware.getClimberLEncoderCount()-ClimbEncoderOrigin) >= HABheight) {
+            if (leftJoystick.getRawButton(10))
+            {
+                robotHardware.climb2(true);
+            }
+        }
+	    */
 
 		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
 		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
 
 		//Shifting
-        if(leftJoystick.getRawButtonPressed(11))    robotHardware.climb2(true);
-        if(leftJoystick.getRawButtonReleased(11))    robotHardware.climb2(false);
+        if (leftJoystick.getRawButtonPressed(11)) {
+            footToggle = !footToggle;
+            if (footToggle) robotHardware.climb2(DoubleSolenoid.Value.kForward);
+            else robotHardware.climb2(DoubleSolenoid.Value.kReverse);
+        }
+
+        if (leftJoystick.getRawButtonPressed(6)) {
+            climbPushToggle = !climbPushToggle;
+            if (climbPushToggle) robotHardware.climbPushForwardz(DoubleSolenoid.Value.kForward);
+            else robotHardware.climbPushForwardz(DoubleSolenoid.Value.kReverse);
+        }
 
         if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();
 		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
 
 		//hatchGrab
-		if      (functionStick.getBButton()) robotHardware.spearIn    ();
-		else if (functionStick.getAButton()) robotHardware.spearOut   ();
+		if      (functionStick.getAButton()) robotHardware.spearIn    ();
+		else if (functionStick.getBButton()) robotHardware.spearOut   ();
 		if      (functionStick.getXButton()) robotHardware.spearHook  ();
 		else if (functionStick.getYButton()) robotHardware.spearUnhook();
 
@@ -297,7 +430,7 @@ public class Robot extends TimedRobot {
 
 		double armPower    = functionStick.getY(Hand.kRight);
 		/*if(functionStick.getY(Hand.kRight) != 0) armPower = functionStick.getY(Hand.kRight);
-		else armPower = 0.4;*/
+		else armPower = 0.4; NO*/
 
 		//arm
 		//Right stick, up/down rotates.
@@ -307,15 +440,6 @@ public class Robot extends TimedRobot {
 		else if (armPower > 0) armPower -= 0.2;
 		else if (armPower < 0) armPower += 0.2;
 		robotHardware.driveArm(-armPower);
-
-
-		/*else if (armPower > 0) armPower -= 0.2;
-		else if (armPower < 0) armPower += 0.2;*/
-		//robotHardware.driveArm(-armPower*0.5);
-		/*else if (armPower > 0) armPower = 0.4;
-		else if (armPower < 0) armPower = -0.4;*/
-
-
 
 		//elevator
 		//elevator position = -29.7
@@ -330,29 +454,27 @@ public class Robot extends TimedRobot {
 		else if (elevatorPower < 0) elevatorPower += 0.3;
 		robotHardware.driveElevator(elevatorPower*0.8);
 
-		if (functionStick.getStickButton(Hand.kLeft)) {
-			if (robotHardware.atElevForwardLimit()) {
+		/*if (functionStick.getStickButton(Hand.kLeft)) {
+			if (robotHardware.isElevatorUp()) {
 				robotHardware.setElevatorOrigin(robotHardware.getElevatorEncoderCount());
 			} else {
 				robotHardware.driveElevator(0.3);
 			}
-			SmartDashboard.putNumber("Elevator Origin: ", robotHardware.getElevatorOrigin());
 
-			if (robotHardware.atArmForwardLimit()) {
+			if (robotHardware.isArmUp()) {
 				robotHardware.setArmOrigin(robotHardware.getArmEncoderCount());
 			} else {
 				robotHardware.driveArm(0.3);
 			}
-			SmartDashboard.putNumber("Arm Origin: ", robotHardware.getArmOrigin());
-		}
+		}*/
 
 		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		switch (controlPadDirection) {
 			case NORTH:
-				robotHardware.floorPickupUp();
+                robotHardware.climb(0.3);
 				break;
 			case SOUTH:
-				robotHardware.floorPickupDown();
+                robotHardware.climb(1.0);
 				break;
 			case EAST:
 				robotHardware.climbFreeUp(0.3);

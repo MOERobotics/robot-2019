@@ -15,7 +15,6 @@ public class DriveStraightAuto extends GenericAuto {
         robot.resetDriveEncoders();
         robot.resetYaw();
         startTime = System.currentTimeMillis();
-
     }
 
     @Override
@@ -42,6 +41,7 @@ public class DriveStraightAuto extends GenericAuto {
                 }
             case 1:
                 robot.stopDriving();
+                break;
         }
     }
 }
