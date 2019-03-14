@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+
 public class AutoFlying extends GenericAuto {
     double climbOrigin;
     double hab2Height;
@@ -42,8 +44,9 @@ public class AutoFlying extends GenericAuto {
                 //}
                 break;
             case 2:
-                robot.climbPushForwardzInternal(???????????);
-                robot.setDrivePower(steadyPower);
+                robot.climbPushForwardz(DoubleSolenoid.Value.kForward);
+                robot.climb2(DoubleSolenoid.Value.kForward);
+                robot.setDrivePower(steadyPower, steadyPower);
 
                 if (robot.getPitchDegrees() < startPitch - spoopynumber) {
                     autoStep++;
