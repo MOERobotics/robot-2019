@@ -5,18 +5,15 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+/*need button for setting habLevel*/
 package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import frc.robot.genericrobot.SuperMOEva;
 //import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.cscore.UsbCamera;
-
-import javax.sound.sampled.Port;
 
 import java.util.Arrays;
 
@@ -78,7 +75,7 @@ public class Robot extends TimedRobot {
 		robotHardware.enableElevatorLimits(true); //-Brian
 		robotHardware.enableArmLimits(true); //-Brian
         robotHardware.climbPushForwardz(DoubleSolenoid.Value.kOff);
-        robotHardware.climb2(DoubleSolenoid.Value.kOff);
+        robotHardware.LinearSlider(DoubleSolenoid.Value.kOff);
 		robotHardware.shiftLow();
 		//robotHardware.floorPickupUp();
 
@@ -333,8 +330,8 @@ public class Robot extends TimedRobot {
 
         if (functionStick.getStickButtonPressed(Hand.kRight)) {
             footToggle = !footToggle;
-            if (footToggle) robotHardware.climb2(DoubleSolenoid.Value.kForward);
-            else robotHardware.climb2(DoubleSolenoid.Value.kReverse);
+            if (footToggle) robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
+            else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
         }
 
         if (leftJoystick.getRawButtonPressed(6)) {
@@ -391,19 +388,19 @@ public class Robot extends TimedRobot {
         if (Math.abs(robotHardware.getClimberLEncoderCount()-ClimbEncoderOrigin) >= HABheight) {
             if (leftJoystick.getRawButton(10))
             {
-                robotHardware.climb2(true);
+                robotHardware.LinearSlider(true);
             }
         }
 	    */
 
-		//if      (leftJoystick.getRawButton(7)) robotHardware.climb2(true);
-		//else if (leftJoystick.getRawButton(8)) robotHardware.climb2(false);
+		//if      (leftJoystick.getRawButton(7)) robotHardware.LinearSlider(true);
+		//else if (leftJoystick.getRawButton(8)) robotHardware.LinearSlider(false);
 
 		//Shifting
         if (leftJoystick.getRawButtonPressed(11)) {
             footToggle = !footToggle;
-            if (footToggle) robotHardware.climb2(DoubleSolenoid.Value.kForward);
-            else robotHardware.climb2(DoubleSolenoid.Value.kReverse);
+            if (footToggle) robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
+            else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
         }
 
         if (leftJoystick.getRawButtonPressed(6)) {
