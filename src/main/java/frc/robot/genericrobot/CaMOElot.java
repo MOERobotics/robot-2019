@@ -122,6 +122,16 @@ public class CaMOElot extends GenericRobot {
     double fakeElevatorEncoder = 0;
     double fakeTurretEncoder = 0;
 
+    @Override
+    public boolean getSix() {
+        return false;
+    }
+
+    @Override
+    public boolean getSeven() {
+        return false;
+    }
+
     double fakeArmPower = 0;
     double fakeElevatorPower = 0;
     double fakeTurretPower = 0;

@@ -13,7 +13,6 @@ public class Lidar {
     }
 
     public static void getLidar(GenericRobot us, SerialPort Blinky) {
-
         //initializing vars
         int num = 0;
         String lidarString = "", exception = "";

@@ -171,5 +171,15 @@ public class MOErio extends GenericRobot {
 
     }
 
+    @Override
+    public boolean getSix() {
+        return false;
+    }
+
+    @Override
+    public boolean getSeven() {
+        return false;
+    }
+
     public  void climb2(boolean state){}
 }

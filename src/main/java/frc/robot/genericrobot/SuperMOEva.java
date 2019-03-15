@@ -57,6 +57,9 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderFrogL = new CANEncoder(froggerLA);
     CANEncoder encoderFrogR = new CANEncoder(froggerRA);
 
+    DigitalInput six = new DigitalInput(6);
+    DigitalInput seven = new DigitalInput(7);
+
     //DigitalInput climbLLimit = new DigitalInput(6); //GET NUMBERS
     //DigitalInput climbRLimit = new DigitalInput(7);
 
@@ -70,6 +73,17 @@ public class SuperMOEva extends GenericRobot {
         froggerLB.setIdleMode(CANSparkMax.IdleMode.kCoast);
         froggerRA.setIdleMode(CANSparkMax.IdleMode.kCoast);
         froggerRB.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    }
+
+    //ha
+    @Override
+    public boolean getSix() {
+        return six.get();
+    }
+
+    @Override
+    public boolean getSeven() {
+        return seven.get();
     }
 
     //lidar
@@ -105,13 +119,11 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public double getDistanceLeftInches() {
         return -encoderL.getRaw() / TICKS_TO_INCHES;
-        //8000-some
     }
 
     @Override
     public double getDistanceRightInches() {
         return encoderR.getRaw() / TICKS_TO_INCHES;
-        //6000-some
     }
 
     @Override
@@ -149,32 +161,33 @@ public class SuperMOEva extends GenericRobot {
     @Override
     public void setElevatorInternal(double power) {
         elevator.set(power);
-        //System.out.println(power);
-        //if (power != 0) Thread.dumpStack();
     }
 
     @Override
     public void enableElevatorLimits(boolean enabled) {
-        elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        return;
+        //elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        //elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
     }
 
     @Override
     public boolean isElevForwardLimitEnabled() {
-        return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;//elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     @Override
     public boolean isElevReverseLimitEnabled() {
-        return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;//elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     public boolean atElevForwardLimit() {
-        return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
     public boolean atElevReverseLimit() {
-        return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+        return false;
+        //return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
     }
 
     @Override
@@ -184,19 +197,20 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void enableArmLimits(boolean enabled) {
-        arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
-        if (enabled == false) Thread.dumpStack();
+        return;
+        //arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
+        //arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        //if (enabled == false) Thread.dumpStack();
     }
 
     @Override
     public boolean isArmForwardLimitEnabled() {
-        return arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;// arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     @Override
     public boolean isArmReverseLimitEnabled() {
-        return arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;//arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     public boolean atArmForwardLimit() {
@@ -315,8 +329,8 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isElevatorUp() {
-        //return false;
-        return atElevForwardLimit();
+        return false;
+        //return atElevForwardLimit();
         //return (!getSafetyOverride() && (getElevatorEncoderCount() >= 44) || atElevForwardLimit());
     }
 
@@ -329,15 +343,15 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isArmUp() {
-        //return false;
-        return atArmForwardLimit();
+        return false;
+        //return atArmForwardLimit();
         //return !getSafetyOverride() && (getArmEncoderCount() >= 100 || atArmForwardLimit());
     }
 
     @Override
     public boolean isArmDown() {
-        //return false;
-        return atArmReverseLimit();
+        return false;
+        //return atArmReverseLimit();
         //return !getSafetyOverride() && (getArmEncoderCount() <= -2 || atArmReverseLimit());
     }
 

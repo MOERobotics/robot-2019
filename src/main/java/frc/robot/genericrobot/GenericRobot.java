@@ -26,8 +26,8 @@ public abstract class GenericRobot {
     private double  elevatorEncoderOffset = 0;
     private boolean   totalSafetyOverride = false;
 
-    //elevator (since canencoder is aidkljfcanfhiua)
-    private double elevatorOrigin;
+    //find origin
+    /*private double elevatorOrigin;
     public void setElevatorOrigin(double origin) {
     	elevatorOrigin = origin;
 	}
@@ -41,7 +41,7 @@ public abstract class GenericRobot {
 	}
 	public double getArmOrigin() {
 		return armOrigin;
-	}
+	}*/
 
     //lidar
 	public abstract int numSensors();
@@ -262,6 +262,9 @@ public abstract class GenericRobot {
 	/*public double getTurretEncoderCount() {
 		return getTurretEncoderCountInternal() - turretEncoderOffset;
 	}*/
+
+	public abstract boolean getSix();
+	public abstract boolean getSeven();
 
 }
 
