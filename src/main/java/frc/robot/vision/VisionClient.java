@@ -7,7 +7,7 @@ public class VisionClient extends Thread{
     VisionListener parent;
     Socket sock;
 
-    boolean die = false;
+    public volatile boolean die = false;
 
     public VisionClient(VisionListener parent, Socket socket){
         this.parent = parent;

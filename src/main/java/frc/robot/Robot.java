@@ -12,6 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.CaMOElot;
 import frc.robot.genericrobot.GenericRobot;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+
 public class Robot extends TimedRobot {
 
   GenericRobot robotHardware = new CaMOElot();
@@ -28,17 +34,44 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     autoProgram.robot = robotHardware;
+    try {
+      socket = new DatagramSocket(5801);
+    } catch (SocketException e) {
+      e.printStackTrace();
+    }
   }
-
+  private DatagramSocket socket;
+  private byte[] buf = new byte[256];
   @Override
   public void robotPeriodic() {
-      SmartDashboard.putNumber("Yaw: ",robotHardware.getHeadingDegrees());
-      SmartDashboard.putNumber("Left Encoder: ",robotHardware.getDistanceLeftInches());
-      SmartDashboard.putNumber("Right Encoder: ",robotHardware.getDistanceRightInches());
-      SmartDashboard.putNumber("Left Drive Power: ",robotHardware.getLeftDrivePower());
-      SmartDashboard.putNumber("Right Drive Power: ",robotHardware.getRightDrivePower());
-      SmartDashboard.putNumber("autostep: ",autoProgram.autoStep);
+    SmartDashboard.putNumber("Yaw: ", robotHardware.getHeadingDegrees());
+    SmartDashboard.putNumber("Left Encoder: ", robotHardware.getDistanceLeftInches());
+    SmartDashboard.putNumber("Right Encoder: ", robotHardware.getDistanceRightInches());
+    SmartDashboard.putNumber("Left Drive Power: ", robotHardware.getLeftDrivePower());
+    SmartDashboard.putNumber("Right Drive Power: ", robotHardware.getRightDrivePower());
+    SmartDashboard.putNumber("auto step: ", autoProgram.autoStep);
 
+    DatagramPacket packet
+            = new DatagramPacket(buf, buf.length);
+    try {
+      socket.receive(packet);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    InetAddress address = packet.getAddress();
+    int port = packet.getPort();
+    packet = new DatagramPacket(buf, buf.length, address, port);
+    String received
+            = new String(packet.getData(), 0, packet.getLength());
+    System.out.println(received);
+
+
+    try {
+      socket.send(packet);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override

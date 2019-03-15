@@ -6,19 +6,13 @@ import java.net.InetAddress;
 
 public class VisionStandalone {
     private static DatagramSocket socket;
+    //Try byte buffer
     private static byte[] buf = new byte[256];
 
     public static void main(String... argv) throws Exception {
 
         socket = new DatagramSocket(5801);
         run();
-//        VisionListener listener = new VisionListener();
-//        listener.start();
-//
-//        Scanner scan = new Scanner(System.in);
-//        scan.next();
-//
-//        listener.die = true;
 
     }
 
@@ -36,12 +30,20 @@ public class VisionStandalone {
             String received
                     = new String(packet.getData(), 0, packet.getLength());
 
-            System.out.println(received);
+            //System.out.println(received);
+            //recievedArr[0] is the x value, [1] is y
+
+            String[] recievedArr = received.split(",");
+
+            System.out.println("X: " + recievedArr[0]);
+            System.out.println("Y: " + recievedArr[1]);
 
             if (received.equals("end")) {
                 running = false;
                 continue;
             }
+
+            socket.send(packet);
         }
         socket.close();
     }
