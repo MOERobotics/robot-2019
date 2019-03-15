@@ -277,7 +277,7 @@ public class Robot extends TimedRobot {
 	    //Driving Adjustments
 		if (leftJoystick.getTrigger()   )  robotHardware.moveForward     (.25);
 		else if (leftJoystick.getRawButton(2))  robotHardware.turnLeftInplace (.25);
-		else if (leftJoystick.getRawButton(3)) {
+		else if (leftJoystick.getRawButton(4)) {
 		    switch (step) {
                 case 1:
 		            currentEncoder = robotHardware.getDistanceLeftInches();
@@ -293,7 +293,7 @@ public class Robot extends TimedRobot {
             }
 
         }
-		else if (leftJoystick.getRawButton(4))  robotHardware.turnRightInplace(.25);
+		else if (leftJoystick.getRawButton(3))  robotHardware.turnRightInplace(.25);
 
 		//Individual motors (For testing) - SET TO COAST IF USED
 		//else if (leftJoystick.getRawButton(5))  robotHardware.driveSA(0.5);
@@ -359,17 +359,17 @@ public class Robot extends TimedRobot {
             }
         }
 
-		if (functionStick.getRawButton(7)) {
+		if (functionStick.getRawButton(5)) {
 		    robotHardware.climb(-1.0);
         }
 
 		//Climbing
 
-		if (leftJoystick.getRawButton(9))
+		if (leftJoystick.getRawButton(8))
 		{
 			robotHardware.climb(-1.0);
 		}
-		else if (leftJoystick.getRawButton(10))
+		else if (leftJoystick.getRawButton(5))
 		{
 			robotHardware.climb(0.2);
 		}
