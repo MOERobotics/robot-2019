@@ -70,6 +70,8 @@ public abstract class GenericRobot {
 	public void stopDriving() {
 		setDrivePower(0,0);
 	}
+	public abstract void resetArmPosition();
+	public abstract void resetElevatorPosition();
 
     //Drive <editor-fold>
     public final void   moveForward        (double motorPower) { setDrivePower( motorPower,  motorPower); }

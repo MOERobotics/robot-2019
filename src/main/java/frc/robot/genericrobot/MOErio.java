@@ -98,6 +98,16 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
+    public void resetArmPosition() {
+
+    }
+
+    @Override
+    public void resetElevatorPosition() {
+
+    }
+
+    @Override
         public void resetDriveEncoders() {
         encoderL.reset();
         encoderR.reset();

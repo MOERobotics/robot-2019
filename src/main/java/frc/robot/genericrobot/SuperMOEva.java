@@ -153,6 +153,16 @@ public class SuperMOEva extends GenericRobot {
     }
 
     @Override
+    public void resetElevatorPosition() {
+        encoderElev.setPosition(0);
+    }
+
+    @Override
+    public void resetArmPosition() {
+        encoderArm.setPosition(0);
+    }
+
+    @Override
     public void stopDriving() {
         setDrivePowerInternal(0,0);
     }

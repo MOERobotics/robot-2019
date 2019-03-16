@@ -24,7 +24,7 @@ public class Lidar {
         try {
             lidarString = new String(Blinky.readString());
             //System.out.println("Straight from Blinky: " + lidarString + ";");
-            //SmartDashboard.putString("Straight from Blinky: ", lidarString);
+            SmartDashboard.putString("Straight from Blinky: ", lidarString);
             SmartDashboard.putString("We caught an error on reading the port", "");
         } catch (Exception e) {
             exception = "exception " + e;
