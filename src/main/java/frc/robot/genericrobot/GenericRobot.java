@@ -26,6 +26,9 @@ public abstract class GenericRobot {
     private double  elevatorEncoderOffset = 0;
     private boolean   totalSafetyOverride = false;
 
+    public abstract double getElevatorEncoderStart();
+    public abstract double getArmEncoderStart();
+
     //find origin
     /*private double elevatorOrigin;
     public void setElevatorOrigin(double origin) {
@@ -99,8 +102,8 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Elevator <editor-fold>
-    //public final void    elevatorUp       (double power) {driveElevator( power);}
-    //public final void    elevatorDown     (double power) {driveElevator(-power);}
+    public final void    elevatorUp       (double power) {driveElevator( power);}
+    public final void    elevatorDown     (double power) {driveElevator(-power);}
 	public final void    driveElevator    (double power) {
 		this.elevatorPower = power;
 		if      (isElevatorUp  () && power > 0) setElevatorInternal(  0.0);

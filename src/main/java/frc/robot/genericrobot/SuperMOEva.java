@@ -15,6 +15,9 @@ public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
     final double TICKS_TO_INCHES = 462;
+    final double ELEV_TICKS_TO_INCHES = 2.85;
+    double elevatorEncoderStart = 0;
+    double armEncoderStart;
 
     //Drive
     TalonSRX driveLA = new TalonSRX(12) {{setNeutralMode(NeutralMode.Brake);}};
@@ -26,7 +29,7 @@ public class SuperMOEva extends GenericRobot {
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
     Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X);
 
-    Solenoid shifter = new Solenoid(7);
+    Solenoid shifter;// = new Solenoid(7);
 
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -233,7 +236,17 @@ public class SuperMOEva extends GenericRobot {
         return encoderArm.getPosition();
     }
 
-   //Cargo/Hatch
+    @Override
+    public double getElevatorEncoderStart() {
+        return elevatorEncoderStart;
+    }
+
+    @Override
+    public double getArmEncoderStart() {
+        return armEncoderStart;
+    }
+
+    //Cargo/Hatch
     @Override
     public void setRollerInternal(double power) {
         rollL.set(ControlMode.PercentOutput, power);
