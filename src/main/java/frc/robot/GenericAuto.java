@@ -9,8 +9,7 @@ public abstract class GenericAuto {
     public abstract void run();
     public GenericRobot robot;
     public int LeftSide;
-    public int lastStep = 3;
-    public double startMF = -5.2;
+    public int lastStep = 4;
 
     private boolean haveWeYelledAtTheCoderYet = false;
     public void printSmartDashboard() {

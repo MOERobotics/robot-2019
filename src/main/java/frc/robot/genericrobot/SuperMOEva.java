@@ -245,7 +245,7 @@ public class SuperMOEva extends GenericRobot {
     public double getArmEncoderCountInternal() {
         return encoderArm.getPosition();
     }
-
+/*
     @Override
     public double getElevatorEncoderStart() {
         return elevatorEncoderStart;
@@ -255,7 +255,7 @@ public class SuperMOEva extends GenericRobot {
     public double getArmEncoderStart() {
         return armEncoderStart;
     }
-
+*/
     //Cargo/Hatch
     @Override
     public void setRollerInternal(double power) {

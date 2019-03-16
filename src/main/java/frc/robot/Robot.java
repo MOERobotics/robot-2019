@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new ArmMoves();
+	private GenericAuto    autoProgram   = new DeployArm();
 
 //	UsbCamera cam1;
     int smartDashCounter = 0;

@@ -4,19 +4,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DeployArm extends GenericAuto{
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
-    PIDModule armPID = new PIDModule(1.5e-2,3.0e-3,0);
-    double elevatorOrigin = 18.4;
+    PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double elevatorCorrection;
     double armCorrection;
-    double armDifference = 20.3;
-    double armOrigin = -13.9;
-    int counter = 0;
     double armPowerBias = 0;
+    double elevatorDeploy = 13.1;
+    double elevatorFloor = -28.6-3.13;
+    double armOut = /*21.3*/ 21.0;
 
     @Override
     public void init() {
-        autoStep = 2;
+        autoStep = 0;
         elevatorPID.resetError();
+        armPID.resetError();
 
     }
 
@@ -41,45 +41,45 @@ public class DeployArm extends GenericAuto{
 
         switch(autoStep){
             case 0:
-                robot.driveElevator(0.8);
-                if(robot.getElevatorEncoderCount() - elevatorOrigin >= 13.1){
+                robot.driveElevator(0.6);
+                if(robot.getElevatorEncoderCount()  >= elevatorDeploy){
                     autoStep++;
                     elevatorPID.resetError();
                 }
                 break;
 
             case 1:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount() - elevatorOrigin - 13.1);
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
                 elevatorCorrection = elevatorPID.getCorrection();
 
                 robot.driveElevator(elevatorCorrection);
 
-                robot.driveArm(0.4);
-                if (robot.getArmEncoderCount() - armOrigin >= 20.3){
+                robot.driveArm(0.2);
+                if (robot.getArmEncoderCount()  >= armOut){
                     armPID.resetError();
                     autoStep++;
                 }
                 break;
 
             case 2:
-                armPID.setHeading(robot.getArmEncoderCount() - armOrigin - 20.3);
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
                 armCorrection = armPID.getCorrection();
 
                 robot.driveArm(armPowerBias + armCorrection);
 
-                robot.driveElevator(-0.4);
-                if(robot.getElevatorEncoderCount() - elevatorOrigin <= -28.6){
+                robot.driveElevator(-0.3);
+                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
                     autoStep++;
                 }
                 break;
 
             case 3:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount() - elevatorOrigin - 28.6);
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
                 elevatorCorrection = elevatorPID.getCorrection();
 
                 robot.driveElevator(elevatorCorrection);
 
-                armPID.setHeading(robot.getArmEncoderCount() - armOrigin - 20.3);
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
                 armCorrection = armPID.getCorrection();
 
                 robot.driveArm(armPowerBias + armCorrection);

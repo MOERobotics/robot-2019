@@ -26,8 +26,10 @@ public abstract class GenericRobot {
     private double  elevatorEncoderOffset = 0;
     private boolean   totalSafetyOverride = false;
 
+    /*
     public abstract double getElevatorEncoderStart();
     public abstract double getArmEncoderStart();
+	*/
 
     //find origin
     /*private double elevatorOrigin;
