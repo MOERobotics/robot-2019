@@ -128,6 +128,16 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
+    public void resetArmPosition() {
+
+    }
+
+    @Override
+    public void resetElevatorPosition() {
+
+    }
+
+    @Override
     public boolean getSeven() {
         return false;
     }

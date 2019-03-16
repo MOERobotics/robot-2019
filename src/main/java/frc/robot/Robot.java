@@ -179,8 +179,8 @@ public class Robot extends TimedRobot {
 
 		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
         if (leftJoystick.getRawButtonReleased(11)) robotHardware.clearOffsets();
-		if (leftJoystick.getZ() > 0.8) robotHardware.setSafetyOverride(true);
-		else if (leftJoystick.getZ() <= 0.8) robotHardware.setSafetyOverride(false);
+		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
+		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
 		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 	}
@@ -198,6 +198,10 @@ public class Robot extends TimedRobot {
         if (leftJoystick.getRawButtonPressed(2)) {
 			robotHardware.resetYaw();
 			robotHardware.resetDriveEncoders();
+		}
+		if (leftJoystick.getRawButtonPressed(3)) {
+			robotHardware.resetArmPosition();
+			robotHardware.resetElevatorPosition();
 		}
 		if (leftJoystick.getRawButtonPressed(11)){
 			autoProgram = new MAFrontAuto();
@@ -382,8 +386,8 @@ public class Robot extends TimedRobot {
 		} else if (leftJoystick.getRawButton(9)) {
 			robotHardware.climb(0.2);
 		} else {
-            if (functionStick.getX(Hand.kRight) > 0.8) robotHardware.climb(-1.0);
-            else if (functionStick.getX(Hand.kRight) < -0.8) robotHardware.climb(-0.3);
+            if (functionStick.getX(Hand.kRight) > 0.9) robotHardware.climb(-1.0);
+            else if (functionStick.getX(Hand.kRight) < -0.9) robotHardware.climb(-0.3);
 			else robotHardware.climb(0);
 		}
 
@@ -430,7 +434,7 @@ public class Robot extends TimedRobot {
 		//arm
 		//Right stick, up/down rotates.
 		double armPower  = functionStick.getY(Hand.kRight);
-		if (Math.abs(functionStick.getX(Hand.kRight)) > 0.8) armPower = 0;
+		if (Math.abs(functionStick.getX(Hand.kRight)) > 0.9) armPower = 0;
 
 		if (
 			Math.abs(armPower) < 0.2
