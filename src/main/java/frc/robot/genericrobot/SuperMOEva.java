@@ -50,6 +50,8 @@ public class SuperMOEva extends GenericRobot {
     Solenoid betaClimb  ;//= new Solenoid(4); //grab
     DoubleSolenoid betaClimb2 = new DoubleSolenoid(5,6);
     DoubleSolenoid climbForwardz = new DoubleSolenoid(0, 1); //CHECK THIS
+    DoubleSolenoid footSpacerCylinderL = new DoubleSolenoid(7,8);//need input ports
+    DoubleSolenoid footSpacerCylinderR = new DoubleSolenoid(9,10); //^
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);//-Brian
@@ -395,4 +397,9 @@ public class SuperMOEva extends GenericRobot {
         climbForwardz.set(value);
     }
 
+    @Override
+    public void footSpacerCylinderInternal(DoubleSolenoid.Value value) {
+        footSpacerCylinderL.set(value);
+        footSpacerCylinderR.set(value);
+    }
 }

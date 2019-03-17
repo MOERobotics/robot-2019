@@ -220,7 +220,7 @@ public abstract class GenericRobot {
     public abstract void climbLDown(double power);
     public abstract void climbRDown(double power);
     public abstract void climb2Internal(DoubleSolenoid.Value state);
-    public void climb2(DoubleSolenoid.Value value) {
+    public void LinearSlider(DoubleSolenoid.Value value) {
         climb2Internal(value);
         this.climb2State = value;
     }
@@ -236,6 +236,11 @@ public abstract class GenericRobot {
     public DoubleSolenoid.Value getClimbPushForwardzState() {
         return climbPushForwardzState;
     }
+
+    public abstract void footSpacerCylinderInternal(DoubleSolenoid.Value value);
+    public void footSpacerCylinder(DoubleSolenoid.Value value){
+    	footSpacerCylinderInternal(value);
+	}
 
     //Temporary for SuperMOEva testing
     /*public void driveSA(double power) {};
