@@ -166,6 +166,12 @@ public class SuperMOEva extends GenericRobot {
     }
 
     @Override
+    public void resetClimberPosition() {
+        encoderFrogL.setPosition(0);
+        encoderFrogR.setPosition(0);
+    }
+
+    @Override
     public void stopDriving() {
         setDrivePowerInternal(0,0);
     }
@@ -284,27 +290,29 @@ public class SuperMOEva extends GenericRobot {
         //double deltaEncoder =
         //    encoderFrogL.getPosition() -
         //    encoderFrogR.getPosition();
+
+        double ReductionFactor = 0.9; // MF 0.5; SM 0.9;
         double
              leftPower = power,
                 rightPower = power;
 
         double angleTol=0.75;
-        double angleOrigin = 2.65;
+        double angleOrigin = 2.5;
         //if (climbLLimit.get()) leftPower = 0;
         //if (climbRLimit.get()) rightPower = 0;
 
         if (power<0) {
             if (navX.getRoll()-angleOrigin < -angleTol) {
-                leftPower = 0.9*leftPower;
-            } else if (navX.getRoll() > angleTol) {
-                rightPower = 0.9*rightPower;
+                leftPower = ReductionFactor*leftPower;
+            } else if (navX.getRoll() - angleOrigin > angleTol) {
+                rightPower = ReductionFactor*rightPower;
             }
         }
         if (power>0) {
             if (navX.getRoll() - angleOrigin < -angleTol) {
-                rightPower = 0.9 * rightPower;
-            } else if (navX.getRoll() > angleTol) {
-                leftPower = 0.9 * leftPower;
+                rightPower = ReductionFactor * rightPower;
+            } else if (navX.getRoll() - angleOrigin > angleTol) {
+                leftPower = ReductionFactor * leftPower;
             }
         }
         froggerLA.set(leftPower);
@@ -315,14 +323,14 @@ public class SuperMOEva extends GenericRobot {
         SmartDashboard.putNumber("Right Climb Power", rightPower);
     }
 
-    public void climbSupportUp(double power) {
+    public void climbLDown(double power) {
         froggerLA.set(power);
         froggerLB.set(power);
         froggerRA.set(0);
         froggerRB.set(0);
     }
 
-    public void climbFreeUp(double power) {
+    public void climbRDown(double power) {
         froggerLA.set(0);
         froggerLB.set(0);
         froggerRA.set(power);

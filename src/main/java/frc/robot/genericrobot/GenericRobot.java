@@ -77,6 +77,7 @@ public abstract class GenericRobot {
 	}
 	public abstract void resetArmPosition();
 	public abstract void resetElevatorPosition();
+	public abstract void resetClimberPosition();
 
     //Drive <editor-fold>
     public final void   moveForward        (double motorPower) { setDrivePower( motorPower,  motorPower); }
@@ -216,8 +217,8 @@ public abstract class GenericRobot {
     public abstract double getClimberREncoderCount();
     public double getClimbPower() {return this.climbPower;}
 
-    public abstract void climbSupportUp(double power);
-    public abstract void climbFreeUp(double power);
+    public abstract void climbLDown(double power);
+    public abstract void climbRDown(double power);
     public abstract void climb2Internal(DoubleSolenoid.Value state);
     public void climb2(DoubleSolenoid.Value value) {
         climb2Internal(value);
