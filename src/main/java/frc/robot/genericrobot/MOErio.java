@@ -83,6 +83,16 @@ public class MOErio extends GenericRobot {
     }
 
     @Override
+    public boolean atElevatorTopLimit() {
+        return false;
+    }
+
+    @Override
+    public boolean atElevatorBottomLimit() {
+        return false;
+    }
+
+    @Override
     public double getDistanceRightInches() {
         return encoderR.getRaw() * TICKS_TO_INCHES;
     }
@@ -179,16 +189,6 @@ public class MOErio extends GenericRobot {
     @Override
     public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
 
-    }
-
-    @Override
-    public boolean getSix() {
-        return false;
-    }
-
-    @Override
-    public boolean getSeven() {
-        return false;
     }
 
     public  void climb2(boolean state){}

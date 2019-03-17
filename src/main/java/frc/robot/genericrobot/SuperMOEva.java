@@ -57,8 +57,8 @@ public class SuperMOEva extends GenericRobot {
     CANEncoder encoderFrogL = new CANEncoder(froggerLA);
     CANEncoder encoderFrogR = new CANEncoder(froggerRA);
 
-    DigitalInput six = new DigitalInput(6);
-    DigitalInput seven = new DigitalInput(7);
+    DigitalInput elevatorTopLimit = new DigitalInput(6);
+    DigitalInput elevatorBottomLimit = new DigitalInput(7);
 
     //DigitalInput climbLLimit = new DigitalInput(6); //GET NUMBERS
     //DigitalInput climbRLimit = new DigitalInput(7);
@@ -77,13 +77,13 @@ public class SuperMOEva extends GenericRobot {
 
     //ha
     @Override
-    public boolean getSix() {
-        return six.get();
+    public boolean atElevatorTopLimit() {
+        return elevatorTopLimit.get();
     }
 
     @Override
-    public boolean getSeven() {
-        return seven.get();
+    public boolean atElevatorBottomLimit() {
+        return elevatorBottomLimit.get();
     }
 
     //lidar

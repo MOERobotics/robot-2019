@@ -265,8 +265,8 @@ public abstract class GenericRobot {
 		return getTurretEncoderCountInternal() - turretEncoderOffset;
 	}*/
 
-	public abstract boolean getSix();
-	public abstract boolean getSeven();
+	public abstract boolean atElevatorTopLimit();
+	public abstract boolean atElevatorBottomLimit();
 
 }
 

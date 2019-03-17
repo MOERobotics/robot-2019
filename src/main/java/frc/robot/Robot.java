@@ -150,8 +150,8 @@ public class Robot extends TimedRobot {
             SmartDashboard.putBoolean("Climb Push Toggle: ", climbPushToggle);
             SmartDashboard.putString("Feet Out: ", robotHardware.getClimb2State().name());
 
-            SmartDashboard.putBoolean("DIO 6: ", robotHardware.getSix());
-            SmartDashboard.putBoolean("DIO 7: ", robotHardware.getSeven());
+            SmartDashboard.putBoolean("At Elevator Top Limit: ", robotHardware.atElevatorTopLimit());
+            SmartDashboard.putBoolean("At Elevator Bottom Limit: ", robotHardware.atElevatorBottomLimit());
 
             String modified = "fail";
             try {
