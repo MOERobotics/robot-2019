@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
 		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(true); //-Brian
 		robotHardware.enableArmLimits(true); //-Brian
-        robotHardware.climbPushForwardz(DoubleSolenoid.Value.kOff);
+        //robotHardware.climbPushForwardz(DoubleSolenoid.Value.kOff);
         robotHardware.LinearSlider(DoubleSolenoid.Value.kOff);
 		robotHardware.shiftLow();
 		//robotHardware.floorPickupUp();
@@ -147,7 +147,8 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Climber Left Encoder: ", robotHardware.getClimberLEncoderCount());
             SmartDashboard.putNumber("Climber Right Encoder: ", robotHardware.getClimberREncoderCount());
 			SmartDashboard.putBoolean("Foot Toggle: ", footToggle);
-            SmartDashboard.putString("Climb Push Forwardz State: ", robotHardware.getClimbPushForwardzState().name());
+			SmartDashboard.putBoolean("Space State: ", robotHardware.getSpacerState());
+            //SmartDashboard.putString("Climb Push Forwardz State: ", robotHardware.getClimbPushForwardzState().name());
             SmartDashboard.putBoolean("Climb Push Toggle: ", climbPushToggle);
             SmartDashboard.putString("Feet Out: ", robotHardware.getClimb2State().name());
 
@@ -356,11 +357,6 @@ public class Robot extends TimedRobot {
             else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
         }
 
-        if (leftJoystick.getRawButtonPressed(7)) {
-            climbPushToggle = !climbPushToggle;
-            if (climbPushToggle) robotHardware.climbPushForwardz(DoubleSolenoid.Value.kForward);
-            else robotHardware.climbPushForwardz(DoubleSolenoid.Value.kReverse);
-        }
 
 		if (functionStick.getStartButton()) {
             switch (step) {
@@ -383,20 +379,14 @@ public class Robot extends TimedRobot {
 			robotHardware.climb(-1.0);
 		} else if (leftJoystick.getRawButton(9)) {
 			robotHardware.climb(0.4);
-		}
-		else if (leftJoystick.getRawButton(15))
-		{
+		} else if (leftJoystick.getRawButton(15)) {
 			robotHardware.climbRDown(0.3);
 		}
-		else if (leftJoystick.getRawButton(16))
-		{
+		else if (leftJoystick.getRawButton(16)) {
 			robotHardware.climbLDown(0.3);
-		}
-		else
-		{
-			robotHardware.climb(0);
-
-		}
+		} else {
+		    robotHardware.climb(0);
+        }
 		/*else {
             if (functionStick.getX(Hand.kRight) > 0.9) robotHardware.climb(-1.0);
             else if (functionStick.getX(Hand.kRight) < -0.9) robotHardware.climb(-0.3);
@@ -432,11 +422,11 @@ public class Robot extends TimedRobot {
             else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
         }
 
-        if (leftJoystick.getRawButtonPressed(6)) {
+        /*if (leftJoystick.getRawButtonPressed(6)) {
             climbPushToggle = !climbPushToggle;
             if (climbPushToggle) robotHardware.climbPushForwardz(DoubleSolenoid.Value.kForward);
             else robotHardware.climbPushForwardz(DoubleSolenoid.Value.kReverse);
-        }
+        }*/
 
         if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();
 		if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
@@ -480,8 +470,8 @@ public class Robot extends TimedRobot {
 		else if (elevatorPower < 0) elevatorPower += 0.3;
 		robotHardware.driveElevator(elevatorPower*0.8);
 
-/*
-		POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
+
+		/*POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 		SmartDashboard.putString("DPAD", controlPadDirection.name());
 		SmartDashboard.putNumber("DPAD Direction", functionStick.getPOV());
 		switch (controlPadDirection) {
@@ -490,7 +480,6 @@ public class Robot extends TimedRobot {
 				break;
 			case SOUTH:
 				robotHardware.climb(1.0);
-				break;
 			case EAST:
 				robotHardware.climbRDown(0.3);
 				break;
@@ -502,9 +491,9 @@ public class Robot extends TimedRobot {
 			case NORTHEAST:
 			case SOUTHWEST:
 			default:
+			    robotHardware.climb(0);
 				break;
-		}
-		*/
+		}*/
 
         POVDirection joystickPOV = POVDirection.getDirection(leftJoystick.getPOV());
         switch (joystickPOV) {

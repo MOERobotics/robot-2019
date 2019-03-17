@@ -201,12 +201,12 @@ public class CaMOElot extends GenericRobot {
     public  void climbRDown(double power){}
 
     @Override
-    public void climb2Internal(DoubleSolenoid.Value state) {
+    public void linearSlideInternal(DoubleSolenoid.Value state) {
 
     }
 
     @Override
-    public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
+    public void footSpacerCylinderInternal(boolean value) {
 
     }
 

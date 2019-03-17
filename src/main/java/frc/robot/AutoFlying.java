@@ -51,14 +51,14 @@ public class AutoFlying extends GenericAuto {
                 break;
             /*extend mini spacer air cylinders*/
             case 1:
-                robot.footSpacerCylinder(DoubleSolenoid.Value.kForward);
+                robot.footSpacerCylinder(true);
                 startTime = System.currentTimeMillis();
                 autoStep++;
                 break;
             /*slide robot forward and also drive forward until it has fallen forward (either it's been doing that long
              * enough or pitch says so*/
             case 2:
-                robot.climbPushForwardz(DoubleSolenoid.Value.kForward);
+                //robot.climbPushForwardz(DoubleSolenoid.Value.kForward);
                 robot.LinearSlider(DoubleSolenoid.Value.kForward);
                 robot.setDrivePower(steadyPower, steadyPower);
                 autoStep++;
@@ -115,7 +115,7 @@ public class AutoFlying extends GenericAuto {
                 break;
             /*retract those mini air cylinders*/
             case 9:
-                robot.footSpacerCylinder(DoubleSolenoid.Value.kReverse);
+                robot.footSpacerCylinder(false);
                 autoStep++;
                 break;
             case 10:

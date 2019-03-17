@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class SuperMOEva extends GenericRobot {
 
     final int COUNTS_PER_REV = 512;
@@ -29,8 +32,6 @@ public class SuperMOEva extends GenericRobot {
     Encoder encoderL = new Encoder(0, 1, true, EncodingType.k4X);
     Encoder encoderR = new Encoder(4, 5, true, EncodingType.k4X);
 
-    Solenoid shifter;// = new Solenoid(7);
-
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -44,14 +45,12 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
     TalonSRX rollR = new TalonSRX(10) {{setNeutralMode(NeutralMode.Brake);}};
 
+    Solenoid footSpacerCylinder = new Solenoid(0);
     Solenoid spearShaft = new Solenoid(2); //extend
     Solenoid spearHook  = new Solenoid(3); //grab
-    Solenoid floorPickup = new Solenoid(4);
-    Solenoid betaClimb  ;//= new Solenoid(4); //grab
-    DoubleSolenoid betaClimb2 = new DoubleSolenoid(5,6);
-    DoubleSolenoid climbForwardz = new DoubleSolenoid(0, 1); //CHECK THIS
-    DoubleSolenoid footSpacerCylinderL = new DoubleSolenoid(7,8);//need input ports
-    DoubleSolenoid footSpacerCylinderR = new DoubleSolenoid(9,10); //^
+    //Solenoid floorPickup = new Solenoid(4);
+    DoubleSolenoid linearSlider = new DoubleSolenoid(5, 6);
+    Solenoid shifter = new Solenoid(7);
 
     //Hab Lifter
     CANSparkMax froggerLA = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);//-Brian
@@ -65,7 +64,7 @@ public class SuperMOEva extends GenericRobot {
     DigitalInput six = new DigitalInput(6);
     DigitalInput seven = new DigitalInput(7);
 
-    //DigitalInput climbLLimit = new DigitalInput(6); //GET NUMBERS
+    //DigitalInput climbLLimit = new DigitalInput(6);
     //DigitalInput climbRLimit = new DigitalInput(7);
 
     {
@@ -283,7 +282,7 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void shiftFloorPickupInternal(boolean out) {
-        floorPickup.set(out);
+        //floorPickup.set(out);
     }
 
     //Hab Climb
@@ -293,12 +292,12 @@ public class SuperMOEva extends GenericRobot {
         //    encoderFrogL.getPosition() -
         //    encoderFrogR.getPosition();
 
-        double ReductionFactor = 0.9; // MF 0.5; SM 0.9;
+        double ReductionFactor = 0.6; // MF 0.5; SM 0.9;
         double
              leftPower = power,
                 rightPower = power;
 
-        double angleTol=0.75;
+        double angleTol = 0.75;
         double angleOrigin = 2.5;
         //if (climbLLimit.get()) leftPower = 0;
         //if (climbRLimit.get()) rightPower = 0;
@@ -317,26 +316,35 @@ public class SuperMOEva extends GenericRobot {
                 leftPower = ReductionFactor * leftPower;
             }
         }
-        froggerLA.set(leftPower);
-        froggerLB.set(leftPower);
-        froggerRA.set(rightPower);
-        froggerRB.set(rightPower);
+        climbInternalK(leftPower, rightPower);
         SmartDashboard.putNumber("Left Climb Power", leftPower);
         SmartDashboard.putNumber("Right Climb Power", rightPower);
     }
 
+    @Override
     public void climbLDown(double power) {
-        froggerLA.set(power);
-        froggerLB.set(power);
-        froggerRA.set(0);
-        froggerRB.set(0);
+        climbInternalK(power,0);
     }
 
+    @Override
     public void climbRDown(double power) {
-        froggerLA.set(0);
-        froggerLB.set(0);
-        froggerRA.set(power);
-        froggerRB.set(power);
+        climbInternalK(0,power);
+    }
+
+    double oldLeftK, oldRightK;
+    public void climbInternalK(double leftPower, double rightPower) {
+        if (oldLeftK != leftPower || oldRightK != rightPower) {
+            for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+                System.out.println(e);
+            }
+            System.out.printf("L:%f R:%f\n", leftPower, rightPower);
+            oldRightK = rightPower;
+            oldLeftK = leftPower;
+        }
+        froggerLA.set(leftPower);
+        froggerLB.set(leftPower);
+        froggerRA.set(rightPower);
+        froggerRB.set(rightPower);
     }
 
     @Override
@@ -388,18 +396,13 @@ public class SuperMOEva extends GenericRobot {
         //return !getSafetyOverride() && (getArmEncoderCount() <= -2 || atArmReverseLimit());
     }
 
-    public void climb2Internal(DoubleSolenoid.Value state) {
-        betaClimb2.set(state);
+    @Override
+    public void linearSlideInternal(DoubleSolenoid.Value state) {
+        linearSlider.set(state);
     }
 
     @Override
-    public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
-        climbForwardz.set(value);
-    }
-
-    @Override
-    public void footSpacerCylinderInternal(DoubleSolenoid.Value value) {
-        footSpacerCylinderL.set(value);
-        footSpacerCylinderR.set(value);
+    public void footSpacerCylinderInternal(boolean state) {
+        footSpacerCylinder.set(state);
     }
 }

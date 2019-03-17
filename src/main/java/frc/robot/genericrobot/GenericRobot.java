@@ -18,8 +18,9 @@ public abstract class GenericRobot {
     private boolean  spearHookState;
     private boolean floorPickupState;
 	private boolean shifterSolenoidState;
-	private DoubleSolenoid.Value climbPushForwardzState;
-	private DoubleSolenoid.Value climb2State;
+	private boolean spacerState;
+	//private DoubleSolenoid.Value climbPushForwardzState;
+	private DoubleSolenoid.Value linearSlideState;
 
     private double       armEncoderOffset = 0;
     //private double    turretEncoderOffset = 0;
@@ -219,27 +220,31 @@ public abstract class GenericRobot {
 
     public abstract void climbLDown(double power);
     public abstract void climbRDown(double power);
-    public abstract void climb2Internal(DoubleSolenoid.Value state);
+    public abstract void linearSlideInternal(DoubleSolenoid.Value state);
     public void LinearSlider(DoubleSolenoid.Value value) {
-        climb2Internal(value);
-        this.climb2State = value;
+        linearSlideInternal(value);
+        this.linearSlideState = value;
     }
     public DoubleSolenoid.Value getClimb2State() {
-        return climb2State;
+        return linearSlideState;
     }
 
-    public abstract void climbPushForwardzInternal(DoubleSolenoid.Value value);
+    /*public abstract void climbPushForwardzInternal(DoubleSolenoid.Value value);
     public void climbPushForwardz(DoubleSolenoid.Value value) {
         climbPushForwardzInternal(value);
         this.climbPushForwardzState = value;
     }
     public DoubleSolenoid.Value getClimbPushForwardzState() {
         return climbPushForwardzState;
-    }
+    }*/
 
-    public abstract void footSpacerCylinderInternal(DoubleSolenoid.Value value);
-    public void footSpacerCylinder(DoubleSolenoid.Value value){
-    	footSpacerCylinderInternal(value);
+    public abstract void footSpacerCylinderInternal(boolean state);
+    public void footSpacerCylinder(boolean state){
+    	footSpacerCylinderInternal(state);
+    	spacerState = state;
+	}
+	public boolean getSpacerState() {
+    	return spacerState;
 	}
 
     //Temporary for SuperMOEva testing
