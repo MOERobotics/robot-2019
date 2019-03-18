@@ -15,12 +15,15 @@ public class AutoFlying extends GenericAuto {
     double elevatorBalance = -28;
     double armOut = 47;
 
+    double hab2Height;
     double hab3Height = 350;
     double steadyPower;
     double startPitch;
     double startTime;
 
     int pulseCounter = 0;
+
+    boolean hab2 = false;
 
     //pitch positive is up
     @Override
@@ -69,9 +72,16 @@ public class AutoFlying extends GenericAuto {
                 robot.driveArm(-0.1);
                 robot.climb(-1.0);
 
-                if(Math.abs(robot.getClimberLEncoderCount()) >= hab3Height) {
-                    autoStep++;
-                    robot.climb(0);
+                if(hab2){
+                    if(Math.abs(robot.getClimberLEncoderCount()) >= hab2Height) {
+                        autoStep++;
+                        robot.climb(0);
+                    }
+                } else {
+                    if(Math.abs(robot.getClimberLEncoderCount()) >= hab3Height) {
+                        autoStep++;
+                        robot.climb(0);
+                    }
                 }
                 break;
 
