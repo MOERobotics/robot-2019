@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private GenericAuto    autoProgram   = new MAFrontAuto();
+	private GenericAuto    autoProgram   = new AutoFlying();
 
 //	UsbCamera cam1;
     int smartDashCounter = 0;
@@ -249,7 +249,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit () {
-        autoEnable = false; //change if auto is teleop
+        autoEnable = true; //change if auto is teleop
 		autoProgram.init();
 	}
 

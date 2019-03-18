@@ -3,122 +3,195 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/*WHAT IS PITCH???*/
-
 public class AutoFlying extends GenericAuto {
-    double hab2Height;
-    double hab3Height;
+    PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
+    PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
+
+    double elevatorCorrection;
+    double armCorrection;
+    double armPowerBias = 0;
+    double elevatorDeploy = 37;
+    double elevatorFloor = -28.6-3.13;
+    double elevatorBalance = -28;
+    double armOut = 47;
+
+    double hab3Height = 350;
     double steadyPower;
     double startPitch;
     double startTime;
-    double ClimbEncoderOrigin;
 
+    int pulseCounter = 0;
 
     //pitch positive is up
     @Override
     public void init() {
-        hab2Height = 20; /*these need to be fixed!!!*/
-        hab3Height = 30;
+        lastStep = 14;
         startPitch = robot.getPitchDegrees();
         autoStep = 0;
         steadyPower = 0.3;
-    }
-
-    public void setClimbEncoderOrigin(double climbEncoderOrigin) {
-        this.ClimbEncoderOrigin = climbEncoderOrigin;
+        habLevel = 3;
     }
 
     @Override
     public void run() {
 
         switch(autoStep) {
-            /*drive the arm and elevator DOWN onto the HAB level and climb up until we reach the specified height,
-             * assuming Alex has rested them both on it (if he hasn't then we're--*/
+             /* assuming Alex has rested both arm and elevator on the HAB*/
+
             case 0:
-                // Anthony thinks this is a good idea.
-                // Let's start with something simpler.
-                //robot.driveArm(-steadyPower);
-                //robot.driveElevator(-steadyPower);
+                robot.driveElevator(-0.4);
                 robot.climb(-1.0);
 
-                if ((robot.getClimberLEncoderCount() - ClimbEncoderOrigin) >= hab2Height && habLevel == 2) {
+                if(robot.getElevatorEncoderCount() <= elevatorBalance){
                     autoStep++;
-                } else if ((robot.getClimberLEncoderCount() - ClimbEncoderOrigin) >= hab3Height && habLevel == 3) {
-                    autoStep++;
-                } else if (habLevel != 3 || habLevel != 2) {
-                    autoStep = 10;
+                    elevatorPID.resetError();
                 }
                 break;
-            /*extend mini spacer air cylinders*/
+
             case 1:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
                 robot.footSpacerCylinder(true);
-                startTime = System.currentTimeMillis();
+                robot.driveArm(-0.1);
+                robot.climb(-1.0);
+
                 autoStep++;
                 break;
-            /*slide robot forward and also drive forward until it has fallen forward (either it's been doing that long
-             * enough or pitch says so*/
+
             case 2:
-                //robot.climbPushForwardz(DoubleSolenoid.Value.kForward);
-                robot.LinearSlider(DoubleSolenoid.Value.kForward);
-                robot.setDrivePower(steadyPower, steadyPower);
-                autoStep++;
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
+                robot.footSpacerCylinder(true);
+                robot.driveArm(-0.1);
+                robot.climb(-1.0);
+
+                if(Math.abs(robot.getClimberLEncoderCount()) >= hab3Height) {
+                    autoStep++;
+                    robot.climb(0);
+                }
                 break;
-            /*drive forward for one second*/
+
             case 3:
-                robot.setDrivePower(steadyPower,steadyPower);
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
 
-                if(System.currentTimeMillis()-startTime < 2000) {
-                    autoStep++;
-                }
-                break;
-            /*retract the climbers until pitch is leaning only 5 degrees towards the driver station*/
-            case 4:
-                robot.climb(0.2);
+                robot.footSpacerCylinder(true);
+                robot.LinearSlider(DoubleSolenoid.Value.kReverse);
 
-                if (robot.getPitchDegrees()-startPitch > - 5) {
-                    autoStep++;
-                    startTime = System.currentTimeMillis();
-                }
-                break;
-            /*drive forward for one second*/
-            case 5:
-                robot.setDrivePower(steadyPower,steadyPower);
-
-                if (System.currentTimeMillis() >= startTime + 1000) {
-                    autoStep++;
-                }
-                break;
-            /*raise arm to somewhere between horizontal and 30 degrees below it*/
-            case 6:
-                robot.driveArm(0.3);
-                //how do i know where the arm even is though
-                if(robot.getArmEncoderCount() >= 12){
-                    autoStep++;
-                }
-                break;
-            /*retract climber until we are level*/
-            case 7:
-                robot.climb(0.2);
-
-                if (Math.abs(robot.getPitchDegrees()-startPitch) < 1) {
-                    autoStep++;
-                    startTime = System.currentTimeMillis();
-                }
-                break;
-            /*continue retracting for another second*/
-            case 8:
-                robot.climb(0.2);
-
-                if (System.currentTimeMillis() >= startTime + 1000) {
-                    autoStep++;
-                }
-                break;
-            /*retract those mini air cylinders*/
-            case 9:
-                robot.footSpacerCylinder(false);
                 autoStep++;
                 break;
-            case 10:
+
+            case 4:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
+                robot.footSpacerCylinder(true);
+                robot.driveArm(0.2);
+                robot.setDrivePower(steadyPower,steadyPower);
+
+                if (robot.getArmEncoderCount()  >= armOut){
+                    armPID.resetError();
+                    startTime = System.currentTimeMillis();
+                    autoStep++;
+                }
+                break;
+
+            case 5:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+                robot.driveArm(armPowerBias + armCorrection);
+
+                robot.footSpacerCylinder(true);
+                robot.setDrivePower(steadyPower,steadyPower);
+
+                if(System.currentTimeMillis() - startTime >= 2000){
+                    autoStep++;
+                }
+                break;
+
+            case 6:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+                robot.driveArm(armPowerBias + armCorrection);
+
+                robot.footSpacerCylinder(true);
+                robot.climb(1.0);
+                robot.setDrivePower(steadyPower,steadyPower);
+
+                if(Math.abs(robot.getClimberLEncoderCount()) <= 120){
+                    autoStep++;
+                    robot.climb(0);
+                    robot.setDrivePower(0,0);
+                }
+                break;
+
+            case 7:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+                robot.driveArm(armPowerBias + armCorrection);
+
+                robot.setDrivePower(0,0);
+                robot.footSpacerCylinder(false);
+
+                pulseCounter++;
+                if(pulseCounter > 15){
+                    autoStep++;
+                    pulseCounter = 0;
+                }
+                break;
+
+            case 8:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+                robot.driveArm(armPowerBias + armCorrection);
+
+                robot.setDrivePower(0,0);
+                robot.footSpacerCylinder(true);
+
+                pulseCounter++;
+                if(pulseCounter > 25){
+                    autoStep++;
+                    pulseCounter = 0;
+                }
+                break;
+
+            case 9:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+                robot.driveArm(armPowerBias + armCorrection);
+
+                robot.setDrivePower(0,0);
+                robot.footSpacerCylinder(false);
+                break;
+
+            case 13:
+
                 robot.resetDriveEncoders();
                 //PIDTune to 0 distance on the ENCODERS
                 robot.stopEverything();
