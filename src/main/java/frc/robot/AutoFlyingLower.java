@@ -12,10 +12,10 @@ public class AutoFlyingLower extends GenericAuto {
     double elevatorDeploy = 37;
     double elevatorFloor = -28.6-3.13;
     double elevatorBalance = -28;
-    double armOut = 47;
+    double armOut = 40;
 
-    double hab2Height = 175;
-    double retractHeight = 120;
+    double hab2Height = 187.5;
+    double retractHeight = 80;
     double steadyPower;
     double startPitch;
     double startTime;
@@ -114,7 +114,7 @@ public class AutoFlyingLower extends GenericAuto {
                 robot.footSpacerCylinder(true);
                 robot.setDrivePower(steadyPower,steadyPower);
 
-                if(System.currentTimeMillis() - startTime >= 2000){
+                if(System.currentTimeMillis() - startTime >= 3000){
                     autoStep++;
                 }
                 break;
