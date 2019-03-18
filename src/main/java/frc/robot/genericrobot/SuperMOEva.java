@@ -79,17 +79,6 @@ public class SuperMOEva extends GenericRobot {
         froggerRB.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
 
-    //ha
-    @Override
-    public boolean atElevatorTopLimit() {
-        return elevatorTopLimit.get();
-    }
-
-    @Override
-    public boolean atElevatorBottomLimit() {
-        return elevatorBottomLimit.get();
-    }
-
     //lidar
     @Override
     public int numSensors() {
@@ -185,19 +174,20 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void enableElevatorLimits(boolean enabled) {
-        return;
         //elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
         //elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
     }
 
     @Override
     public boolean isElevForwardLimitEnabled() {
-        return false;//elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;
+        //elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     @Override
     public boolean isElevReverseLimitEnabled() {
-        return false;//elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;
+        //elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     public boolean atElevForwardLimit() {
@@ -208,6 +198,16 @@ public class SuperMOEva extends GenericRobot {
     public boolean atElevReverseLimit() {
         return false;
         //return elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).get();
+    }
+
+    @Override
+    public boolean atElevatorTopLimit() {
+        return elevatorTopLimit.get();
+    }
+
+    @Override
+    public boolean atElevatorBottomLimit() {
+        return elevatorBottomLimit.get();
     }
 
     @Override

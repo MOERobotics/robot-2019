@@ -27,28 +27,6 @@ public abstract class GenericRobot {
     private double  elevatorEncoderOffset = 0;
     private boolean   totalSafetyOverride = false;
 
-    /*
-    public abstract double getElevatorEncoderStart();
-    public abstract double getArmEncoderStart();
-	*/
-
-    //find origin
-    /*private double elevatorOrigin;
-    public void setElevatorOrigin(double origin) {
-    	elevatorOrigin = origin;
-	}
-	public double getElevatorOrigin() {
-    	return elevatorOrigin;
-	}
-
-	private double armOrigin;
-	public void setArmOrigin(double origin) {
-		armOrigin = origin;
-	}
-	public double getArmOrigin() {
-		return armOrigin;
-	}*/
-
     //lidar
 	public abstract int numSensors();
 	public int[] lidar = new int[numSensors()];
@@ -121,6 +99,8 @@ public abstract class GenericRobot {
 	public final double  getElevatorPower () {return elevatorPower;}
 	public       void    enableElevatorLimits(boolean enabled) {}
     protected abstract void setElevatorInternal(double power);
+	public abstract boolean atElevatorTopLimit();
+	public abstract boolean atElevatorBottomLimit();
 	public boolean isElevForwardLimitEnabled() {return false;}
 	public boolean isElevReverseLimitEnabled() {return false;}
 	/*public boolean atElevForwardLimit() {return false;}
@@ -192,10 +172,6 @@ public abstract class GenericRobot {
 	public boolean getSpearHookState() {return spearHookState;}
 	//</editor-fold>
 
-	//combos
-	//public abstract void grabberOpenCombo();
-	//public abstract void grabberClosedCombo();
-
 	//Floor Hatch Grab
 	public void floorPickupUp() { shiftFloorPickup(false); }
 	public void floorPickupDown() { shiftFloorPickup(true); }
@@ -229,15 +205,6 @@ public abstract class GenericRobot {
         return linearSlideState;
     }
 
-    /*public abstract void climbPushForwardzInternal(DoubleSolenoid.Value value);
-    public void climbPushForwardz(DoubleSolenoid.Value value) {
-        climbPushForwardzInternal(value);
-        this.climbPushForwardzState = value;
-    }
-    public DoubleSolenoid.Value getClimbPushForwardzState() {
-        return climbPushForwardzState;
-    }*/
-
     public abstract void footSpacerCylinderInternal(boolean state);
     public void footSpacerCylinder(boolean state){
     	footSpacerCylinderInternal(state);
@@ -246,23 +213,14 @@ public abstract class GenericRobot {
 	public boolean getSpacerState() {
     	return spacerState;
 	}
-
-    //Temporary for SuperMOEva testing
-    /*public void driveSA(double power) {};
-    public void driveSB(double power) {};
-    public void driveFA(double power) {};
-    public void driveFB(double power) {};*/
-
     public void setOffsets() {
     	this.armEncoderOffset = getArmEncoderCountInternal();
     	this.elevatorEncoderOffset = getElevatorEncoderCountInternal();
-    	//this.turretEncoderOffset = getTurretEncoderCountInternal();
 	}
 
 	public void clearOffsets() {
     	this.armEncoderOffset = 0;
     	this.elevatorEncoderOffset = 0;
-    	//this.turretEncoderOffset = 0;
 	}
 
 	public void setSafetyOverride(boolean state) {
@@ -277,12 +235,6 @@ public abstract class GenericRobot {
 	public double getElevatorEncoderCount() {
 		return getElevatorEncoderCountInternal() - elevatorEncoderOffset;
 	}
-	/*public double getTurretEncoderCount() {
-		return getTurretEncoderCountInternal() - turretEncoderOffset;
-	}*/
-
-	public abstract boolean atElevatorTopLimit();
-	public abstract boolean atElevatorBottomLimit();
 
 }
 

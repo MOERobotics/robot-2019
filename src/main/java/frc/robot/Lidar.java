@@ -5,21 +5,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.GenericRobot;
 
 public class Lidar {
-    static int i = 0;
-    public static void init(SerialPort Blinky) {
+    GenericRobot us;
+    SerialPort Blinky;
+    String lidarString = "", exception = "";
+    String[] lString = new String[us.numSensors()];
+
+    int[] l = new int[us.numSensors()];
+
+    public void reset() {
         SmartDashboard.putString("Resetting the port: ", "Start");
         Blinky.reset();
         SmartDashboard.putString("Resetting the port: ", "End");
     }
 
-    public static void getLidar(GenericRobot us, SerialPort Blinky) {
-        //initializing vars
-        int num = 0;
-        String lidarString = "", exception = "";
-        String[] lString = new String[us.numSensors()];
-
-        int[] l = new int[us.numSensors()];
-
+    public void getLidar() {
         //reading string from Blinky
         try {
             lidarString = new String(Blinky.readString());
@@ -33,35 +32,14 @@ public class Lidar {
         }
 
         if (!lidarString.equals("")) {
-            if (lidarString.indexOf(" ") != -1)
-                lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
-
-            /*if (lidarString.indexOf("1-") == lidarString.length() - 2) {
-                try {
-                    lString[1] = lidarString.substring(0, lidarString.indexOf("0-")).trim();
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-                try {
-                    lString[0] = lidarString.substring(lidarString.indexOf("0-") + 2, lidarString.lastIndexOf(" ")).trim();
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-            } else if (lidarString.indexOf("0-") == lidarString.length() - 2) {
-                try {
-                    lString[0] = lidarString.substring(0, lidarString.indexOf("1-")).trim();
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-                try {
-                    lString[1] = lidarString.substring(lidarString.indexOf("1-") + 2, lidarString.lastIndexOf(" ")).trim();
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-            }*/
+            for (int k = 1; k < us.numSensors() - 1; k++) {
+                lString[k] = lidarString.substring(lidarString.indexOf(k+"-") + 2, lidarString.indexOf((k+1)+"-")).trim();
+            }
+            lString[us.numSensors()-1] = lidarString.substring(lidarString.indexOf(us.numSensors() - 1 + "-") + 2, lidarString.indexOf("0-")).trim();
+            lString[0] = lidarString.substring(0, lidarString.indexOf(" "));
 
             //parsings substrings
-            for (i = 0; i < us.numSensors(); i++) {
+            for (int i = 0; i < us.numSensors(); i++) {
                 try {
                     l[i] = Integer.parseInt(lString[i]);
                     SmartDashboard.putString("Lidar " + i + " parsing error: ", "");
