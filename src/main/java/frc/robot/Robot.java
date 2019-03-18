@@ -49,6 +49,7 @@ public class Robot extends TimedRobot {
 
 	//auto
     boolean autoEnable = true;
+    int startAutoStep;
 
 	//drive elevator
 	//static final double upperElevator = 1;
@@ -293,6 +294,10 @@ public class Robot extends TimedRobot {
 				climbEnabled = false;
 		} else {
 			//Driving Adjustments
+			if (functionStick.getStickButtonPressed(Hand.kLeft)) {
+				functionStickDrive = !functionStickDrive;
+			}
+
 			if (leftJoystick.getTrigger())  robotHardware.moveForward     (.25);
 			else if (leftJoystick.getRawButton(3))  robotHardware.turnLeftInplace (.25);
 			else if (leftJoystick.getRawButton(2)) {
@@ -322,21 +327,21 @@ public class Robot extends TimedRobot {
 					driveJoyStickY = -functionStick.getY(Hand.kLeft);
 				}
 
-				/*if (Math.abs(driveJoyStickY) < 0.05) driveJoyStickY = 0.0;
+				if (Math.abs(driveJoyStickY) < 0.05) driveJoyStickY = 0.0;
 				else if (driveJoyStickX > 0) driveJoyStickX -= 0.05;
 				else if (driveJoyStickX < 0) driveJoyStickX += 0.05;
 				//Attempt to drive straight if joystick is within 15% of vertical
 				if (Math.abs(driveJoyStickX) < 0.15) driveJoyStickX = 0.0;
 				else if (driveJoyStickX > 0) driveJoyStickX -= 0.15;
-				else if (driveJoyStickX < 0) driveJoyStickX += 0.15;*/
+				else if (driveJoyStickX < 0) driveJoyStickX += 0.15;
 
-				if (Math.abs(driveJoyStickY) < 0.03) driveJoyStickY = 0.0;
+				/*if (Math.abs(driveJoyStickY) < 0.03) driveJoyStickY = 0.0;
 				else if (driveJoyStickX > 0) driveJoyStickX -= 0.03;
 				else if (driveJoyStickX < 0) driveJoyStickX += 0.03;
 				//Attempt to drive straight if joystick is within 10% of vertical
 				if (Math.abs(driveJoyStickX) < 0.10) driveJoyStickX = 0.0;
 				else if (driveJoyStickX > 0) driveJoyStickX -= 0.1;
-				else if (driveJoyStickX < 0) driveJoyStickX += 0.1;
+				else if (driveJoyStickX < 0) driveJoyStickX += 0.1;*/
 
 				//driveJoyStickY *= 1.052631579;
 				driveJoyStickY *= 1.10;
@@ -346,16 +351,6 @@ public class Robot extends TimedRobot {
 				double drivePowerRight = driveJoyStickY - driveJoyStickX;
 
 				robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
-			}
-
-			if (functionStick.getStickButtonPressed(Hand.kLeft)) {
-				functionStickDrive = !functionStickDrive;
-			}
-
-			if (functionStick.getStickButtonPressed(Hand.kRight)) {
-				footToggle = !footToggle;
-				if (footToggle) robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
-				else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
 			}
 
 			if (functionStick.getStartButton()) {
@@ -410,6 +405,9 @@ public class Robot extends TimedRobot {
 			robotHardware.driveElevator(elevatorPower*0.8);
 
 			//Climbing
+			if (leftJoystick.getRawButton(8)) {
+				climbEnabled = true;
+			}
 			if (leftJoystick.getRawButton(6)) {
 				robotHardware.climb(-1.0);
 			} else if (leftJoystick.getRawButton(9)) {
@@ -429,16 +427,17 @@ public class Robot extends TimedRobot {
 			//Foot Toggle
 			if (leftJoystick.getRawButtonPressed(11)) {
 				footToggle = !footToggle;
-				//if (footToggle) robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
-				//else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
+			}
+			if (functionStick.getStickButtonPressed(Hand.kRight)) {
+				footToggle = !footToggle;
 			}
 			if (footToggle) robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
 			else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
 
 			//DPAD
 			POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
-			SmartDashboard.putString("DPAD", controlPadDirection.name());
-			SmartDashboard.putNumber("DPAD Direction", functionStick.getPOV());
+			//SmartDashboard.putString("DPAD", controlPadDirection.name());
+			//SmartDashboard.putNumber("DPAD Direction", functionStick.getPOV());
 			switch (controlPadDirection) {
 				case NORTH:
 					//robotHardware.climb(0.3);
