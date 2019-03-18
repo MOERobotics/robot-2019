@@ -13,6 +13,17 @@ public class CaMOElot extends GenericRobot {
 
     private TalonSRX leftMotorA = new TalonSRX(12);
     private TalonSRX leftMotorB = new TalonSRX(13);
+
+    @Override
+    public boolean atElevatorTopLimit() {
+        return false;
+    }
+
+    @Override
+    public boolean atElevatorBottomLimit() {
+        return false;
+    }
+
     private TalonSRX leftMotorC = new TalonSRX(14);
 
     private TalonSRX rightMotorA = new TalonSRX(1);
@@ -123,11 +134,6 @@ public class CaMOElot extends GenericRobot {
     double fakeTurretEncoder = 0;
 
     @Override
-    public boolean getSix() {
-        return false;
-    }
-
-    @Override
     public void resetArmPosition() {
 
     }
@@ -139,11 +145,6 @@ public class CaMOElot extends GenericRobot {
     @Override
     public void resetClimberPosition() {
 
-    }
-
-    @Override
-    public boolean getSeven() {
-        return false;
     }
 
     double fakeArmPower = 0;

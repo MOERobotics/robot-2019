@@ -1,9 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoFlying extends GenericAuto {
+public class AutoFlyingLower extends GenericAuto {
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
 
@@ -15,7 +14,7 @@ public class AutoFlying extends GenericAuto {
     double elevatorBalance = -28;
     double armOut = 47;
 
-    double hab3Height = 350;
+    double hab2Height = 175;
     double retractHeight = 120;
     double steadyPower;
     double startPitch;
@@ -70,7 +69,7 @@ public class AutoFlying extends GenericAuto {
                 robot.driveArm(-0.1);
                 robot.climb(-1.0);
 
-                if(Math.abs(robot.getClimberLEncoderCount()) >= hab3Height) {
+                if(Math.abs(robot.getClimberLEncoderCount()) >= hab2Height) {
                     autoStep++;
                     robot.climb(0);
                 }
@@ -96,7 +95,7 @@ public class AutoFlying extends GenericAuto {
                 robot.driveArm(0.2);
                 robot.setDrivePower(steadyPower,steadyPower);
 
-                if (robot.getArmEncoderCount() >= armOut){
+                if (robot.getArmEncoderCount()  >= armOut){
                     armPID.resetError();
                     startTime = System.currentTimeMillis();
                     autoStep++;
