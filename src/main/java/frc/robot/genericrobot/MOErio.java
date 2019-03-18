@@ -25,6 +25,12 @@ public class MOErio extends GenericRobot {
     Encoder encoderL        = new Encoder(0, 1, false, CounterBase.EncodingType.k1X);
     Encoder encoderR        = new Encoder(2, 3, false, CounterBase.EncodingType.k1X);
     Encoder encoderElevator = new Encoder(4, 5, true,  CounterBase.EncodingType.k2X);
+
+    @Override
+    public void footSpacerCylinderInternal(boolean value) {
+
+    }
+
     Encoder encoderWrist    = new Encoder(8, 9, true,  CounterBase.EncodingType.k2X);
 
     DigitalInput elevatorBottomLimitSwitch = new DigitalInput(6);
@@ -111,6 +117,10 @@ public class MOErio extends GenericRobot {
     public void resetArmPosition() {
 
     }
+    @Override
+    public void resetClimberPosition() {
+
+    }
 
     @Override
     public void resetElevatorPosition() {
@@ -178,16 +188,11 @@ public class MOErio extends GenericRobot {
     public double getClimberREncoderCount() {
         return 0;
     }
-    public  void climbSupportUp(double power){}
-    public  void climbFreeUp(double power){}
+    public  void climbLDown(double power){}
+    public  void climbRDown(double power){}
 
     @Override
-    public void climb2Internal(DoubleSolenoid.Value state) {
-
-    }
-
-    @Override
-    public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
+    public void linearSlideInternal(DoubleSolenoid.Value state) {
 
     }
 

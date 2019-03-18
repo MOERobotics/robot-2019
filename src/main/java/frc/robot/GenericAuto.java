@@ -10,6 +10,7 @@ public abstract class GenericAuto {
     public GenericRobot robot;
     public int LeftSide;
     public int lastStep;
+    public int habLevel;
 
     private boolean haveWeYelledAtTheCoderYet = false;
     public void printSmartDashboard() {

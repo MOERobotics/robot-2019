@@ -142,6 +142,10 @@ public class CaMOElot extends GenericRobot {
     public void resetElevatorPosition() {
 
     }
+    @Override
+    public void resetClimberPosition() {
+
+    }
 
     double fakeArmPower = 0;
     double fakeElevatorPower = 0;
@@ -194,16 +198,16 @@ public class CaMOElot extends GenericRobot {
         return 0;
     }
 
-    public  void climbSupportUp(double power){}
-    public  void climbFreeUp(double power){}
+    public  void climbLDown(double power){}
+    public  void climbRDown(double power){}
 
     @Override
-    public void climb2Internal(DoubleSolenoid.Value state) {
+    public void linearSlideInternal(DoubleSolenoid.Value state) {
 
     }
 
     @Override
-    public void climbPushForwardzInternal(DoubleSolenoid.Value value) {
+    public void footSpacerCylinderInternal(boolean value) {
 
     }
 

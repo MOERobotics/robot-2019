@@ -33,10 +33,10 @@ public class Lidar {
         }
 
         if (!lidarString.equals("")) {
-            /*if (lidarString.indexOf(" ") != -1)
-                lString[num] = lidarString.substring(0, lidarString.indexOf(" "));*/
+            if (lidarString.indexOf(" ") != -1)
+                lString[num] = lidarString.substring(0, lidarString.indexOf(" "));
 
-            if (lidarString.indexOf("1-") == lidarString.length() - 2) {
+            /*if (lidarString.indexOf("1-") == lidarString.length() - 2) {
                 try {
                     lString[1] = lidarString.substring(0, lidarString.indexOf("0-")).trim();
                 } catch (Exception e) {
@@ -58,7 +58,7 @@ public class Lidar {
                 } catch (Exception e) {
                     System.out.println(e);
                 }
-            }
+            }*/
 
             //parsings substrings
             for (i = 0; i < us.numSensors(); i++) {
