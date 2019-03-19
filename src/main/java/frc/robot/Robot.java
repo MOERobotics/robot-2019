@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
-import io.github.pseudoresonance.pixy2api.Pixy2Line;
+//import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
@@ -257,7 +257,6 @@ public class Robot extends TimedRobot {
         autoEnable = true; //change if auto is teleop
 		autoProgram.init();
 	}
-
 	@Override
 	public void autonomousPeriodic () {
 	    if (autoEnable) {
@@ -385,6 +384,9 @@ public class Robot extends TimedRobot {
 			else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
 			else                                           robotHardware.driveRoller(0.0);
 
+			if(leftJoystick.getRawButton(10)) {
+				autoProgram = new ArmLevel1();
+			}
 			//arm
 			//Right stick, up/down rotates.
 			double armPower = functionStick.getY(Hand.kRight);
