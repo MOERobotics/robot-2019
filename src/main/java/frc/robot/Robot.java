@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import com.sun.source.tree.SwitchTree;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
@@ -18,7 +17,6 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 
 import javax.sound.sampled.Port;
-import javax.swing.*;
 
 import java.util.Arrays;
 
@@ -35,6 +33,7 @@ public class Robot extends TimedRobot {
 	private Joystick 	   switchBox 	 = new Joystick(2);
 	private GenericAuto    autoProgram   = new DoNothingAuto();
 	private GenericAuto	   climbAuto 	 = new DoNothingAuto();
+	private GenericAuto    cargo1        = new Cargo1();
 
 //	UsbCamera cam1;
     int smartDashCounter = 0;
@@ -79,6 +78,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+		//System.gc();
 		autoProgram.robot = robotHardware;
 		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(true); //-Brian
@@ -182,8 +182,8 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getRawButtonPressed (14)) robotHardware.setSafetyOverride(true);
 		if (leftJoystick.getRawButtonReleased(14)) robotHardware.setSafetyOverride(false);*/
 
-		if (leftJoystick.getRawButtonPressed (14)) robotHardware.setOffsets();
-		if (leftJoystick.getRawButtonReleased(14)) robotHardware.clearOffsets();
+		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
+		if (leftJoystick.getRawButtonReleased(11)) robotHardware.clearOffsets();
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
@@ -214,27 +214,27 @@ public class Robot extends TimedRobot {
 			autoProgram.LeftSide = 1;
 			autoProgram.lastStep = 4;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButtonPressed(6)){
+		} else if (leftJoystick.getRawButton(6)){
 			autoProgram = new MAFrontAuto();
 			autoProgram.LeftSide = -1;
 			autoProgram.lastStep = 4;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButtonPressed(7)){
+		} else if (leftJoystick.getRawButton(7)){
 			autoProgram = new MASideAuto();
 			autoProgram.LeftSide = 1;
             autoProgram.lastStep = 7;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButtonPressed(8)){
+		} else if (leftJoystick.getRawButton(8)){
 			autoProgram = new MASideAuto();
 			autoProgram.LeftSide = -1;
             autoProgram.lastStep = 7;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButtonPressed(9)) {
+		} else if (leftJoystick.getRawButton(9)) {
 		    autoProgram = new DriveStraightAuto();
             autoProgram.robot = robotHardware;
             autoProgram.lastStep = 1;
         } else if (leftJoystick.getRawButtonPressed(10)) {
-		    autoProgram = new UnitTestArcZ();
+		    autoProgram = new Cargo2();
 		    autoProgram.robot = robotHardware;
 		    autoProgram.lastStep = 1;
         }
@@ -263,6 +263,7 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic () {
 	    if (autoEnable) {
 	        autoProgram.run();
+            //startAutoStep = autoProgram.autoStep;
         } else teleopPeriodic();
         if ((leftJoystick.getRawButton(8)) || (autoProgram.autoStep == autoProgram.lastStep)) {
             autoEnable = false;
@@ -283,16 +284,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic () {
 	    //initial auto
+
 		if (autoEnable) {
             autoProgram.run();
-            if (leftJoystick.getRawButtonPressed(8))
+            if (leftJoystick.getRawButton(8))
                 autoEnable = false;
-		//auto climb
         } else if (climbEnabled) {
 			climbAuto.run();
-			if (leftJoystick.getRawButtonPressed(8))
+			if (leftJoystick.getRawButton(8))
 				climbEnabled = false;
-		//regular teleop stuff
 		} else {
 			//Driving Adjustments
 			if (functionStick.getStickButtonPressed(Hand.kLeft)) {
@@ -386,36 +386,32 @@ public class Robot extends TimedRobot {
 			else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
 			else                                           robotHardware.driveRoller(0.0);
 
-			//pre-set rocket positions
-			if (switchBox.getRawButtonPressed(1)) {
-				//cargo1
-			} else if (switchBox.getRawButtonPressed(2)) {
-				//cargo2
-			} else if (switchBox.getRawButtonPressed(3)) {
-				//cargo3
-			} else {
-				//arm
-				//Right stick, up/down rotates.
-				double armPower = functionStick.getY(Hand.kRight);
 
-				if (Math.abs(armPower) < 0.2) armPower = 0;
-				else if (armPower > 0) armPower -= 0.2;
-				else if (armPower < 0) armPower += 0.2;
-				robotHardware.driveArm(-armPower);
+			//if (switchBox.getRawButtonPressed(1)) {
+			//    cargo1.run();
+            //} else {
+                //arm
+                //Right stick, up/down rotates.
+                double armPower = functionStick.getY(Hand.kRight);
 
-				//elevator
-				//elevator position = -29.7
-				double elevatorPower =
-						functionStick.getTriggerAxis(Hand.kRight) - functionStick.getTriggerAxis(Hand.kLeft );
+                if (Math.abs(armPower) < 0.2) armPower = 0;
+                else if (armPower > 0) armPower -= 0.2;
+                else if (armPower < 0) armPower += 0.2;
+                robotHardware.driveArm(-armPower);
 
-				if (Math.abs(elevatorPower) < 0.3) elevatorPower = 0;
-				else if (elevatorPower > 0) elevatorPower -= 0.3;
-				else if (elevatorPower < 0) elevatorPower += 0.3;
-				robotHardware.driveElevator(elevatorPower*0.8);
-			}
+                //elevator
+                //elevator position = -29.7
+                double elevatorPower =
+                        functionStick.getTriggerAxis(Hand.kRight) - functionStick.getTriggerAxis(Hand.kLeft );
+
+                if (Math.abs(elevatorPower) < 0.3) elevatorPower = 0;
+                else if (elevatorPower > 0) elevatorPower -= 0.3;
+                else if (elevatorPower < 0) elevatorPower += 0.3;
+                robotHardware.driveElevator(elevatorPower*0.8);
+            //}
 
 			//Climbing
-			if (leftJoystick.getRawButtonPressed(7)) {
+			if (leftJoystick.getRawButton(8)) {
 				climbEnabled = true;
 			}
 			if (leftJoystick.getRawButton(6)) {
