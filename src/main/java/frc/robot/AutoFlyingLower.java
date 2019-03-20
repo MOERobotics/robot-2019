@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class AutoFlyingLower extends GenericAuto {
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-
+ 
     double elevatorCorrection;
     double armCorrection;
     double armPowerBias = 0;
