@@ -27,7 +27,6 @@ public class AutoFlying extends GenericAuto {
     @Override
     public void init() {
         lastStep = 14;
-        startPitch = robot.getPitchDegrees();
         autoStep = 0;
         steadyPower = 0.3;
         habLevel = 3;
