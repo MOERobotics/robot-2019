@@ -225,6 +225,7 @@ public class MASideAutoSimpleArm extends GenericAuto {
                 }
                 break;
 
+            /*raising elevator into position*/
             case 5:
                 robot.driveElevator(0.6);
 
@@ -234,6 +235,7 @@ public class MASideAutoSimpleArm extends GenericAuto {
                 }
                 break;
 
+            /*keeping elevator still while raising arm into position*/
             case 6:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -246,6 +248,7 @@ public class MASideAutoSimpleArm extends GenericAuto {
                 }
                 break;
 
+            /*keeping arm in place while lowering elevator to floor*/
             case 7:
                 armPID.setHeading(robot.getArmEncoderCount()  - armOut);
                 armCorrection = armPID.getCorrection();
@@ -259,6 +262,8 @@ public class MASideAutoSimpleArm extends GenericAuto {
                 }
                 break;
 
+            /*keeping arm and elevator still*/
+            /*moving forward*/
             case 8:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
                 elevatorCorrection = elevatorPID.getCorrection();
