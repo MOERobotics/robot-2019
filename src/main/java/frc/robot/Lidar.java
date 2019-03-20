@@ -3,22 +3,21 @@ package frc.robot;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.GenericRobot;
+import frc.robot.genericrobot.SuperMOEva;
 
 public class Lidar {
-    GenericRobot us;
-    SerialPort Blinky;
-    String lidarString = "", exception = "";
-    String[] lString = new String[us.numSensors()];
 
-    int[] l = new int[us.numSensors()];
-
-    public void reset() {
+    public static void reset(SerialPort Blinky) {
         SmartDashboard.putString("Resetting the port: ", "Start");
         Blinky.reset();
         SmartDashboard.putString("Resetting the port: ", "End");
     }
 
-    public void getLidar() {
+    public static void getLidar(GenericRobot us, SerialPort Blinky) {
+        String lidarString = "", exception = "";
+        String[] lString = new String[us.numSensors()];
+        int[] l = new int[us.numSensors()];
+
         //reading string from Blinky
         try {
             lidarString = new String(Blinky.readString());
