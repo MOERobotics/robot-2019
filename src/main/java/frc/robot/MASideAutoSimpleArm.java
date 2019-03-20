@@ -21,9 +21,11 @@ public class MASideAutoSimpleArm extends GenericAuto {
     double elevatorFloor = -28.6-3.13;
     double armOut = /*21.3*/ 21.0;
 
-    boolean levelTwo = true;
+    boolean levelTwo = false;
     int turncounter = 0;
     long startTime = 0;
+
+    double remainingDistance;
 
 
     public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
@@ -231,6 +233,8 @@ public class MASideAutoSimpleArm extends GenericAuto {
                 if(robot.getElevatorEncoderCount()  >= elevatorDeploy){
                     elevatorPID.resetError();
                     autoStep++;
+                    remainingDistance = robot.lidar[0];//use lidar before lowering the arm/elevator to check the distance that's left
+                    remainingDistance = remainingDistance / 25.4;//converting mm from lidar to inches
                 }
                 break;
 
@@ -255,6 +259,7 @@ public class MASideAutoSimpleArm extends GenericAuto {
 
                 if(robot.getElevatorEncoderCount()  <= elevatorFloor){
                     MOErioAuto.resetError();
+                    robot.resetDriveEncoders();
                     autoStep++;
                 }
                 break;
@@ -272,14 +277,28 @@ public class MASideAutoSimpleArm extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.3 * (1 + correction), 0.3 * (1 - correction));
 
-                if (robot.lidar[0] <= 545 - 25.4 + moementumCorrection) {
+                if(robot.getDistanceLeftInches() >= remainingDistance){
                     autoStep++;
                 }
+                /*if (robot.lidar[0] <= 545 - 25.4) {
+                    autoStep++;
+                }*/
 
                 break;
 
             case 9:
-                robot.stopDriving();
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
+
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+                robot.driveArm(armPowerBias + armCorrection);
+
+                MOErioAuto.setHeading(robot.getHeadingDegrees() + 90 * LeftSide);
+                correction = MOErioAuto.getCorrection();
+
+                robot.setDrivePower(0,0);
                 break;
         }
     }
