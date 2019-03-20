@@ -42,7 +42,7 @@ public class SuperMOEva extends GenericRobot {
     //Encoder encoderArm = new Encoder(8, 9, true, EncodingType.k2X);
 
     //Cargo/Hatch
-    TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}}; //aka the accumulators
+    TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}};
     TalonSRX rollR = new TalonSRX(10) {{setNeutralMode(NeutralMode.Brake);}};
 
     Solenoid footSpacerCylinder = new Solenoid(0);
