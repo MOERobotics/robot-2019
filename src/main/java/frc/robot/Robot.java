@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
+<<<<<<< HEAD
 	private Joystick 	   switchBox 	 = new Joystick(2);
 	private GenericAuto    autoProgram   = new DoNothingAuto();
 	private GenericAuto	   climbAuto 	 = new AutoFlying();
@@ -42,6 +43,11 @@ public class Robot extends TimedRobot {
 	private GenericAuto    hatch3        = new Hatch3();
 	boolean[] cargoPos = {false, false, false};
 	boolean[] hatchPos = {false, false, false};
+=======
+	private GenericAuto    autoProgram   = new AutoFlyingLower();
+	private GenericAuto	   climbAuto 	 = new AutoFlying();
+	//private Lidar 		   lidar 		 = new Lidar();
+>>>>>>> remotes/origin/kbuhbib8u
 
 //	UsbCamera cam1;
     int smartDashCounter = 0;
@@ -58,7 +64,7 @@ public class Robot extends TimedRobot {
 
 	//auto
     boolean autoEnable = true;
-    int startAutoStep;
+    //int startAutoStep;
 
 	//drive elevator
 	//static final double upperElevator = 1;
@@ -101,6 +107,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		//System.gc();
 		autoProgram.robot = robotHardware;
+<<<<<<< HEAD
 		climbAuto.robot = robotHardware;
 		cargo1.robot = robotHardware;
 		cargo2.robot = robotHardware;
@@ -108,6 +115,9 @@ public class Robot extends TimedRobot {
 		hatch1.robot = robotHardware;
 		hatch2.robot = robotHardware;
 		hatch3.robot = robotHardware;
+=======
+		//lidar.us = robotHardware;
+>>>>>>> remotes/origin/kbuhbib8u
 		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(true); //-Brian
 		robotHardware.enableArmLimits(true); //-Brian
@@ -121,6 +131,10 @@ public class Robot extends TimedRobot {
 		  try {
 			Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
 			SmartDashboard.putString("Open serial port: ", "Success!");
+<<<<<<< HEAD
+=======
+			//lidar.Blinky = Blinky;
+>>>>>>> remotes/origin/kbuhbib8u
 		  } catch (Exception e) {
 			String exception = e + "";
 			SmartDashboard.putString("I caught: ", exception);
@@ -216,7 +230,11 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
+<<<<<<< HEAD
 		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
+=======
+		//if (PortOpen) lidar.getLidar();
+>>>>>>> remotes/origin/kbuhbib8u
 	}
 
 	@Override
@@ -509,7 +527,6 @@ public class Robot extends TimedRobot {
 				case NORTHEAST:
 				case SOUTHWEST:
 				default:
-
 					break;
 			}
 
