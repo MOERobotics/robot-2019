@@ -1,10 +1,10 @@
 package frc.robot;
 
-public class ArmLevel1 extends GenericAuto{
+public class Cargo3 extends GenericAuto{
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double armOut = /*21.3*/ 21.0;
+    double armOut = /*21.3*/ 53;
     double elevatorFloor = -28.6-3.13;
     boolean armControlling = false;
     boolean elevatorControlling = false;
