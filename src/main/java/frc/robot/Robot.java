@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
+import frc.robot.vision.PiClient;
 import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
@@ -31,8 +32,9 @@ public class Robot extends TimedRobot {
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	private GenericAuto    autoProgram   = new DriveStraightAuto();
-	private GenericAuto	   climbAuto 	 = new AutoFlying();
-	private Lidar 		   lidar 		 = new Lidar();
+	//private GenericAuto	   climbAuto 	 = new AutoFlying();
+//	private Lidar 		   lidar 		 = new Lidar();
+	private PiClient piClient = PiClient.getInstance();
 
 //	UsbCamera cam1;
     int smartDashCounter = 0;
@@ -78,7 +80,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
-		lidar.us = robotHardware;
+		//lidar.us = robotHardware;
 		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(true); //-Brian
 		robotHardware.enableArmLimits(true); //-Brian
@@ -92,7 +94,7 @@ public class Robot extends TimedRobot {
 		  try {
 			Blinky = new SerialPort(9600, SerialPort.Port.kMXP, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
 			SmartDashboard.putString("Open serial port: ", "Success!");
-			lidar.Blinky = Blinky;
+			//lidar.Blinky = Blinky;
 		  } catch (Exception e) {
 			String exception = e + "";
 			SmartDashboard.putString("I caught: ", exception);
@@ -186,7 +188,13 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
-		if (PortOpen) lidar.getLidar();
+		int[] xy = piClient.getCentroidXY();
+
+		SmartDashboard.putNumber("Vision_X:" , xy[0]);
+		SmartDashboard.putNumber("Vision_Y:" , xy[1]);
+
+
+		//if (PortOpen) lidar.getLidar();
 	}
 
 	@Override
@@ -274,7 +282,7 @@ public class Robot extends TimedRobot {
 	public void teleopInit () {
         //autoProgram.autoStep = startAutoStep;
         ClimbEncoderOrigin = robotHardware.getClimberLEncoderCount();
-		//autoEnable = false;
+		autoEnable = false;
 		climbEnabled = false;
         atHabHeight3 = false;
         atHabHeight2 = false;
@@ -289,7 +297,7 @@ public class Robot extends TimedRobot {
             if (leftJoystick.getRawButton(8))
                 autoEnable = false;
         } else if (climbEnabled) {
-			climbAuto.run();
+			//climbAuto.run();
 			if (leftJoystick.getRawButton(8))
 				climbEnabled = false;
 		} else {

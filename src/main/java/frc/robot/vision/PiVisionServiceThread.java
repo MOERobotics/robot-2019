@@ -13,10 +13,10 @@ public class PiVisionServiceThread implements Runnable {
     private AtomicInteger currentX = new AtomicInteger();
     private AtomicInteger currentY = new AtomicInteger();
 
-    private int interval = 10000;
+    private int interval = 0;
 
     private DatagramSocket socket;
-    private byte[] buffer = new byte[64];
+    private byte[] buffer = new byte[16];
 
     public PiVisionServiceThread() {
         try {
@@ -37,18 +37,18 @@ public class PiVisionServiceThread implements Runnable {
     }
 
     public int[] getCentroidXY() {
-        System.out.println("Returning new int[]");
+//        System.out.println("Returning new int[]");
         return new int[] { currentX.get(), currentY.get() };
     }
 
     public void run() {
         running.set(true);
-        System.out.println("Set running");
+//        System.out.println("Set running");
 
         while (running.get()) {
             try {
                 Thread.sleep(interval);
-                System.out.println("Getting centroid");
+//                System.out.println("Getting centroid");
                 this.getCentroid();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

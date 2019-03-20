@@ -13,7 +13,7 @@ public class PiClient {
 
     public static PiClient getInstance() {
         if (piClientInstance == null) {
-            System.out.println("Creating new instance");
+//            System.out.println("Creating new instance");
             piClientInstance = new PiClient();
         }
         return piClientInstance;
@@ -24,7 +24,7 @@ public class PiClient {
     }
 
     public int[] getCentroidXY() {
-        System.out.println("Creating centroid x y from pi client thread");
+//        System.out.println("Creating centroid x y from pi client thread");
         return piVisionServiceThread.getCentroidXY();
     }
 }
