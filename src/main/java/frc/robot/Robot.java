@@ -30,19 +30,16 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
+	private Joystick 	   switchBox 	 = new Joystick(2);
 
-	//private Joystick 	   switchBox 	 = new Joystick(2);
-	private GenericAuto    autoProgram   = new DeployArm();
+	private GenericAuto    autoProgram   = new MASideAuto();
 	private GenericAuto	   climbAuto 	 = new AutoFloating();
 
-	private GenericAuto    cargo1        = new Cargo1();
-	private GenericAuto    cargo2        = new Cargo2();
-	private GenericAuto    cargo3        = new Cargo3();
-	private GenericAuto    hatch1        = new Hatch1();
-	private GenericAuto    hatch2        = new Hatch2();
-	private GenericAuto    hatch3        = new Hatch3();
-	boolean[] cargoPos = {false, false, false};
-	boolean[] hatchPos = {false, false, false};
+	private GenericAuto[] cargoPos = {new Cargo1(), new Cargo2(), new Cargo3()};
+	private GenericAuto[] hatchPos = {new Hatch1(), new Hatch2(), new Hatch3()};
+	int pos = -1;
+	boolean cargo = false;
+	boolean positionLock = false;
 
 
 //	UsbCamera cam1;
@@ -76,9 +73,6 @@ public class Robot extends TimedRobot {
 	private boolean footToggle = true;
 	private boolean climbEnabled = false;
 
-	//private boolean positionLock = false;
-	//private int position = 0;
-
 	private boolean functionStickDrive = false;
     double driveJoyStickX;
     double driveJoyStickY;
@@ -87,16 +81,15 @@ public class Robot extends TimedRobot {
 	double currentEncoder;
 
 	public void noPosition() {
-		cargoPos[0] = false;
-		cargoPos[1] = false;
-		cargoPos[2] = false;
-		hatchPos[0] = false;
-		hatchPos[1] = false;
-		hatchPos[2] = false;
-		hatch1.init();
-		hatch2.init();
-		cargo1.init();
-		cargo2.init();
+		pos = -1;
+		positionLock = false;
+
+		hatchPos[0].init();
+		hatchPos[1].init();
+		hatchPos[2].init();
+		cargoPos[0].init();
+		cargoPos[1].init();
+		cargoPos[2].init();
 	}
 
 	@Override
@@ -105,12 +98,12 @@ public class Robot extends TimedRobot {
 		autoProgram.robot = robotHardware;
 
 		climbAuto.robot = robotHardware;
-		cargo1.robot = robotHardware;
-		cargo2.robot = robotHardware;
-		cargo3.robot = robotHardware;
-		hatch1.robot = robotHardware;
-		hatch2.robot = robotHardware;
-		hatch3.robot = robotHardware;
+		hatchPos[0].robot = robotHardware;
+		hatchPos[1].robot = robotHardware;
+		hatchPos[2].robot = robotHardware;
+		cargoPos[0].robot = robotHardware;
+		cargoPos[1].robot = robotHardware;
+		cargoPos[2].robot = robotHardware;
 
 		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(false); //-Brian
@@ -249,22 +242,22 @@ public class Robot extends TimedRobot {
 			autoProgram.LeftSide = 1;
 			autoProgram.lastStep = 4;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButton(6)){
+		} else if (leftJoystick.getRawButtonPressed(6)){
 			autoProgram = new MAFrontAuto();
 			autoProgram.LeftSide = -1;
 			autoProgram.lastStep = 4;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButton(7)){
+		} else if (leftJoystick.getRawButtonPressed(7)){
 			autoProgram = new MASideAuto();
 			autoProgram.LeftSide = 1;
             autoProgram.lastStep = 7;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButton(8)){
+		} else if (leftJoystick.getRawButtonPressed(8)){
 			autoProgram = new MASideAuto();
 			autoProgram.LeftSide = -1;
             autoProgram.lastStep = 7;
 			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButton(9)) {
+		} else if (leftJoystick.getRawButtonPressed(9)) {
 		    autoProgram = new DriveStraightAuto();
             autoProgram.robot = robotHardware;
             autoProgram.lastStep = 1;
@@ -301,7 +294,7 @@ public class Robot extends TimedRobot {
 	        autoProgram.run();
             //startAutoStep = autoProgram.autoStep;
         } else teleopPeriodic();
-        if ((leftJoystick.getRawButton(8)) || (autoProgram.autoStep == autoProgram.lastStep)) {
+        if ((leftJoystick.getRawButtonPressed(8)) || (autoProgram.autoStep == autoProgram.lastStep)) {
             autoEnable = false;
             teleopInit();
         }
@@ -325,11 +318,11 @@ public class Robot extends TimedRobot {
 
 		if (autoEnable) {
             autoProgram.run();
-            if (leftJoystick.getRawButton(8))
+            if (leftJoystick.getRawButtonPressed(8))
                 autoEnable = false;
         } else if (climbEnabled) {
 			climbAuto.run();
-			if (leftJoystick.getRawButton(8))
+			if (leftJoystick.getRawButtonPressed(8))
 				climbEnabled = false;
 		} else {
 			//Driving Adjustments
@@ -445,7 +438,7 @@ public class Robot extends TimedRobot {
 
 
 			//Climbing
-			if (leftJoystick.getRawButton(8)) {
+			if (leftJoystick.getRawButtonPressed(8)) {
 				climbEnabled = true;
 			}
 			if (leftJoystick.getRawButton(6)) {
@@ -474,10 +467,30 @@ public class Robot extends TimedRobot {
 			if (footToggle) robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
 			else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
 
+			//Auto Positioning
+			if (switchBox.getRawButtonPressed(5)) cargo = true;
+			else if (switchBox.getRawButtonReleased(5)) cargo = false;
+
+			if (switchBox.getRawButtonPressed(2)) {
+				positionLock = true;
+				pos = 0;
+			}
+			else if (switchBox.getRawButtonPressed(3)) {
+				positionLock = true;
+				pos = 1;
+			}
+			else if (switchBox.getRawButtonPressed(4)) {
+				positionLock = true;
+				pos = 2;
+			}
+
+			if (positionLock) {
+				if (cargo) cargoPos[pos].run();
+				else hatchPos[pos].run();
+			}
+
 			//DPAD
-			POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
-			//SmartDashboard.putString("DPAD", controlPadDirection.name());
-			//SmartDashboard.putNumber("DPAD Direction", functionStick.getPOV());
+			/*POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 			switch (controlPadDirection) {
 				case NORTH:
 					cargoPos[0] = false;
@@ -527,7 +540,7 @@ public class Robot extends TimedRobot {
 				cargo1.run();
 			} else if (cargoPos[1]) {
 				cargo2.run();
-			}
+			}*/
 
 
 			POVDirection joystickPOV = POVDirection.getDirection(leftJoystick.getPOV());
