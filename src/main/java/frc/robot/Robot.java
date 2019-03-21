@@ -15,6 +15,7 @@ import frc.robot.genericrobot.SuperMOEva;
 import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
+import frc.robot.vision.PiClient;
 
 import javax.sound.sampled.Port;
 
@@ -32,6 +33,8 @@ public class Robot extends TimedRobot {
 	private XboxController functionStick = new XboxController(1);
 	private Joystick 	   switchBox 	 = new Joystick(2);
 
+    private PiClient piClient = PiClient.getInstance();
+
 	private GenericAuto    autoProgram   = new MASideAuto();
 	private GenericAuto	   climbAuto 	 = new AutoFloating();
 
@@ -40,6 +43,15 @@ public class Robot extends TimedRobot {
 	int pos = -1;
 	boolean cargo = false;
 	boolean positionLock = false;
+
+    /*private GenericAuto    cargo1        = new Cargo1();
+    private GenericAuto    cargo2        = new Cargo2();
+    private GenericAuto    cargo3        = new Cargo3();
+    private GenericAuto    hatch1        = new Hatch1();
+    private GenericAuto    hatch2        = new Hatch2();
+    private GenericAuto    hatch3        = new Hatch3();
+    boolean[] cargoPos = {false, false, false};
+    boolean[] hatchPos = {false, false, false};*/
 
 
 //	UsbCamera cam1;
@@ -90,6 +102,13 @@ public class Robot extends TimedRobot {
 		cargoPos[0].init();
 		cargoPos[1].init();
 		cargoPos[2].init();
+
+        /*cargoPos[0] = false;
+        cargoPos[1] = false;
+        cargoPos[2] = false;
+        hatchPos[0] = false;
+        hatchPos[1] = false;
+        hatchPos[2] = false;*/
 	}
 
 	@Override
@@ -213,6 +232,11 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getRawButtonReleased(11)) robotHardware.clearOffsets();
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
+
+        int[] xy = piClient.getCentroidXY();
+
+        SmartDashboard.putNumber("Vision_X:" , xy[0]);
+        SmartDashboard.putNumber("Vision_Y:" , xy[1]);
 
 		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 
@@ -470,26 +494,26 @@ public class Robot extends TimedRobot {
 			//Auto Positioning
 			if (switchBox.getRawButtonPressed(5)) cargo = true;
 			else if (switchBox.getRawButtonReleased(5)) cargo = false;
+            if (!positionLock) {
+                if (switchBox.getRawButtonPressed(2)) {
+                    positionLock = true;
+                    pos = 0;
+                }
+                else if (switchBox.getRawButtonPressed(3)) {
+                    positionLock = true;
+                    pos = 1;
+                }
+                else if (switchBox.getRawButtonPressed(4)) {
+                    positionLock = true;
+                    pos = 2;
+                }
+            } else if (positionLock) {
+                if (cargo) cargoPos[pos].run();
+                else hatchPos[pos].run();
+            }
 
-			if (switchBox.getRawButtonPressed(2)) {
-				positionLock = true;
-				pos = 0;
-			}
-			else if (switchBox.getRawButtonPressed(3)) {
-				positionLock = true;
-				pos = 1;
-			}
-			else if (switchBox.getRawButtonPressed(4)) {
-				positionLock = true;
-				pos = 2;
-			}
 
-			if (positionLock) {
-				if (cargo) cargoPos[pos].run();
-				else hatchPos[pos].run();
-			}
-
-			//DPAD
+            //DPAD
 			/*POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 			switch (controlPadDirection) {
 				case NORTH:
