@@ -3,7 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoFlying extends GenericAuto {
+public class AutoFloating extends GenericAuto {
+
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
 
@@ -12,12 +13,11 @@ public class AutoFlying extends GenericAuto {
     double armPowerBias = 0;
     double elevatorDeploy = 37;
     double elevatorFloor = -28.6-3.13;
-    //double elevatorBalance = -28;
     double elevatorBalance = 13;
-    double armOut = /*40*/25;
+    double armOut = 25;
 
-    double hab3Height = 350;
-    double retractHeight = 120;
+    double hab2Height = 187.5;
+    double retractHeight = 80;
     double steadyPower;
     double startPitch;
     double startTime;
@@ -38,7 +38,7 @@ public class AutoFlying extends GenericAuto {
         SmartDashboard.putNumber("Climb autoStep: ", autoStep);
 
         switch(autoStep) {
-             /* assuming Alex has rested both arm and elevator on the HAB*/
+            /* assuming Alex has rested both arm and elevator on the HAB*/
 
             case 0:
                 robot.driveElevator(-0.4);
@@ -71,7 +71,7 @@ public class AutoFlying extends GenericAuto {
                 //robot.driveArm(-0.1);
                 robot.climb(-1.0);
 
-                if (Math.abs(robot.getClimberLEncoderCount()) >= hab3Height) {
+                if (Math.abs(robot.getClimberLEncoderCount()) >= hab2Height) {
                     robot.climb(0);
                     autoStep++;
                 }
@@ -155,6 +155,7 @@ public class AutoFlying extends GenericAuto {
                     autoStep++;
                     robot.climb(0);
                     robot.setDrivePower(0,0);
+                    armOut = 40;
                 }
                 break;
 
@@ -207,6 +208,7 @@ public class AutoFlying extends GenericAuto {
 
                 robot.setDrivePower(0,0);
                 robot.footSpacerCylinder(false);
+
                 break;
 
             case 13:
@@ -217,4 +219,5 @@ public class AutoFlying extends GenericAuto {
                 break;
         }
     }
+
 }

@@ -32,8 +32,8 @@ public class Robot extends TimedRobot {
 	private XboxController functionStick = new XboxController(1);
 
 	//private Joystick 	   switchBox 	 = new Joystick(2);
-	private GenericAuto    autoProgram   = new MASideAutoSimpleArm();
-	private GenericAuto	   climbAuto 	 = new AutoFlying();
+	private GenericAuto    autoProgram   = new DeployArm();
+	private GenericAuto	   climbAuto 	 = new AutoFloating();
 
 	private GenericAuto    cargo1        = new Cargo1();
 	private GenericAuto    cargo2        = new Cargo2();
@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
 	static final double HABheight3 = 20;
 	boolean atHabHeight2 = false;
 	boolean atHabHeight3 = false;
-	private boolean footToggle = false;
+	private boolean footToggle = true;
 	private boolean climbEnabled = false;
 
 	//private boolean positionLock = false;
@@ -113,10 +113,11 @@ public class Robot extends TimedRobot {
 		hatch3.robot = robotHardware;
 
 		autoProgram.LeftSide = 1;
-		robotHardware.enableElevatorLimits(true); //-Brian
-		robotHardware.enableArmLimits(true); //-Brian
-        robotHardware.LinearSlider(DoubleSolenoid.Value.kOff);
+		robotHardware.enableElevatorLimits(false); //-Brian
+		robotHardware.enableArmLimits(false); //-Brian
+        robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
 		robotHardware.shiftLow();
+
 		//robotHardware.floorPickupUp();
 
 		//opening serial port

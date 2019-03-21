@@ -82,7 +82,7 @@ public class SuperMOEva extends GenericRobot {
     //lidar
     @Override
     public int numSensors() {
-        return 1;
+        return 2;
     }
 
     //Drive Functions
@@ -174,8 +174,8 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void enableElevatorLimits(boolean enabled) {
-        //elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        //elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
     }
 
     @Override
@@ -217,9 +217,8 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void enableArmLimits(boolean enabled) {
-        return;
-        //arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        //arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
         //if (enabled == false) Thread.dumpStack();
     }
 
@@ -298,7 +297,7 @@ public class SuperMOEva extends GenericRobot {
                 rightPower = power;
 
         double angleTol = 0.75;
-        double angleOrigin = 2.5;
+        double angleOrigin = 0;
         //if (climbLLimit.get()) leftPower = 0;
         //if (climbRLimit.get()) rightPower = 0;
 
