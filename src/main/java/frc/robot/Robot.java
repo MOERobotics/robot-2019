@@ -38,20 +38,20 @@ public class Robot extends TimedRobot {
 	private GenericAuto    autoProgram   = new MASideAuto();
 	private GenericAuto	   climbAuto 	 = new AutoFloating();
 
-	private GenericAuto[] cargoPos = {new Cargo1(), new Cargo2(), new Cargo3()};
+	/*private GenericAuto[] cargoPos = {new Cargo1(), new Cargo2(), new Cargo3()};
 	private GenericAuto[] hatchPos = {new Hatch1(), new Hatch2(), new Hatch3()};
 	int pos = -1;
 	boolean cargo = false;
-	boolean positionLock = false;
+	boolean positionLock = false;*/
 
-    /*private GenericAuto    cargo1        = new Cargo1();
+    private GenericAuto    cargo1        = new Cargo1();
     private GenericAuto    cargo2        = new Cargo2();
-    private GenericAuto    cargo3        = new Cargo3();
+    //private GenericAuto    cargo3        = new Cargo3();
     private GenericAuto    hatch1        = new Hatch1();
     private GenericAuto    hatch2        = new Hatch2();
-    private GenericAuto    hatch3        = new Hatch3();
+    //private GenericAuto    hatch3        = new Hatch3();
     boolean[] cargoPos = {false, false, false};
-    boolean[] hatchPos = {false, false, false};*/
+    boolean[] hatchPos = {false, false, false};
 
 
 //	UsbCamera cam1;
@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
 	double currentEncoder;
 
 	public void noPosition() {
-		pos = -1;
+		/*pos = -1;
 		positionLock = false;
 
 		hatchPos[0].init();
@@ -101,14 +101,18 @@ public class Robot extends TimedRobot {
 		hatchPos[2].init();
 		cargoPos[0].init();
 		cargoPos[1].init();
-		cargoPos[2].init();
+		cargoPos[2].init();*/
 
-        /*cargoPos[0] = false;
+        cargoPos[0] = false;
         cargoPos[1] = false;
         cargoPos[2] = false;
         hatchPos[0] = false;
         hatchPos[1] = false;
-        hatchPos[2] = false;*/
+        hatchPos[2] = false;
+        cargo1.init();
+        cargo2.init();
+        hatch1.init();
+        hatch2.init();
 	}
 
 	@Override
@@ -117,12 +121,16 @@ public class Robot extends TimedRobot {
 		autoProgram.robot = robotHardware;
 
 		climbAuto.robot = robotHardware;
-		hatchPos[0].robot = robotHardware;
+		hatch1.robot = robotHardware;
+		hatch2.robot = robotHardware;
+		cargo1.robot = robotHardware;
+		cargo2.robot = robotHardware;
+		/*hatchPos[0].robot = robotHardware;
 		hatchPos[1].robot = robotHardware;
 		hatchPos[2].robot = robotHardware;
 		cargoPos[0].robot = robotHardware;
 		cargoPos[1].robot = robotHardware;
-		cargoPos[2].robot = robotHardware;
+		cargoPos[2].robot = robotHardware;*/
 
 		autoProgram.LeftSide = 1;
 		robotHardware.enableElevatorLimits(false); //-Brian
@@ -492,7 +500,7 @@ public class Robot extends TimedRobot {
 			else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
 
 			//Auto Positioning
-			if (switchBox.getRawButtonPressed(5)) cargo = true;
+			/*if (switchBox.getRawButtonPressed(5)) cargo = true;
 			else if (switchBox.getRawButtonReleased(5)) cargo = false;
             if (!positionLock) {
                 if (switchBox.getRawButtonPressed(2)) {
@@ -510,11 +518,11 @@ public class Robot extends TimedRobot {
             } else if (positionLock) {
                 if (cargo) cargoPos[pos].run();
                 else hatchPos[pos].run();
-            }
+            }*/
 
 
             //DPAD
-			/*POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
+			POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
 			switch (controlPadDirection) {
 				case NORTH:
 					cargoPos[0] = false;
@@ -564,7 +572,7 @@ public class Robot extends TimedRobot {
 				cargo1.run();
 			} else if (cargoPos[1]) {
 				cargo2.run();
-			}*/
+			}
 
 
 			POVDirection joystickPOV = POVDirection.getDirection(leftJoystick.getPOV());
