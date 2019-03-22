@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
 	private XboxController functionStick = new XboxController(1);
 
 	//private Joystick 	   switchBox 	 = new Joystick(2);
-	private GenericAuto    autoProgram   = new DeployArm();
+	private GenericAuto    autoProgram   = new ArmWithLidarAuto();
 	private GenericAuto	   climbAuto 	 = new AutoFloating();
 
 	private GenericAuto    cargo1        = new Cargo1();
@@ -445,17 +445,17 @@ public class Robot extends TimedRobot {
 
 
 			//Climbing
-			if (leftJoystick.getRawButton(8)) {
+			if (leftJoystick.getRawButtonPressed(8)) {
 				climbEnabled = true;
 			}
-			if (leftJoystick.getRawButton(6)) {
+			if (leftJoystick.getRawButtonPressed(6)) {
 				robotHardware.climb(-1.0);
-			} else if (leftJoystick.getRawButton(9)) {
+			} else if (leftJoystick.getRawButtonPressed(9)) {
 				robotHardware.climb(0.4);
-			} else if (leftJoystick.getRawButton(15)) {
+			} else if (leftJoystick.getRawButtonPressed(15)) {
 				robotHardware.climbRDown(0.3);
 			}
-			else if (leftJoystick.getRawButton(16)) {
+			else if (leftJoystick.getRawButtonPressed(16)) {
 				robotHardware.climbLDown(0.3);
 			} else {
 				//TEST these first two lines
