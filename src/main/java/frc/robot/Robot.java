@@ -451,22 +451,6 @@ public class Robot extends TimedRobot {
 						else robotHardware.moveBackward(.25);
 						break;
 				}*/
-				/*switch (step) {
-                    case 1:
-                        if (Math.abs(robotHardware.getElevatorEncoderCount()) < 1) {
-                            robotHardware.elevatorDown(0);
-                            step++;
-                        } else if (robotHardware.getElevatorEncoderCount() > 0) {
-                            robotHardware.elevatorDown(0.3);
-                        } else {
-                            robotHardware.elevatorUp(0.3);
-                        }
-                        break;
-                    case 2:
-                        robotHardware.elevatorDown(0);
-                        step = 1;
-                        break;
-                }*/
 				robotHardware.resetElevatorPosition();
 			}
 

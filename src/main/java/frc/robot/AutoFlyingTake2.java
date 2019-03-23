@@ -3,8 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoFlyingFullRetraction extends GenericAuto {
-    PIDModule elevatorPID = new PIDModule(/*0.1*/0.075, 0.00, 0);
+public class AutoFlyingTake2 extends GenericAuto {
+    PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
 
     double elevatorCorrection;
@@ -24,8 +24,6 @@ public class AutoFlyingFullRetraction extends GenericAuto {
     double startPitch;
     double startTime;
 
-    boolean withinArmTolerance = false;
-
     int pulseCounter = 0;
 
     //pitch positive is up
@@ -35,7 +33,6 @@ public class AutoFlyingFullRetraction extends GenericAuto {
         autoStep = 0;
         steadyPower = 0.3;
         habLevel = 3;
-        withinArmTolerance = false;
     }
 
     @Override
@@ -148,10 +145,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
 
                 if ((robot.getArmEncoderCount() >= armOut) ||
                         (System.currentTimeMillis() - startTime > 3000)){
-                    if (Math.abs(robot.getArmEncoderCount()-armOut) < 5) {
-                        withinArmTolerance = true;
-                        armPID.resetError();
-                    }
+                    armPID.resetError();
                     robot.climb(1);
                     autoStep++;
                 }
@@ -162,21 +156,16 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                if (withinArmTolerance) {
-                    armPID.setHeading(robot.getArmEncoderCount() - armOut);
-                    armCorrection = armPID.getCorrection();
-                    robot.driveArm(armPowerBias + armCorrection);
-                } else if (Math.abs(robot.getArmEncoderCount() - armOut) < 5) {
-                    withinArmTolerance = true;
-                    armPID.resetError();
-                }
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+                robot.driveArm(armPowerBias + armCorrection);
 
                 //robot.footSpacerCylinder(true);
                 //robot.climb(1.0);
                 robot.setDrivePower(steadyPower,steadyPower);
                 robot.climb(1);
                 if (Math.abs(robot.getClimberLEncoderCount()) < 50 ||
-                    Math.abs(robot.getClimberREncoderCount()) < 50) {
+                        Math.abs(robot.getClimberREncoderCount()) < 50) {
                     autoStep++;
                 }
                 break;

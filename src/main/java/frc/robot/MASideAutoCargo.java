@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.genericrobot.MOErio;
 
 public class MASideAutoCargo extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);

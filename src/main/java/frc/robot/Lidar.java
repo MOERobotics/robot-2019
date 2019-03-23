@@ -6,7 +6,7 @@ import frc.robot.genericrobot.GenericRobot;
 import frc.robot.genericrobot.SuperMOEva;
 
 public class Lidar {
-
+    static int uArtCounter = 0;
     public static void reset(SerialPort Blinky) {
         SmartDashboard.putString("Resetting the port: ", "Start");
         Blinky.reset();
@@ -14,24 +14,28 @@ public class Lidar {
     }
 
     public static void getLidar(GenericRobot us, SerialPort Blinky) {
-        String lidarString = "", exception = "";
+        String lidarString = "", exception = "", readStringBlinky;
         String[] lString = new String[us.numSensors()];
         int[] l = new int[us.numSensors()];
 
         //reading string from Blinky
-        try {
-            lidarString = new String(Blinky.readString());
-            //System.out.println("Straight from Blinky: " + lidarString + ";");
-            SmartDashboard.putString("Straight from Blinky: ", lidarString);
-            if (lidarString.equals("")) {
-                //System.out.println("getting nothing");
+        if (uArtCounter == 5) {
+            try {
+                readStringBlinky = Blinky.readString();
+                lidarString = readStringBlinky.substring(0, readStringBlinky.indexOf("0-") + 2);
+                //System.out.println("Straight from Blinky: " + lidarString + ";");
+                SmartDashboard.putString("Straight from Blinky: ", lidarString);
+                SmartDashboard.putString("We caught an error on reading the port", "");
+            } catch (Exception e) {
+                //exception = "exception " + e;
+                //System.out.println("booo " + exception);
+                //SmartDashboard.putString("We caught an error on reading the port", exception);
             }
-            SmartDashboard.putString("We caught an error on reading the port", "");
-        } catch (Exception e) {
-            exception = "exception " + e;
-            System.out.println("booo " + exception);
-            SmartDashboard.putString("We caught an error on reading the port", exception);
+            uArtCounter = 0;
+        } else {
+            uArtCounter++;
         }
+
 
         if (!lidarString.equals("")) {
 
@@ -70,7 +74,7 @@ public class Lidar {
                     SmartDashboard.putString("Lidar " + i + " parsing error: ", "");
                 } catch (Exception e) {
                     exception = "ERROR " + e;
-                    SmartDashboard.putString("Lidar " + i + " parsing error: ", exception);
+                    //SmartDashboard.putString("Lidar " + i + " parsing error: ", exception);
                     //System.out.println("lString[1] is " + lString[1]);
                 }
             }
