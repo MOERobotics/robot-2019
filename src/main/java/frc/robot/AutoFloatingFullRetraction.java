@@ -41,6 +41,11 @@ public class AutoFloatingFullRetraction extends GenericAuto {
         switch(autoStep) {
             /* assuming Alex has rested both arm and elevator on the HAB*/
 
+            case -1:
+                robot.spearHook();
+                autoStep++;
+                break;
+
             case 0:
                 robot.climb(-1.0);
 
@@ -100,7 +105,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 robot.driveElevator(elevatorCorrection);
 
                 //robot.footSpacerCylinder(true);
-                robot.driveArm(0.2);
+                robot.driveArm(0.2/*0.1*/);
                 robot.setDrivePower(steadyPower,steadyPower);
 
                 if (robot.getArmEncoderCount() >= armOut){
@@ -115,11 +120,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                //armCorrection = armPID.getCorrection();
-                //robot.driveArm(armPowerBias + armCorrection);
-
-                //robot.footSpacerCylinder(true);
                 robot.setDrivePower(steadyPower,steadyPower);
 
                 if(System.currentTimeMillis() - startTime >= 2000){
@@ -135,10 +135,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //robot.footSpacerCylinder(true);
-                robot.driveArm(0.6);
-                //robot.climb(1);
-                //robot.setDrivePower(steadyPower,steadyPower);
+                robot.driveArm(0.2);
 
                 if (robot.getArmEncoderCount() >= armOut - 10 ||
                         System.currentTimeMillis() - startTime >= 2000){
@@ -164,8 +161,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 armCorrection = armPID.getCorrection();
                 robot.driveArm(armPowerBias + armCorrection);
 
-                //robot.footSpacerCylinder(true);
-                //robot.climb(1.0);
                 robot.setDrivePower(steadyPower,steadyPower);
                 robot.climb(1);
                 if (Math.abs(robot.getClimberLEncoderCount()) < 50 ||
@@ -182,10 +177,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 armPID.setHeading(robot.getArmEncoderCount()  - armOut);
                 armCorrection = armPID.getCorrection();
                 robot.driveArm(armPowerBias + armCorrection);
-
-                //robot.footSpacerCylinder(true);
-                //robot.climb(1.0);
-                //robot.setDrivePower(steadyPower,steadyPower);
 
                 if(Math.abs(robot.getClimberLEncoderCount()) > fullRetractHeight + 15){
                     robot.climbLDown(1);
@@ -233,10 +224,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
 
                 robot.driveArm(0);
 
-                //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                //armCorrection = armPID.getCorrection();
-                //robot.driveArm(armPowerBias + armCorrection);
-
                 robot.setDrivePower(0,0);
                 robot.footSpacerCylinder(false);
 
@@ -252,14 +239,9 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                //armCorrection = armPID.getCorrection();
-                //robot.driveArm(armPowerBias + armCorrection);
-
-                robot.driveArm(0);
+               robot.driveArm(0);
 
                 robot.setDrivePower(0,0);
-                //robot.footSpacerCylinder(true);
 
                 pulseCounter++;
                 if(pulseCounter > 25){
@@ -274,16 +256,10 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 robot.driveElevator(elevatorCorrection);
 
                 robot.driveArm(0);
-                //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                //armCorrection = armPID.getCorrection();
-                //robot.driveArm(armPowerBias + armCorrection);
-
                 robot.setDrivePower(0,0);
-                //robot.footSpacerCylinder(false);
                 break;
 
             case 14:
-
                 robot.driveArm(0);
 
                 robot.resetDriveEncoders();

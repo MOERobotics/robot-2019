@@ -14,6 +14,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
     double elevatorFloor = -28.6-3.13;
     //double elevatorBalance = -28;
     double elevatorBalance = 13;
+    double elevatorFinale = 0;
     double armOut = /*40*/25;
 
     double hab3Height = 335;
@@ -41,6 +42,11 @@ public class AutoFlyingFullRetraction extends GenericAuto {
         switch(autoStep) {
             /* assuming Alex has rested both arm and elevator on the HAB*/
 
+            case -1:
+                robot.spearHook();
+                autoStep++;
+                break;
+
             case 0:
                 robot.climb(-1.0);
 
@@ -48,8 +54,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                     robot.driveElevator(0.4);
                 } else if (robot.getElevatorEncoderCount() >= elevatorBalance + 5) {
                     robot.driveElevator(-0.4);
-                } else
-                {
+                } else {
                     autoStep++;
                     elevatorPID.resetError();
                 }
@@ -125,9 +130,9 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 if(System.currentTimeMillis() - startTime >= 2000){
                     robot.setDrivePower(0,0);
                     autoStep++;
+                    startTime = System.currentTimeMillis();
                 }
                 break;
-
 
             case 6:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
@@ -138,7 +143,8 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 robot.driveArm(0.2);
                 //robot.setDrivePower(steadyPower,steadyPower);
 
-                if (robot.getArmEncoderCount() >= armOut){
+                if ((robot.getArmEncoderCount() >= armOut) ||
+                        (System.currentTimeMillis() - startTime > 3000)){
                     armPID.resetError();
                     robot.climb(1);
                     autoStep++;
@@ -146,7 +152,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 break;
 
             case 7:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
@@ -165,7 +171,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 break;
 
             case 8:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
@@ -206,7 +212,6 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 break;
 
             case 9:
-
                 if (System.currentTimeMillis() - startTime > 1500) {
                     robot.setDrivePower(0, 0);
                     autoStep++;
@@ -217,7 +222,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 break;
 
             case 10:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
@@ -238,8 +243,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 break;
 
             case 11:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
-                elevatorCorrection = elevatorPID.getCorrection();
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 robot.driveElevator(elevatorCorrection);
 
                 //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
@@ -259,7 +263,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 break;
 
             case 12:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 

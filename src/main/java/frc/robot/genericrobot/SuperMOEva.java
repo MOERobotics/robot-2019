@@ -82,7 +82,7 @@ public class SuperMOEva extends GenericRobot {
     //lidar
     @Override
     public int numSensors() {
-        return 2;
+        return 1;
     }
 
     //Drive Functions

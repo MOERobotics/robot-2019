@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto    autoProgram   = new DeployArm();
+	private GenericAuto    autoProgram   = new MASideAutoCargo();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
     boolean[] hatchPos = {false, false, false};
 
 
-//	UsbCamera cam1;
+	//UsbCamera cam1;
     int smartDashCounter = 0;
 
 	public PixyCam pixy = new PixyCam() {{
@@ -164,7 +164,7 @@ public class Robot extends TimedRobot {
         //robotHardware.checkSafety();
 
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
-	        robotHardware.getClimberCurrent();
+	        //robotHardware.getClimberCurrent();
             SmartDashboard.putString("Robot Class", robotHardware.getClass().getSimpleName());
             SmartDashboard.putString("Auto Class", autoProgram.getClass().getSimpleName());
 
@@ -185,7 +185,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Roller Power: ", robotHardware.getRollerPower());
             SmartDashboard.putNumber("Climber Power: ", robotHardware.getClimbPower());
 
-            SmartDashboard.putBoolean("ALEX DRIVE", functionStickDrive);
+            //SmartDashboard.putBoolean("ALEX DRIVE", functionStickDrive);
 
             //SmartDashboard.putBoolean("Is ArmDown: ", robotHardware.isArmDown());
             //SmartDashboard.putBoolean("Is ArmUp: ", robotHardware.isArmUp());
@@ -233,9 +233,9 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
 			SmartDashboard.putBoolean("autoEnable", autoEnable);
             SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
-            autoProgram.printSmartDashboard();
+            //autoProgram.printSmartDashboard();
 
-            SmartDashboard.putString("PixyInfo: ", pixy.toString());
+            //SmartDashboard.putString("PixyInfo: ", pixy.toString());
         }
 		/*if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
@@ -248,16 +248,15 @@ public class Robot extends TimedRobot {
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
 		robotHardware.xy = piClient.getCentroidXY();
-        int[] xy = piClient.getCentroidXY();
+        //int[] xy = piClient.getCentroidXY();
 
-        SmartDashboard.putNumber("Vision_X:" , xy[0]);
-        SmartDashboard.putNumber("Vision_Y:" , xy[1]);
+        //SmartDashboard.putNumber("Vision_X:" , xy[0]);
+        //SmartDashboard.putNumber("Vision_Y:" , xy[1]);
 
-        //SmartDashboard.putNumber("Vision_X:" , robotHardware.xy[0]);
-        //SmartDashboard.putNumber("Vision_Y:" , robotHardware.xy[1]);
+        SmartDashboard.putNumber("Vision_X:" , robotHardware.xy[0]);
+        SmartDashboard.putNumber("Vision_Y:" , robotHardware.xy[1]);
 
 		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
-
 	}
 
 	@Override
@@ -290,14 +289,14 @@ public class Robot extends TimedRobot {
 			autoProgram.lastStep = 4;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(7)){
-			autoProgram = new MASideAuto();
+			autoProgram = new MASideAutoCargo();
 			autoProgram.LeftSide = 1;
-            autoProgram.lastStep = 7;
+            autoProgram.lastStep = 9;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(8)){
-			autoProgram = new MASideAuto();
+			autoProgram = new MASideAutoCargo();
 			autoProgram.LeftSide = -1;
-            autoProgram.lastStep = 7;
+            autoProgram.lastStep = 9;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(9)) {
 		    autoProgram = new DriveStraightAuto();
@@ -367,15 +366,15 @@ public class Robot extends TimedRobot {
 
 		if (autoEnable) {
             autoProgram.run();
-            if (leftJoystick.getRawButtonPressed(8))
+            if (leftJoystick.getRawButtonPressed(5))
                 autoEnable = false;
         } else if (hab2Enabled) {
 			hab2Climb.run();
-			if (leftJoystick.getRawButtonPressed(8))
+			if (leftJoystick.getRawButtonPressed(14))
 				hab2Enabled = false;
 		} else if (hab3Enabled) {
 		    hab3Climb.run();
-		    if (leftJoystick.getRawButtonPressed(14))
+		    if (leftJoystick.getRawButtonPressed(8))
 		        hab3Enabled = false;
         } else {
 			//Driving Adjustments
@@ -439,7 +438,7 @@ public class Robot extends TimedRobot {
 			}
 
 			if (functionStick.getStartButton()) {
-				switch (step) {
+				/*switch (step) {
 					case 1:
 						currentEncoder = robotHardware.getDistanceLeftInches();
 						step++;
@@ -451,7 +450,24 @@ public class Robot extends TimedRobot {
 						}
 						else robotHardware.moveBackward(.25);
 						break;
-				}
+				}*/
+				/*switch (step) {
+                    case 1:
+                        if (Math.abs(robotHardware.getElevatorEncoderCount()) < 1) {
+                            robotHardware.elevatorDown(0);
+                            step++;
+                        } else if (robotHardware.getElevatorEncoderCount() > 0) {
+                            robotHardware.elevatorDown(0.3);
+                        } else {
+                            robotHardware.elevatorUp(0.3);
+                        }
+                        break;
+                    case 2:
+                        robotHardware.elevatorDown(0);
+                        step = 1;
+                        break;
+                }*/
+				robotHardware.resetElevatorPosition();
 			}
 
 			//Shifting
@@ -466,8 +482,10 @@ public class Robot extends TimedRobot {
 
 			//roller
 			//TODO: bumpers
-			if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
-			else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
+			/*if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
+			else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);*/
+            if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
+            else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollOut(0.5);
 			else                                           robotHardware.driveRoller(0.0);
 
 			//arm
