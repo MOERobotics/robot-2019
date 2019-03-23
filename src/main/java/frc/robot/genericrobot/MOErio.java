@@ -196,5 +196,10 @@ public class MOErio extends GenericRobot {
 
     }
 
+    @Override
+    public void getClimberCurrent() {
+
+    }
+
     public  void climb2(boolean state){}
 }

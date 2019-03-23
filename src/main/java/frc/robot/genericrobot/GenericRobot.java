@@ -31,6 +31,9 @@ public abstract class GenericRobot {
 	public abstract int numSensors();
 	public int[] lidar = new int[numSensors()];
 
+	//pi
+    public int[] xy = new int[2];
+
 	//checking for things
 	public abstract double getDistanceLeftInches();
 	public abstract double getDistanceRightInches();
@@ -204,6 +207,7 @@ public abstract class GenericRobot {
     public DoubleSolenoid.Value getClimb2State() {
         return linearSlideState;
     }
+    public abstract void getClimberCurrent();
 
     public abstract void footSpacerCylinderInternal(boolean state);
     public void footSpacerCylinder(boolean state){

@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
-import io.github.pseudoresonance.pixy2api.Pixy2Line;
+//import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.cscore.UsbCamera;
+//import edu.wpi.cscore.UsbCamera;
 import frc.robot.vision.PiClient;
 
-import javax.sound.sampled.Port;
+//import javax.sound.sampled.Port;
 
 import java.util.Arrays;
 
@@ -31,12 +31,13 @@ public class Robot extends TimedRobot {
 	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
-	private Joystick 	   switchBox 	 = new Joystick(2);
+	//private Joystick 	   switchBox 	 = new Joystick(2);
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto    autoProgram   = new MASideAuto();
-	private GenericAuto	   climbAuto 	 = new AutoFloating();
+	private GenericAuto    autoProgram   = new DeployArm();
+	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
+	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 
 	/*private GenericAuto[] cargoPos = {new Cargo1(), new Cargo2(), new Cargo3()};
 	private GenericAuto[] hatchPos = {new Hatch1(), new Hatch2(), new Hatch3()};
@@ -83,7 +84,8 @@ public class Robot extends TimedRobot {
 	boolean atHabHeight2 = false;
 	boolean atHabHeight3 = false;
 	private boolean footToggle = true;
-	private boolean climbEnabled = false;
+	private boolean hab2Enabled = false;
+	private boolean hab3Enabled = false;
 
 	private boolean functionStickDrive = false;
     double driveJoyStickX;
@@ -120,7 +122,8 @@ public class Robot extends TimedRobot {
 		//System.gc();
 		autoProgram.robot = robotHardware;
 
-		climbAuto.robot = robotHardware;
+		hab2Climb.robot = robotHardware;
+		hab3Climb.robot = robotHardware;
 		hatch1.robot = robotHardware;
 		hatch2.robot = robotHardware;
 		cargo1.robot = robotHardware;
@@ -153,7 +156,7 @@ public class Robot extends TimedRobot {
 		  }
 		}
 
-		CameraServer.getInstance().startAutomaticCapture();
+		//CameraServer.getInstance().startAutomaticCapture();
 	}
 
 	@Override
@@ -161,6 +164,7 @@ public class Robot extends TimedRobot {
         //robotHardware.checkSafety();
 
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
+	        robotHardware.getClimberCurrent();
             SmartDashboard.putString("Robot Class", robotHardware.getClass().getSimpleName());
             SmartDashboard.putString("Auto Class", autoProgram.getClass().getSimpleName());
 
@@ -205,8 +209,10 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putBoolean("Foot Toggle: ", footToggle);
 			SmartDashboard.putBoolean("Space State: ", robotHardware.getSpacerState());
             SmartDashboard.putString("Feet Out: ", robotHardware.getClimb2State().name());
-            SmartDashboard.putBoolean("Auto Climb Enabled: ", climbEnabled);
-            SmartDashboard.putString("Auto Climb: ", climbAuto.getClass().getSimpleName());
+            SmartDashboard.putBoolean("Auto Hab 2 Climb Enabled: ", hab2Enabled);
+            SmartDashboard.putBoolean("Auto Hab 3 Climb Enabled", hab3Enabled);
+            SmartDashboard.putString("Auto Hab 2 Climb: ", hab2Climb.getClass().getSimpleName());
+            SmartDashboard.putString("Auto Hab 3 Climb: ", hab3Climb.getClass().getSimpleName());
 
             SmartDashboard.putBoolean("At Elevator Top Limit: ", robotHardware.atElevatorTopLimit());
             SmartDashboard.putBoolean("At Elevator Bottom Limit: ", robotHardware.atElevatorBottomLimit());
@@ -241,10 +247,14 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
+		robotHardware.xy = piClient.getCentroidXY();
         int[] xy = piClient.getCentroidXY();
 
         SmartDashboard.putNumber("Vision_X:" , xy[0]);
         SmartDashboard.putNumber("Vision_Y:" , xy[1]);
+
+        //SmartDashboard.putNumber("Vision_X:" , robotHardware.xy[0]);
+        //SmartDashboard.putNumber("Vision_Y:" , robotHardware.xy[1]);
 
 		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 
@@ -297,6 +307,10 @@ public class Robot extends TimedRobot {
 		    autoProgram = new MASideAutoSimpleArm();
 		    autoProgram.robot = robotHardware;
 		    autoProgram.lastStep = 10;
+        } else if (leftJoystick.getRawButtonPressed(12)) {
+		    autoProgram = new DeployArm();
+		    autoProgram.robot = robotHardware;
+		    autoProgram.lastStep = 42;
         }
 		/*else if (leftJoystick.getRawButton(9)){
 			autoProgram = new MOErioCargoSideAutoBonus();
@@ -307,9 +321,9 @@ public class Robot extends TimedRobot {
 			autoProgram.LeftSide = -1;
 			autoProgram.robot = robotHardware;
 		}*/
-		if (functionStick.getStickButtonPressed(Hand.kLeft)) {
+		/*if (functionStick.getStickButtonPressed(Hand.kLeft)) {
 			functionStickDrive = !functionStickDrive;
-		}
+		}*/
 
 	}
 
@@ -326,7 +340,7 @@ public class Robot extends TimedRobot {
 	        autoProgram.run();
             //startAutoStep = autoProgram.autoStep;
         } else teleopPeriodic();
-        if ((leftJoystick.getRawButtonPressed(8)) || (autoProgram.autoStep == autoProgram.lastStep)) {
+        if ((leftJoystick.getRawButtonPressed(5)) || (autoProgram.autoStep == autoProgram.lastStep)) {
             autoEnable = false;
             teleopInit();
         }
@@ -338,10 +352,13 @@ public class Robot extends TimedRobot {
         //autoProgram.autoStep = startAutoStep;
         ClimbEncoderOrigin = robotHardware.getClimberLEncoderCount();
 		autoEnable = false;
-		climbEnabled = false;
+		hab2Enabled = false;
+		hab3Enabled = false;
+
         atHabHeight3 = false;
         atHabHeight2 = false;
-        climbAuto.init();
+        hab2Climb.init();
+        hab3Climb.init();
 	}
 
 	@Override
@@ -352,15 +369,19 @@ public class Robot extends TimedRobot {
             autoProgram.run();
             if (leftJoystick.getRawButtonPressed(8))
                 autoEnable = false;
-        } else if (climbEnabled) {
-			climbAuto.run();
+        } else if (hab2Enabled) {
+			hab2Climb.run();
 			if (leftJoystick.getRawButtonPressed(8))
-				climbEnabled = false;
-		} else {
+				hab2Enabled = false;
+		} else if (hab3Enabled) {
+		    hab3Climb.run();
+		    if (leftJoystick.getRawButtonPressed(14))
+		        hab3Enabled = false;
+        } else {
 			//Driving Adjustments
-			if (functionStick.getStickButtonPressed(Hand.kLeft)) {
+			/*if (functionStick.getStickButtonPressed(Hand.kLeft)) {
 				functionStickDrive = !functionStickDrive;
-			}
+			}*/
 
 			if (leftJoystick.getTrigger())  robotHardware.moveForward     (.25);
 			else if (leftJoystick.getRawButton(3))  robotHardware.turnLeftInplace (.25);
@@ -457,7 +478,6 @@ public class Robot extends TimedRobot {
 			if (armPower != 0) noPosition();
 			robotHardware.driveArm(-armPower);
 
-
 			//elevator
 			//elevator position = -29.7
 			double elevatorPower =
@@ -468,11 +488,12 @@ public class Robot extends TimedRobot {
 			else if (elevatorPower < 0) elevatorPower += 0.3;
 			robotHardware.driveElevator(elevatorPower*0.8);
 
-
 			//Climbing
 			if (leftJoystick.getRawButtonPressed(8)) {
-				climbEnabled = true;
-			}
+				hab3Enabled = true;
+			} else if (leftJoystick.getRawButtonPressed(14)) {
+			    hab2Enabled = true;
+            }
 			if (leftJoystick.getRawButton(6)) {
 				robotHardware.climb(-1.0);
 			} else if (leftJoystick.getRawButton(9)) {

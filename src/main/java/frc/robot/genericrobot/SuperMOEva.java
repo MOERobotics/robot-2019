@@ -330,6 +330,14 @@ public class SuperMOEva extends GenericRobot {
         climbInternalK(0,power);
     }
 
+    @Override
+    public void getClimberCurrent() {
+        SmartDashboard.putNumber("climber la I: ", froggerLA.getOutputCurrent());
+        SmartDashboard.putNumber("climber lb I: ", froggerLB.getOutputCurrent());
+        SmartDashboard.putNumber("climber ra I: ", froggerRA.getOutputCurrent());
+        SmartDashboard.putNumber("climber rb I: ", froggerRB.getOutputCurrent());
+
+    }
     double oldLeftK, oldRightK;
     public void climbInternalK(double leftPower, double rightPower) {
         if (oldLeftK != leftPower || oldRightK != rightPower) {

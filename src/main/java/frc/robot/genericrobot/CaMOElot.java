@@ -207,6 +207,11 @@ public class CaMOElot extends GenericRobot {
     }
 
     @Override
+    public void getClimberCurrent() {
+
+    }
+
+    @Override
     public void footSpacerCylinderInternal(boolean value) {
 
     }

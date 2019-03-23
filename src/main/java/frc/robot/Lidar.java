@@ -55,10 +55,10 @@ public class Lidar {
                     } catch(Exception e) {}
                 }
                 try {
-                    lString[us.numSensors()-1] = lidarString.substring(lidarString.indexOf(us.numSensors() - 2 + "-") + 2, lidarString.indexOf("1-")).trim();
+                    lString[0] = lidarString.substring(lidarString.indexOf(us.numSensors() - 2 + "-") + 2, lidarString.indexOf("1-")).trim();
                 } catch(Exception e) {}
                 try {
-                    lString[0] = lidarString.substring(0, lidarString.indexOf(" "));
+                    lString[1] = lidarString.substring(0, lidarString.indexOf(" "));
                 } catch(Exception e) {}
             }
 
