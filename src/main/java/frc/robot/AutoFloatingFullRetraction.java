@@ -15,6 +15,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
     //double elevatorBalance = -28;
     double elevatorBalance = 13;
     double armOut = /*40*/30;
+    boolean withinArmTolerance = false;
 
     double hab2Height = 146.5;
     double retractHeight = 120;
@@ -32,6 +33,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
         autoStep = 0;
         steadyPower = 0.3;
         habLevel = 3;
+        withinArmTolerance = false;
     }
 
     @Override
@@ -137,10 +139,12 @@ public class AutoFloatingFullRetraction extends GenericAuto {
 
                 robot.driveArm(0.2);
 
-                if (robot.getArmEncoderCount() >= armOut - 10 ||
-                        System.currentTimeMillis() - startTime >= 2000){
-                    armPID.resetError();
-                    startTime = System.currentTimeMillis();
+                if ((robot.getArmEncoderCount() >= armOut) ||
+                        (System.currentTimeMillis() - startTime > 3000)){
+                    if (Math.abs(robot.getArmEncoderCount()-armOut) < 5) {
+                        withinArmTolerance = true;
+                        armPID.resetError();
+                    }
                     robot.climb(1);
                     autoStep++;
                 }
@@ -157,9 +161,14 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-                robot.driveArm(armPowerBias + armCorrection);
+                if (withinArmTolerance) {
+                    armPID.setHeading(robot.getArmEncoderCount() - armOut);
+                    armCorrection = armPID.getCorrection();
+                    robot.driveArm(armPowerBias + armCorrection);
+                } else if (Math.abs(robot.getArmEncoderCount() - armOut) < 5) {
+                    withinArmTolerance = true;
+                    armPID.resetError();
+                }
 
                 robot.setDrivePower(steadyPower,steadyPower);
                 robot.climb(1);

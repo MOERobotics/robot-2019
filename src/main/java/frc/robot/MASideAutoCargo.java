@@ -196,7 +196,7 @@ public class MASideAutoCargo extends GenericAuto {
                     robot.driveElevator(0);
                 }
 
-                if (leftDistance >= 52) {
+                if (leftDistance >= 49) {
                     autoStep++;
                     MOErioAuto.resetError();
                     MOErioTurn.resetError();

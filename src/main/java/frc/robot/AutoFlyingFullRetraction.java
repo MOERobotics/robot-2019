@@ -43,7 +43,6 @@ public class AutoFlyingFullRetraction extends GenericAuto {
         SmartDashboard.putNumber("Climb autoStep: ", autoStep);
 
         switch(autoStep) {
-            /* assuming Alex has rested both arm and elevator on the HAB*/
 
             case -1:
                 robot.spearHook();
