@@ -282,7 +282,7 @@ public class MASideAutoSimpleArm extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.3 * (1 + correction), 0.3 * (1 - correction));
 
-                if(robot.getDistanceLeftInches() >= remainingDistance){
+                if(robot.getDistanceLeftInches() >= remainingDistance - 2){
                     autoStep++;
                 }
                 /*if (robot.lidar[0] <= 545 - 25.4) {
@@ -303,7 +303,7 @@ public class MASideAutoSimpleArm extends GenericAuto {
                 MOErioAuto.setHeading(robot.getHeadingDegrees() + 90 * LeftSide);
                 correction = MOErioAuto.getCorrection();
 
-                robot.setDrivePower(0,0);
+                robot.stopDriving();
                 break;
         }
     }

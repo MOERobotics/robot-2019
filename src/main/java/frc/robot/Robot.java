@@ -269,8 +269,9 @@ public class Robot extends TimedRobot {
             autoProgram.lastStep = 1;
         } else if (leftJoystick.getRawButtonPressed(10)) {
 		    autoProgram = new MASideAutoSimpleArm();
-		    autoProgram.robot = robotHardware;
+		    autoProgram.LeftSide = 1;
 		    autoProgram.lastStep = 10;
+            autoProgram.robot = robotHardware;
         }
 		/*else if (leftJoystick.getRawButton(9)){
 			autoProgram = new MOErioCargoSideAutoBonus();
