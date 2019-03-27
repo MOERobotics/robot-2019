@@ -44,11 +44,13 @@ public class AutoFlyingFullRetraction extends GenericAuto {
 
         switch(autoStep) {
 
+            //Retracting the spear
             case -1:
                 robot.spearHook();
                 autoStep++;
                 break;
 
+            //Start climb, move elevator up to balance height
             case 0:
                 robot.climb(-1.0);
 
@@ -62,25 +64,23 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Start PID controlling the elevator, continue climbing
             case 1:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //robot.footSpacerCylinder(true);
-                //robot.driveArm(-0.1);
                 robot.climb(-1.0);
 
                 autoStep++;
                 break;
 
+            //Continue climbing until bot is above Hab 3, continue PID controlling the elevator
             case 2:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //robot.footSpacerCylinder(true);
-                //robot.driveArm(-0.1);
                 robot.climb(-1.0);
 
                 if (Math.abs(robot.getClimberLEncoderCount()) >= hab3Height) {
@@ -89,6 +89,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Push bot forward with linear sliders, continue PID controlling the elevator
             case 3:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -101,6 +102,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 autoStep = 5;
                 break;
 
+            //Move arm out, start driving forward, continue PID controlling elevator
             case 4:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -117,16 +119,12 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Drive forward for 2 seconds, continue PID controlling elevator
             case 5:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                //armCorrection = armPID.getCorrection();
-                //robot.driveArm(armPowerBias + armCorrection);
-
-                //robot.footSpacerCylinder(true);
                 robot.setDrivePower(steadyPower,steadyPower);
 
                 if(System.currentTimeMillis() - startTime >= 2000){
@@ -136,12 +134,12 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Move arm out OR continue through the climb after 3 seconds, continue PID controlling elevator
             case 6:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //robot.footSpacerCylinder(true);
                 robot.driveArm(0.2);
                 //robot.setDrivePower(steadyPower,steadyPower);
 
@@ -156,6 +154,8 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Start PID controlling elevator at finale height, drive forward,
+            //continue moving arm up if not done already, start retracting feet
             case 7:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -170,8 +170,6 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                     armPID.resetError();
                 }
 
-                //robot.footSpacerCylinder(true);
-                //robot.climb(1.0);
                 robot.setDrivePower(steadyPower,steadyPower);
                 robot.climb(1);
                 if (Math.abs(robot.getClimberLEncoderCount()) < 50 ||
@@ -180,6 +178,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Retract feet until at full retract height, continue PID controlling elevator, arm
             case 8:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -188,10 +187,6 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 armPID.setHeading(robot.getArmEncoderCount()  - armOut);
                 armCorrection = armPID.getCorrection();
                 robot.driveArm(armPowerBias + armCorrection);
-
-                //robot.footSpacerCylinder(true);
-                //robot.climb(1.0);
-                //robot.setDrivePower(steadyPower,steadyPower);
 
                 if(Math.abs(robot.getClimberLEncoderCount()) > fullRetractHeight + 15){
                     robot.climbLDown(1);
@@ -221,6 +216,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Drive forward for 1.5 seconds, stop controlling the arm
             case 9:
                 if (System.currentTimeMillis() - startTime > 1500) {
                     robot.setDrivePower(0, 0);
@@ -231,16 +227,12 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 robot.driveArm(0);
                 break;
 
+            //Wait for 15 pulses, continue PID controlling elevator
             case 10:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
-
                 robot.driveArm(0);
-
-                //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                //armCorrection = armPID.getCorrection();
-                //robot.driveArm(armPowerBias + armCorrection);
 
                 robot.setDrivePower(0,0);
                 robot.footSpacerCylinder(false);
@@ -252,18 +244,14 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Wait for 25 pulses, continue PID controlling elevator
             case 11:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 robot.driveElevator(elevatorCorrection);
 
-                //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                //armCorrection = armPID.getCorrection();
-                //robot.driveArm(armPowerBias + armCorrection);
-
                 robot.driveArm(0);
 
                 robot.setDrivePower(0,0);
-                //robot.footSpacerCylinder(true);
 
                 pulseCounter++;
                 if(pulseCounter > 25){
@@ -272,20 +260,18 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Continue PID controlling elevator - end of climb
             case 12:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
                 robot.driveArm(0);
-                //armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                //armCorrection = armPID.getCorrection();
-                //robot.driveArm(armPowerBias + armCorrection);
 
                 robot.setDrivePower(0,0);
-                //robot.footSpacerCylinder(false);
                 break;
 
+            //Unreachable step - Stop everything
             case 13:
 
                 robot.driveArm(0);

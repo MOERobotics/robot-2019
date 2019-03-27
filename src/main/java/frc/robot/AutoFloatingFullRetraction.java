@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoFloatingFullRetraction extends GenericAuto {
-    PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
+    PIDModule elevatorPID = new PIDModule(0.075, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
 
     double elevatorCorrection;
@@ -14,6 +14,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
     double elevatorFloor = -28.6-3.13;
     //double elevatorBalance = -28;
     double elevatorBalance = 13;
+    //double elevatorFinale = 0;
     double armOut = /*40*/30;
     boolean withinArmTolerance = false;
 
@@ -41,13 +42,14 @@ public class AutoFloatingFullRetraction extends GenericAuto {
         SmartDashboard.putNumber("Climb autoStep: ", autoStep);
 
         switch(autoStep) {
-            /* assuming Alex has rested both arm and elevator on the HAB*/
 
+            //Retracting the spear
             case -1:
                 robot.spearHook();
                 autoStep++;
                 break;
 
+            //Start climb, move elevator up to balance height
             case 0:
                 robot.climb(-1.0);
 
@@ -62,18 +64,18 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Start PID controlling the elevator, continue climbing
             case 1:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //robot.footSpacerCylinder(true);
-                //robot.driveArm(-0.1);
                 robot.climb(-1.0);
 
                 autoStep++;
                 break;
 
+            //Continue climbing until bot is above Hab 2, continue PID controlling the elevator
             case 2:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -89,6 +91,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Push bot forward with linear sliders, continue PID controlling the elevator
             case 3:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -101,6 +104,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 autoStep = 5;
                 break;
 
+            //Move arm out, start driving forward, continue PID controlling elevator
             case 4:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -117,6 +121,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Drive forward for 2 seconds, continue PID controlling elevator
             case 5:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -131,7 +136,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
-
+            //Move arm out OR continue through the climb after 3 seconds, continue PID controlling elevator
             case 6:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -150,12 +155,15 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Wait for 0.5 seconds
             case 7:
                 if (System.currentTimeMillis() - startTime >= 500) {
                     autoStep++;
                 }
                 break;
 
+            //Drive forward, continue PID controlling the elevator
+            //continue moving arm up if not done already, start retracting feet
             case 8:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -178,6 +186,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Retract feet until at full retract height, continue PID controlling elevator, arm
             case 9:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -215,8 +224,8 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Drive forward for 1.5 seconds, stop controlling the arm
             case 10:
-
                 if (System.currentTimeMillis() - startTime > 1500) {
                     robot.setDrivePower(0, 0);
                     autoStep++;
@@ -226,6 +235,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 robot.driveArm(0);
                 break;
 
+            //Wait for 15 pulses, continue PID controlling elevator
             case 11:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -243,6 +253,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Wait for 25 pulses, continue PID controlling elevator
             case 12:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -259,6 +270,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 }
                 break;
 
+            //Continue PID controlling elevator - end of climb
             case 13:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -268,6 +280,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 robot.setDrivePower(0,0);
                 break;
 
+            //Unreachable step - Stop everything
             case 14:
                 robot.driveArm(0);
 
