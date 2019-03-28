@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.genericrobot.SuperMOEva;
-//import io.github.pseudoresonance.pixy2api.Pixy2Line;
 import edu.wpi.first.cameraserver.CameraServer;
 //import edu.wpi.cscore.UsbCamera;
 import frc.robot.vision.PiClient;
@@ -235,7 +234,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
             //autoProgram.printSmartDashboard();
 
-            //SmartDashboard.putString("PixyInfo: ", pixy.toString());
+            SmartDashboard.putString("PixyInfo: ", pixy.toString());
         }
 		/*if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
