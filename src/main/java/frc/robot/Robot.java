@@ -28,14 +28,14 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new SuperMOEva();
+	private GenericRobot   robotHardware = new MOErio();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	//private Joystick 	   switchBox 	 = new Joystick(2);
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto    autoProgram   = new MASideAutoCargo();
+	private GenericAuto    autoProgram   = new TestSideLidar();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
             //autoProgram.printSmartDashboard();
 
-            //SmartDashboard.putString("PixyInfo: ", pixy.toString());
+            SmartDashboard.putString("PixyInfo: ", pixy.toString());
         }
 		/*if (leftJoystick.getRawButtonPressed (13)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(13)) robotHardware.clearOffsets();
