@@ -61,8 +61,8 @@ public class DriveCurvedAuto extends GenericAuto {
 
                 yawRate = 5.0 / 1000;
 
-                straightPid.setHeading(robot.getHeadingDegrees() - (10000-dT)*yawRate);
-                correction = straightPid.getCorrection();
+                straightPID.setHeading(robot.getHeadingDegrees() - (10000-dT)*yawRate);
+                correction = straightPID.getCorrection();
                 robot.setDrivePower(0.3 * (1 + correction), (0.3 + louMagic) * (1 - correction));
 
                 if(dT > 10000) {

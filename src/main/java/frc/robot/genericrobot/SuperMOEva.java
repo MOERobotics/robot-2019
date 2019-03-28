@@ -174,8 +174,8 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void enableElevatorLimits(boolean enabled) {
-        //elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        //elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        elevator.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        elevator.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
     }
 
     @Override
@@ -217,9 +217,8 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void enableArmLimits(boolean enabled) {
-        return;
-        //arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(enabled);
-        //arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
+        arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).enableLimitSwitch(false);
         //if (enabled == false) Thread.dumpStack();
     }
 
@@ -298,7 +297,7 @@ public class SuperMOEva extends GenericRobot {
                 rightPower = power;
 
         double angleTol = 0.75;
-        double angleOrigin = 2.5;
+        double angleOrigin = 0;
         //if (climbLLimit.get()) leftPower = 0;
         //if (climbRLimit.get()) rightPower = 0;
 
@@ -331,6 +330,14 @@ public class SuperMOEva extends GenericRobot {
         climbInternalK(0,power);
     }
 
+    @Override
+    public void getClimberCurrent() {
+        SmartDashboard.putNumber("climber la I: ", froggerLA.getOutputCurrent());
+        SmartDashboard.putNumber("climber lb I: ", froggerLB.getOutputCurrent());
+        SmartDashboard.putNumber("climber ra I: ", froggerRA.getOutputCurrent());
+        SmartDashboard.putNumber("climber rb I: ", froggerRB.getOutputCurrent());
+
+    }
     double oldLeftK, oldRightK;
     public void climbInternalK(double leftPower, double rightPower) {
         if (oldLeftK != leftPower || oldRightK != rightPower) {
