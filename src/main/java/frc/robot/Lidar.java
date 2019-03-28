@@ -9,6 +9,7 @@ public class Lidar {
     public static LidarThread lidarThread;
     public static int numSensors;
 
+    //Init - instantiate new LidarThread
     public static void init(SerialPort Blinky, GenericRobot us) {
         lidarThread = new LidarThread(Blinky);
         lidarThread.start();
@@ -38,6 +39,7 @@ public class Lidar {
 
         @Override
         public void run() {
+
             lString = new String[Lidar.numSensors];
             lidar = new int[Lidar.numSensors];
 
@@ -84,6 +86,7 @@ public class Lidar {
                         SmartDashboard.putString("Lidar " + i + " parsing error: ", "");
                     } catch (Exception e) { }
                 }
+
             }
         }
     }
@@ -93,9 +96,10 @@ public class Lidar {
 
         //Sends lidar values to robot
         for (int j = 0; j < us.numSensors(); j++) {
-            SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
-            us.lidar[j] = lidarThread.lidar[j];
+            if (lidarThread.lidar[j] != 0) {
+                SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
+                us.lidar[j] = lidarThread.lidar[j];
+            }
         }
-
     }
 }

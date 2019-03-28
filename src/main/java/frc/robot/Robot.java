@@ -203,7 +203,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
             //autoProgram.printSmartDashboard();
 
-            //SmartDashboard.putString("PixyInfo: ", pixy.toString());
+            SmartDashboard.putString("PixyInfo: ", pixy.toString());
         }
 
 		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
