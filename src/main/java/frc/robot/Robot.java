@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new SuperMOEva();
+	private GenericRobot   robotHardware = new CaMOElot();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	//private Joystick 	   switchBox 	 = new Joystick(2);
