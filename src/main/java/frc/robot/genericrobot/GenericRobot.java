@@ -63,11 +63,14 @@ public abstract class GenericRobot {
 	public abstract void resetClimberPosition();
 
     //Drive <editor-fold>
+	public Logger<Double> driverLogger = new Logger<>();
     public final void   moveForward        (double motorPower) { setDrivePower( motorPower,  motorPower); }
     public final void   moveBackward       (double motorPower) { setDrivePower(-motorPower, -motorPower); }
     public final void   turnLeftInplace    (double motorPower) { setDrivePower(-motorPower,  motorPower); }
     public final void   turnRightInplace   (double motorPower) { setDrivePower( motorPower, -motorPower); }
     public final void   setDrivePower      (double leftMotor, double rightMotor) {
+    	driverLogger.printIfChanged("Left Driver Motor", leftMotor);
+    	driverLogger.printIfChanged("Right Driver Motor", rightMotor);
         this. leftPower =  leftMotor;
         this.rightPower = rightMotor;
         setDrivePowerInternal(leftMotor, rightMotor);
@@ -130,7 +133,9 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Arm <editor-fold>
+	public Logger<Double> armLogger = new Logger<>();
     public final void    driveArm    (double power)  {
+		armLogger.printIfChanged("Arm", power);
         this.armPower = power;
         if      (isArmUp  () && power > 0) setArmInternal(  0.0);
         else if (isArmDown() && power < 0) setArmInternal(  0.0);
@@ -148,9 +153,11 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Roller <editor-fold>
+	public Logger<Double> rollerLogger = new Logger<>();
 	public final void   rollIn      (double power) { driveRoller(-power); }
 	public final void   rollOut     (double power) { driveRoller( power); }
 	public final void   driveRoller (double power) {
+		rollerLogger.printIfChanged("Roller", power);
 		this.rollerPower = power;
 		setRollerInternal(power);
 	}
@@ -191,7 +198,9 @@ public abstract class GenericRobot {
 	//Habitat Climb <editor-fold>
 	//public void climbUp  (double power) {climb(-power);}
 	//public void climbDown(double power) {climb( power);}
+	public Logger<Double> climberLogger = new Logger<>();
 	public void climb(double power) {
+		climberLogger.printIfChanged("Climber", power);
 		this.climbPower = power;
 		climbInternal(power);
 	}
