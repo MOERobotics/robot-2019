@@ -31,6 +31,7 @@ public abstract class GenericRobot {
     //lidar
 	public abstract int numSensors();
 	public int[] lidar = new int[numSensors()];
+	public long lidarReadTime;
 
 	//pi
     public int[] xy = new int[2];

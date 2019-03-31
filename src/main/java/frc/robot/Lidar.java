@@ -16,7 +16,7 @@ public class Lidar {
         Lidar.numSensors = us.numSensors();
     }
 
-    public static void reset(SerialPort Blinky) {
+    public static void serialReset(SerialPort Blinky) {
         SmartDashboard.putString("Resetting the port: ", "Start");
         Blinky.reset();
         SmartDashboard.putString("Resetting the port: ", "End");
@@ -27,6 +27,7 @@ public class Lidar {
         public String lidarString;
         public boolean isAlive = true;
         int lidar[];// = new int[];
+        public long lidarReadTime;
 
         Pattern p = Pattern.compile("-");
         Matcher ma;
@@ -83,6 +84,7 @@ public class Lidar {
                 for (int i = 0; i < numSensors; i++) {
                     try {
                         lidar[i] = Integer.parseInt(lString[i]);
+                        lidarReadTime = System.currentTimeMillis();
                         SmartDashboard.putString("Lidar " + i + " parsing error: ", "");
                     } catch (Exception e) { }
                 }
@@ -94,11 +96,12 @@ public class Lidar {
     public static void getLidar(GenericRobot us) {
         lidarThread.run();
 
-        //Sends lidar values to robot
+        //Sends lidar values, read time to robot
         for (int j = 0; j < us.numSensors(); j++) {
             if (lidarThread.lidar[j] != 0) {
                 SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
                 us.lidar[j] = lidarThread.lidar[j];
+                us.lidarReadTime = lidarThread.lidarReadTime;
             }
         }
     }
