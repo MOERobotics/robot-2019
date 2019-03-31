@@ -3,6 +3,7 @@ package frc.robot.genericrobot;
 /*code*/
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import frc.robot.Logger;
 
 public abstract class GenericRobot {
 
@@ -30,6 +31,7 @@ public abstract class GenericRobot {
     //lidar
 	public abstract int numSensors();
 	public int[] lidar = new int[numSensors()];
+	public long lidarReadTime;
 
 	//pi
     public int[] xy = new int[2];
@@ -89,9 +91,11 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Elevator <editor-fold>
+	public Logger<Double> elevatorLogger = new Logger<>();
     public final void    elevatorUp       (double power) {driveElevator( power);}
     public final void    elevatorDown     (double power) {driveElevator(-power);}
 	public final void    driveElevator    (double power) {
+    	elevatorLogger.printIfChanged("Elevator", power);
 		this.elevatorPower = power;
 		if      (isElevatorUp  () && power > 0) setElevatorInternal(  0.0);
 		else if (isElevatorDown() && power < 0) setElevatorInternal(  0.0);

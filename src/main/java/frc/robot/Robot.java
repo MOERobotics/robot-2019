@@ -9,11 +9,12 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.autonomous.*;
+import frc.robot.autonomous.climb.AutoFloatingFullRetraction;
+import frc.robot.autonomous.climb.AutoFlyingFullRetraction;
+import frc.robot.autonomous.test.*;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import frc.robot.genericrobot.SuperMOEva;
-//import io.github.pseudoresonance.pixy2api.Pixy2Line;
-import edu.wpi.first.cameraserver.CameraServer;
 //import edu.wpi.cscore.UsbCamera;
 import frc.robot.vision.PiClient;
 
@@ -28,14 +29,14 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new MOErio();
+	private GenericRobot   robotHardware = new CaMOElot();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	private Joystick 	   switchBox 	 = new Joystick(2);
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto    autoProgram   = new TestSideLidar();
+	private GenericAuto autoProgram   = new MASideAutoCargo();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 
