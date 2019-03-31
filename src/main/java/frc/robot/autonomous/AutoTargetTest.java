@@ -19,9 +19,7 @@ public class AutoTargetTest extends GenericAuto {
         int VisualCenter;
         int DesiredVisualCenter;
 
-        public int Peek(double d)
-        {
-
+        public int Peek(double d) {
             return 100;
         }
 
@@ -35,18 +33,6 @@ public class AutoTargetTest extends GenericAuto {
 
         @Override
         public void printSmartDashboard () {
-
-            SmartDashboard.putNumber("Elevator Error: ", elevatorPID.getInput());
-            SmartDashboard.putNumber("Arm Error: ", armPID.getInput());
-            SmartDashboard.putNumber("Elevator Correction: ", elevatorCorrection);
-            SmartDashboard.putNumber("Arm Correction: ", armCorrection);
-            SmartDashboard.putNumber("Elevator kP: ", elevatorPID.pidController.getP());
-            SmartDashboard.putNumber("Elevator kI: ", elevatorPID.pidController.getI());
-            SmartDashboard.putNumber("Elevator kD: ", elevatorPID.pidController.getD());
-            SmartDashboard.putNumber("Arm kP: ", armPID.pidController.getP());
-            SmartDashboard.putNumber("Arm kI: ", armPID.pidController.getI());
-            SmartDashboard.putNumber("Arm kD: ", armPID.pidController.getD());
-
         }
 
         @Override
@@ -97,10 +83,12 @@ public class AutoTargetTest extends GenericAuto {
 
                     robot.driveArm(armPowerBias + armCorrection);
 
+                    VisualCenter = robot.xy[0];
                     currentLidar = robot.lidar[0];
                     DesiredVisualCenter = Peek(currentLidar);
                     autoStep++;
                     break;
+
                 case 4:
                     VisualCenter = robot.xy[0];
                     if (VisualCenter != -1)
