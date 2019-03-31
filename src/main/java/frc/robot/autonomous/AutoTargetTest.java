@@ -16,8 +16,8 @@ public class AutoTargetTest extends GenericAuto {
         double armOut = /*21.3*/ 21.0;
         double elevatorPeek = -28.6 - 3.13 + (9*2.85);
         int currentLidar;
-        int VisualCenter;
-        int DesiredVisualCenter;
+        int VisualCenter = robot.pixyXY[0].getX0();
+        int DesiredVisualCenter = 25;
 
         public int Peek(double d) {
             return 100;
@@ -83,14 +83,14 @@ public class AutoTargetTest extends GenericAuto {
 
                     robot.driveArm(armPowerBias + armCorrection);
 
-                    VisualCenter = robot.xy[0];
+                    /*VisualCenter = robot.piXY[0];
                     currentLidar = robot.lidar[0];
-                    DesiredVisualCenter = Peek(currentLidar);
+                    DesiredVisualCenter = Peek(currentLidar);*/
                     autoStep++;
                     break;
 
                 case 4:
-                    VisualCenter = robot.xy[0];
+                    //VisualCenter = robot.piXY[0];
                     if (VisualCenter != -1)
                     {
                         if (VisualCenter-DesiredVisualCenter > 5) {

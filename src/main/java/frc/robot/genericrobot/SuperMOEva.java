@@ -80,8 +80,9 @@ public class SuperMOEva extends GenericRobot {
     //lidar
     @Override
     public int numSensors() {
-        return 1;
+        return 3;
     }
+    //right 0, middle 1, left 2? lol check again
 
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
@@ -339,10 +340,10 @@ public class SuperMOEva extends GenericRobot {
     double oldLeftK, oldRightK;
     public void climbInternalK(double leftPower, double rightPower) {
         if (oldLeftK != leftPower || oldRightK != rightPower) {
-            for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+            /*for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
                 System.out.println(e);
             }
-            System.out.printf("L:%f R:%f\n", leftPower, rightPower);
+            System.out.printf("L:%f R:%f\n", leftPower, rightPower);*/
             oldRightK = rightPower;
             oldLeftK = leftPower;
         }

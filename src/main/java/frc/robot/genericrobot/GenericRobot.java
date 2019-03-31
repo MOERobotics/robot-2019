@@ -4,6 +4,8 @@ package frc.robot.genericrobot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.Logger;
+import frc.robot.PixyCam;
+import io.github.pseudoresonance.pixy2api.Pixy2Line;
 
 public abstract class GenericRobot {
 
@@ -34,7 +36,10 @@ public abstract class GenericRobot {
 	public long lidarReadTime;
 
 	//pi
-    public int[] xy = new int[2];
+    public int[] piXY = new int[2];
+
+    //pixy
+	public Pixy2Line.Vector pixyXY[] = new Pixy2Line.Vector[1];
 
 	//checking for things
 	public abstract double getDistanceLeftInches();

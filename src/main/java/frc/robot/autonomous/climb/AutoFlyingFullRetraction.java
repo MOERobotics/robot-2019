@@ -18,6 +18,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
     double elevatorBalance = 13;
     double elevatorFinale = 0;
     double armOut = /*40*/25;
+    double pitchMin = Double.MAX_VALUE;
 
     double hab3Height = 335;
     double retractHeight = 120;
@@ -43,6 +44,10 @@ public class AutoFlyingFullRetraction extends GenericAuto {
     @Override
     public void run() {
         SmartDashboard.putNumber("Climb autoStep: ", autoStep);
+        if (robot.getPitchDegrees() < pitchMin) {
+            SmartDashboard.putNumber("Minimum Pitch", robot.getPitchDegrees());
+            pitchMin = robot.getPitchDegrees();
+        }
 
         switch(autoStep) {
 

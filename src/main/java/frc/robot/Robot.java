@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomous.*;
 import frc.robot.autonomous.climb.AutoFloatingFullRetraction;
 import frc.robot.autonomous.climb.AutoFlyingFullRetraction;
+import frc.robot.autonomous.presets.*;
 import frc.robot.autonomous.test.*;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class Robot extends TimedRobot {
 
-	private GenericRobot   robotHardware = new CaMOElot();
+	private GenericRobot   robotHardware = new SuperMOEva();
 	private Joystick       leftJoystick  = new Joystick(0);
 	private XboxController functionStick = new XboxController(1);
 	private Joystick 	   switchBox 	 = new Joystick(2);
@@ -40,6 +41,7 @@ public class Robot extends TimedRobot {
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 
+	//presets
 	private GenericAuto[] cargoPos = {new Cargo1(), new Cargo2(), new Cargo3()};
 	private GenericAuto[] hatchPos = {new Hatch1(), new Hatch2(), new Hatch3()};
 	int pos = -1;
@@ -49,11 +51,14 @@ public class Robot extends TimedRobot {
 	//UsbCamera cam1;
     int smartDashCounter = 0;
 
+    //pixy
 	public PixyCam pixy = new PixyCam() {{
 		init();
 		run();
 		start();
 	}};
+	int greatest;
+	int greatestInd;
 
 	//lidar
 	SerialPort Blinky;
@@ -140,8 +145,8 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Yaw: ", robotHardware.getHeadingDegrees());
             SmartDashboard.putNumber("Roll: ", robotHardware.getRollDegrees());
             SmartDashboard.putNumber("Pitch: ", robotHardware.getPitchDegrees());
-            SmartDashboard.putNumber("Left Encoder (Raw): ", robotHardware.getDistanceLeftInches() * 462);
-            SmartDashboard.putNumber("Right Encoder (Raw): ", robotHardware.getDistanceRightInches() * 462);
+            //SmartDashboard.putNumber("Left Encoder (Raw): ", robotHardware.getDistanceLeftInches() * 462);
+            //SmartDashboard.putNumber("Right Encoder (Raw): ", robotHardware.getDistanceRightInches() * 462);
             SmartDashboard.putNumber("Left Encoder (Inches): ", robotHardware.getDistanceLeftInches());
             SmartDashboard.putNumber("Right Encoder (Inches): ", robotHardware.getDistanceRightInches());
             SmartDashboard.putNumber("Arm Encoder: ", robotHardware.getArmEncoderCount());
@@ -212,12 +217,24 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
-		robotHardware.xy = piClient.getCentroidXY();
+		robotHardware.piXY = piClient.getCentroidXY();
 
-        SmartDashboard.putNumber("Vision_X:" , robotHardware.xy[0]);
-        SmartDashboard.putNumber("Vision_Y:" , robotHardware.xy[1]);
+        SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
+        SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
 
-		if (PortOpen) Lidar.getLidar(robotHardware);
+
+        if (pixy.vec.length != 0) {
+        	for (int m = 0; m < pixy.vec.length; m++) {
+        		if (Math.abs(pixy.vec[m].getY0() - pixy.vec[m].getY1()) > greatest) {
+        			greatest = Math.abs(pixy.vec[m].getY0() - pixy.vec[m].getY1());
+        			greatestInd = m;
+				}
+			}
+        	robotHardware.pixyXY[0] = pixy.vec[greatestInd];
+		}
+		//SmartDashboard.putString("Pixy", robotHardware.pixyXY[0].toString());
+
+		//if (PortOpen) Lidar.getLidar(robotHardware);
 	}
 
 	@Override

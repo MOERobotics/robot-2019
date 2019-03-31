@@ -1,4 +1,4 @@
-package frc.robot.autonomous.test;
+package frc.robot.autonomous.presets;
 
 import frc.robot.PIDModule;
 import frc.robot.autonomous.GenericAuto;

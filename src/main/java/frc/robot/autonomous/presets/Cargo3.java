@@ -1,14 +1,14 @@
-package frc.robot.autonomous.test;
+package frc.robot.autonomous.presets;
 
 import frc.robot.PIDModule;
 import frc.robot.autonomous.GenericAuto;
 
-public class Hatch3 extends GenericAuto {
+public class Cargo3 extends GenericAuto {
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double armOut = /*21.3*/ 53;
-    double elevatorFloor = -28.6-3.13+14;
+    double elevatorFloor = -28.6-3.13;
     boolean armControlling = false;
     boolean elevatorControlling = false;
     double armCorrection;

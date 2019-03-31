@@ -20,6 +20,8 @@ public class AutoFloatingFullRetraction extends GenericAuto {
     double armOut = /*40*/30;
     boolean withinArmTolerance = false;
 
+    double pitchMin = Double.MAX_VALUE;
+
     double hab2Height = 146.5;
     double retractHeight = 120;
     double fullRetractHeight = 5;
@@ -42,6 +44,11 @@ public class AutoFloatingFullRetraction extends GenericAuto {
     @Override
     public void run() {
         SmartDashboard.putNumber("Climb autoStep: ", autoStep);
+        if (robot.getPitchDegrees() < pitchMin) {
+            SmartDashboard.putNumber("Minimum Pitch", robot.getPitchDegrees());
+            pitchMin = robot.getPitchDegrees();
+        }
+
 
         switch(autoStep) {
 

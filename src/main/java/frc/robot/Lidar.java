@@ -24,7 +24,7 @@ public class Lidar {
 
     public static class LidarThread extends Thread {
         public SerialPort Blinky;
-        public String lidarString;
+        public String lidarString = "";
         public boolean isAlive = true;
         int lidar[];// = new int[];
         public long lidarReadTime;
@@ -40,27 +40,26 @@ public class Lidar {
 
         @Override
         public void run() {
+            while (isAlive) {
+                lString = new String[Lidar.numSensors];
+                lidar = new int[Lidar.numSensors];
 
-            lString = new String[Lidar.numSensors];
-            lidar = new int[Lidar.numSensors];
+                //Reading string from serial port
+                try {
+                    lidarString = new String(Blinky.readString());
+                    ma = p.matcher(lidarString);
+                    SmartDashboard.putString("Straight from Blinky: ", lidarString);
+                    SmartDashboard.putString("We caught an error on reading the port", "");
+                } catch (Exception e) {
+                    SmartDashboard.putString("We caught an error on reading the port", e.toString());
+                }
 
-            //Reading string from serial port
-            try {
-                lidarString = new String(Blinky.readString());
-                ma = p.matcher(lidarString);
-                SmartDashboard.putString("Straight from Blinky: ", lidarString);
-                SmartDashboard.putString("We caught an error on reading the port", "");
-            } catch (Exception e) {
-                SmartDashboard.putString("We caught an error on reading the port", e.toString());
-            }
+                //Does not parse if lidar is maxing out
+                if (lidarString.contains("65535") || lidarString.length() == 0) {
+                    continue;
+                }
 
-            //Does not parse if lidar is maxing out
-            if (lidarString.contains("65535")) {
-                isAlive = false;
-            } else isAlive = true;
-
-            //Splitting and parsing string if not maxing out
-            if (isAlive) {
+                //Splitting and parsing string if not maxing out
                 //Splitting using Matcher
                 while (ma.find()) {
                     String numStr = new String(lidarString.substring(ma.start() - 1, ma.start()).trim());
@@ -89,17 +88,18 @@ public class Lidar {
                     } catch (Exception e) { }
                 }
 
+
             }
+
         }
     }
 
     public static void getLidar(GenericRobot us) {
-        lidarThread.run();
-
         //Sends lidar values, read time to robot
         for (int j = 0; j < us.numSensors(); j++) {
             if (lidarThread.lidar[j] != 0) {
                 SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
+                SmartDashboard.putNumber("LidarReadTime", lidarThread.lidarReadTime);
                 us.lidar[j] = lidarThread.lidar[j];
                 us.lidarReadTime = lidarThread.lidarReadTime;
             }
