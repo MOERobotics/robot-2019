@@ -40,10 +40,9 @@ public class Lidar {
 
         @Override
         public void run() {
+            lString = new String[Lidar.numSensors];
+            lidar = new int[Lidar.numSensors];
             while (isAlive) {
-                lString = new String[Lidar.numSensors];
-                lidar = new int[Lidar.numSensors];
-
                 //Reading string from serial port
                 try {
                     lidarString = new String(Blinky.readString());
@@ -87,8 +86,6 @@ public class Lidar {
                         SmartDashboard.putString("Lidar " + i + " parsing error: ", "");
                     } catch (Exception e) { }
                 }
-
-
             }
 
         }

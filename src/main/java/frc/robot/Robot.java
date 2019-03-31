@@ -222,19 +222,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
 
-
-        if (pixy.vec.length != 0) {
-        	for (int m = 0; m < pixy.vec.length; m++) {
-        		if (Math.abs(pixy.vec[m].getY0() - pixy.vec[m].getY1()) > greatest) {
-        			greatest = Math.abs(pixy.vec[m].getY0() - pixy.vec[m].getY1());
-        			greatestInd = m;
-				}
-			}
-        	robotHardware.pixyXY[0] = pixy.vec[greatestInd];
-		}
-		//SmartDashboard.putString("Pixy", robotHardware.pixyXY[0].toString());
-
-		//if (PortOpen) Lidar.getLidar(robotHardware);
+		if (PortOpen) Lidar.getLidar(robotHardware);
 	}
 
 	@Override
