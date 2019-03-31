@@ -53,7 +53,6 @@ public class PixyCam implements Runnable{
 
     @Override
     public String toString() {
-
         StringBuilder pixyOutput = new StringBuilder();
 
         pixyOutput.append("[");
