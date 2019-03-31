@@ -80,10 +80,12 @@ public abstract class GenericRobot {
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);
 
 	//shifting
+	public Logger<Boolean> shifterLogger = new Logger<>();
 	public void shiftLow () { shiftDrive(false); }
 	public void shiftHigh  () { shiftDrive(true); }
 
 	public void shiftDrive(boolean state) {
+		shifterLogger.printIfChanged("Is Shifter High?: ", state);
 		this.shifterSolenoidState = state;
 		shiftDriveInternal(state);
 	}
@@ -166,18 +168,22 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
 	//Hatch Grab <editor-fold>
+	public Logger<Boolean> spearLogger = new Logger<>();
 	public void spearIn()  { shiftSpearShaft(false); }
 	public void spearOut() { shiftSpearShaft(true); }
 	public void shiftSpearShaft(boolean out) {
+		spearLogger.printIfChanged("Is Spear Out?: ", out);
 		this.spearShaftState = out;
 		shiftSpearShaftInternal(out);
 	}
 	public abstract void shiftSpearShaftInternal(boolean out);
 	public boolean getSpearShaftState() {return spearShaftState;}
 
+	public Logger<Boolean> spearHookLogger = new Logger<>();
 	public void spearHook  () { shiftSpearHook(false); }
 	public void spearUnhook() { shiftSpearHook( true); }
 	public void shiftSpearHook(boolean out) {
+		spearHookLogger.printIfChanged("Is Spear Unhooked?: ", out);
 		this.spearHookState = out;
 		shiftSpearHookInternal(out);
 	}
@@ -186,9 +192,11 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
 	//Floor Hatch Grab
+	public Logger<Boolean> floorPickupLogger = new Logger<>();
 	public void floorPickupUp() { shiftFloorPickup(false); }
 	public void floorPickupDown() { shiftFloorPickup(true); }
 	public void shiftFloorPickup(boolean out) {
+		floorPickupLogger.printIfChanged("Is Floor Pickup Down?: ", out);
 		this.floorPickupState = out;
 		shiftFloorPickupInternal(out);
 	}
