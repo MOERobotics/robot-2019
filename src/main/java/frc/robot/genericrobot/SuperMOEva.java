@@ -77,6 +77,7 @@ public class SuperMOEva extends GenericRobot {
         froggerRB.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
 
+
     //lidar
     @Override
     public int numSensors() {

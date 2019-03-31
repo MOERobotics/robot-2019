@@ -1,7 +1,8 @@
-package frc.robot.autonomous;
+package frc.robot.autonomous.test;
 
 
 import frc.robot.PIDModule;
+import frc.robot.autonomous.GenericAuto;
 
 public class TestSideLidar extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);

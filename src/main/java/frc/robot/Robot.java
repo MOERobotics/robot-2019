@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomous.*;
 import frc.robot.autonomous.climb.AutoFloatingFullRetraction;
 import frc.robot.autonomous.climb.AutoFlyingFullRetraction;
+import frc.robot.autonomous.sandstorm.MAFrontAuto;
+import frc.robot.autonomous.sandstorm.MASideAutoCargo;
+import frc.robot.autonomous.sandstorm.MASideAutoSimpleArm;
 import frc.robot.autonomous.test.*;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -36,7 +39,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto autoProgram   = new MASideAutoCargo();
+	private GenericAuto autoProgram   = new PivotBot();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 
@@ -212,11 +215,12 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
-		robotHardware.xy = piClient.getCentroidXY();
+		robotHardware.piXY = piClient.getCentroidXY();
 
-        SmartDashboard.putNumber("Vision_X:" , robotHardware.xy[0]);
-        SmartDashboard.putNumber("Vision_Y:" , robotHardware.xy[1]);
+        SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
+        SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
 
+        if(pixy.vec.length != 0) robotHardware.pixyXY = pixy.vec;
 		if (PortOpen) Lidar.getLidar(robotHardware);
 	}
 

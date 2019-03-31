@@ -1,16 +1,15 @@
-package frc.robot.autonomous;
+package frc.robot.autonomous.sandstorm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
 import frc.robot.PIDModuleLucy;
+import frc.robot.autonomous.GenericAuto;
 
-//WE DRIVING BACKWARDS GUYS cries
-
-public class MARocketAuto extends GenericAuto {
+public class MASideAutoCargo extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
-    double z = 1.81;
+    double z = 1.33;
     double louWizardry = 0;
 
     //-1 is left, 1 is right
@@ -77,7 +76,7 @@ public class MARocketAuto extends GenericAuto {
 
     @Override
     public void init() {
-        autoStep = -1;
+        autoStep = -2;
         robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.resetError();
@@ -113,10 +112,10 @@ public class MARocketAuto extends GenericAuto {
     public void run() {
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
-        louWizardry = rightDistance - leftDistance * zEffective;
+        louWizardry = leftDistance - rightDistance * zEffective;
 
         switch (autoStep) {
-            case -1:
+            case -2:
                 MOErioAuto.resetError();
                 robot.resetYaw();
 
@@ -128,12 +127,12 @@ public class MARocketAuto extends GenericAuto {
                 break;
 
             /*drive off the HAB*/
-            case 0:
+            case -1:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
-                robot.setDrivePower((-0.8) * (1 + correction), (-0.8) * (1 - correction));
+                robot.setDrivePower((0.8) * (1 + correction), (0.8) * (1 - correction));
 
                 if (levelTwo) {
                     if (leftDistance >= 48 * 2) {
@@ -150,29 +149,29 @@ public class MARocketAuto extends GenericAuto {
                 }
                 break;
 
-            /*Right side- make a right turning arc BACKWARDS*/
-            /*Left side- make a left turning arc BACKWARDS*/
-            case 1:
+            /*Right side- make a right turning arc*/
+            /*Left side- make a left turning arc*/
+            case 0:
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
 
-                setDrivePowerHands(/*0.5*/-0.1,/*0.3*/-0.5, correction, LeftSide);
+                setDrivePowerHands(/*0.5*/0.7,/*0.3*/0.5, correction, LeftSide);
 
-                if (getDistanceRightInchesHands(LeftSide) >= 60 /*x1*/) {
+                if (getDistanceLeftInchesHands(LeftSide) >= 72 /*x1*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.resetError();
                 }
                 break;
 
-            /*Right side- make a left turning arc BACKWARDS*/
-            /*Left side- make a right turning arc BACKWARDS*/
-            /*you should be sideways to the rocket*/
-            case 2:
-                louWizardry = rightDistance - leftDistance / zEffective;
+            /*Right side- make a left turning arc*/
+            /*Left side- make a right turning arc*/
+            /*you should be sideways to the cargo ship*/
+            case 1:
+                louWizardry = leftDistance - rightDistance / zEffective;
                 MOErioAuto.setHeading(louWizardry);
                 correction = MOErioAuto.getCorrection();
-                setDrivePowerHands(-0.5, -0.1, correction, LeftSide);
+                setDrivePowerHands(0.5, 0.7, correction, LeftSide);
 
 
                 if(robot.getElevatorEncoderCount() < elevatorDeploy){
@@ -181,27 +180,46 @@ public class MARocketAuto extends GenericAuto {
                     robot.driveElevator(0);
                 }
 
-                if (getDistanceLeftInchesHands(LeftSide) >= 60 /*x2*/) {
+                if (getDistanceRightInchesHands(LeftSide) >= 43 /*x2*/) {
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.resetError();
                 }
                 break;
 
-            /*Right side- turn 45 degrees to the left*/
-            /*Left side- turn 45 degrees to the right*/
+            /*roll forward, now in front of hatch*/
+            case 2:
+                MOErioAuto.setHeading(robot.getHeadingDegrees());
+                correction = MOErioAuto.getCorrection();
+                robot.setDrivePower((0.4) * (1 + correction), (0.4) * (1 - correction));
+
+                if(robot.getElevatorEncoderCount() < elevatorDeploy){
+                    robot.driveElevator(0.6);
+                } else {
+                    robot.driveElevator(0);
+                }
+
+                if (leftDistance >= 49) {
+                    autoStep++;
+                    MOErioAuto.resetError();
+                    MOErioTurn.resetError();
+                    elevatorPID.resetError();
+                }
+                break;
+
+            /*Right side- turn 90 degrees to the left*/
+            /*Left side- turn 90 degrees to the right*/
             /*turning towards the hatch*/
             case 3:
+                MOErioTurn.setHeading(robot.getHeadingDegrees());
 
-                if(robot.getElevatorEncoderCount() < elevatorDeploy){
-                    robot.driveElevator(0.6);
-                } else {
-                    robot.driveElevator(0);
-                }
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
+                elevatorCorrection = elevatorPID.getCorrection();
+                robot.driveElevator(elevatorCorrection);
 
                 robot.setDrivePower(-0.5 * LeftSide, 0.5 * LeftSide);
 
-                if (reachedHeadingHands(45, -1 * LeftSide)) {
+                if (reachedHeadingHands(80, -1 * LeftSide)) {
                     MOErioTurn.resetError();
                     autoStep++;
                 }
@@ -209,7 +227,7 @@ public class MARocketAuto extends GenericAuto {
 
             /*turning cont'd*/
             case 4:
-                MOErioTurn.setHeading(robot.getHeadingDegrees() + 45 * LeftSide);
+                MOErioTurn.setHeading(robot.getHeadingDegrees() + 90 * LeftSide);
                 correction = MOErioTurn.getCorrection();
                 robot.setDrivePower(correction, -correction);
 
@@ -217,10 +235,10 @@ public class MARocketAuto extends GenericAuto {
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                if ((Math.abs(robot.getHeadingDegrees() + 45 * LeftSide) < orientationTolerance) && (turncounter > 4)) {
+                if ((Math.abs(robot.getHeadingDegrees() + 90 * LeftSide) < orientationTolerance) && (turncounter > 4)) {
                     ++autoStep;
                     MOErioAuto.resetError();
-                } else if (Math.abs(robot.getHeadingDegrees() + 45 * LeftSide) < orientationTolerance) {
+                } else if (Math.abs(robot.getHeadingDegrees() + 90 * LeftSide) < orientationTolerance) {
                     ++turncounter;
                 } else {
                     turncounter = 0;
@@ -229,19 +247,7 @@ public class MARocketAuto extends GenericAuto {
 
 
             case 5:
-                MOErioAuto.setHeading(robot.getHeadingDegrees());
-                correction = MOErioAuto.getCorrection();
-                robot.setDrivePower((-0.4) * (1 + correction), (-0.4) * (1 - correction));
-
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
-                elevatorCorrection = elevatorPID.getCorrection();
-                robot.driveElevator(elevatorCorrection);
-
-                if (leftDistance >= 36) {
-                    autoStep++;
-                    MOErioAuto.resetError();
-                }
-
+                autoStep++;
                 break;
 
             case 6:
