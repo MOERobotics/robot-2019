@@ -1,7 +1,5 @@
 package frc.robot;
 
-import frc.robot.genericrobot.GenericRobot;
-
 public class AutoTest extends GenericAuto{
     public static long endTime;
     public void init() {
@@ -12,7 +10,7 @@ public class AutoTest extends GenericAuto{
             //case 0 move forward 2 feet
             case -1:
 
-                robot.resetDriveEncoder();
+                robot.resetDriveEncoders();
                 robot.resetYaw();
                 autoStep = 0;
             case 0:
@@ -28,7 +26,7 @@ public class AutoTest extends GenericAuto{
                 robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
                     autoStep = 2;
-                    robot.resetDriveEncoder();
+                    robot.resetDriveEncoders();
                 }
                 break;
                 //case 2 moves backwards 2 feet
@@ -68,7 +66,7 @@ public class AutoTest extends GenericAuto{
                 //case 6 turns right 180 degrees
             case 6:
                 robot.turnRightInplace(0.3);
-                if (robot.getHeadingDegrees() >= 180) {
+                if (robot.getHeadingDegrees() >= 178) {
                     autoStep = 7;
                     long startTime = System.currentTimeMillis();
                     endTime =  startTime + 1000;
@@ -78,7 +76,7 @@ public class AutoTest extends GenericAuto{
             case 7:
                 robot.stopDriving();
                 if (System.currentTimeMillis() >= endTime) {
-                    autoStep = 7;
+                    autoStep = 8;
                     robot.resetYaw();
                 }
                 break;
