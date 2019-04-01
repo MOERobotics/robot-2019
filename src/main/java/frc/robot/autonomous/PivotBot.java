@@ -22,12 +22,20 @@ public class PivotBot extends GenericAuto {
 
         Pixy2Line.Vector vec = robot.pixyXY[0];
         if(vec == null){
-            autoStep = 2;
+            numTimesNull++;
+            if(numTimesNull > 4){
+                autoStep=2;
+            }
+        }else{
+            numTimesNull = 0;
+            autoStep = 1;
         }
 
         Pixy2Line.Vector vec2 = robot.pixyXY[1];
         if(vec2 != null){
-            autoStep = 2;
+            if(vec.getY1() - vec.getY0() < vec2.getY1() - vec2.getY0()){ //Get larger vec (based on length)
+                vec = vec2;
+            }
         }
 
         //which point of vector is higher on screen? get that X val
