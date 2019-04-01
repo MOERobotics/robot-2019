@@ -37,7 +37,6 @@ public class PixyCam implements Runnable{
                 Pixy2Line.Vector[] tmp = pixyCam.getLine().getVectors();
                 if (tmp == null) tmp = sillyNullVector;
                 vec = tmp;
-                System.out.println(vec.toString());
             }catch(Exception e){
                 e.printStackTrace();
             }
