@@ -52,13 +52,12 @@ public class Robot extends TimedRobot {
     int smartDashCounter = 0;
 
     //pixy
-	public PixyCam pixy = new PixyCam() {{
+	/*public PixyCam pixy = new PixyCam() {{
 		init();
 		run();
 		start();
-	}};
-	int greatest;
-	int greatestInd;
+	}};*/
+
 
 	//lidar
 	SerialPort Blinky;
@@ -209,7 +208,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
             //autoProgram.printSmartDashboard();
 
-            SmartDashboard.putString("PixyInfo: ", pixy.toString());
+            //SmartDashboard.putString("PixyInfo: ", pixy.toString());
         }
 
 		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
@@ -217,10 +216,10 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
-		robotHardware.piXY = piClient.getCentroidXY();
+		/*robotHardware.piXY = piClient.getCentroidXY();
 
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
-        SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
+        SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);*/
 
 		if (PortOpen) Lidar.getLidar(robotHardware);
 	}
@@ -485,7 +484,7 @@ public class Robot extends TimedRobot {
                     positionLock = true;
                     pos = 2;
                 }
-            } else if (positionLock) {
+            } else if (positionLock && pos != -1) {
                 if (cargo) cargoPos[pos].run();
                 else hatchPos[pos].run();
             }
