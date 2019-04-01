@@ -52,11 +52,11 @@ public class Robot extends TimedRobot {
     int smartDashCounter = 0;
 
     //pixy
-	/*public PixyCam pixy = new PixyCam() {{
+	public PixyCam pixy = new PixyCam() {{
 		init();
 		run();
 		start();
-	}};*/
+	}};
 
 
 	//lidar
@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
 		  }
 		}
 
-		Lidar.init(Blinky, robotHardware);
+		//Lidar.init(Blinky, robotHardware);
 
 		//CameraServer.getInstance().startAutomaticCapture();
 	}
@@ -216,12 +216,14 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
+		SmartDashboard.putString("PixyInfo: ", pixy.toString());
+
 		/*robotHardware.piXY = piClient.getCentroidXY();
 
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);*/
 
-		if (PortOpen) Lidar.getLidar(robotHardware);
+		//if (PortOpen) Lidar.getLidar(robotHardware);
 	}
 
 	@Override

@@ -11,7 +11,7 @@ public class Lidar {
 
     //Init - instantiate new LidarThread
     public static void init(SerialPort Blinky, GenericRobot us) {
-        lidarThread = new LidarThread(Blinky);
+        //lidarThread = new LidarThread(Blinky);
         lidarThread.start();
         Lidar.numSensors = us.numSensors();
     }
@@ -23,7 +23,7 @@ public class Lidar {
     }
 
     public static class LidarThread extends Thread {
-        public SerialPort Blinky;
+        /*public SerialPort Blinky;
         public String lidarString = "";
         public boolean isAlive = true;
         int lidar[];// = new int[];
@@ -38,7 +38,7 @@ public class Lidar {
             this.Blinky = Blinky;
         }
 
-        @Override
+        /*@Override
         public void run() {
             lString = new String[Lidar.numSensors];
             lidar = new int[Lidar.numSensors];
@@ -88,18 +88,18 @@ public class Lidar {
                 }
             }
 
-        }
+        }*/
     }
 
     public static void getLidar(GenericRobot us) {
         //Sends lidar values, read time to robot
-        for (int j = 0; j < us.numSensors(); j++) {
+        /*for (int j = 0; j < us.numSensors(); j++) {
             if (lidarThread.lidar[j] != 0) {
                 SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
                 SmartDashboard.putNumber("LidarReadTime", lidarThread.lidarReadTime);
                 us.lidar[j] = lidarThread.lidar[j];
                 us.lidarReadTime = lidarThread.lidarReadTime;
             }
-        }
+        }*/
     }
 }
