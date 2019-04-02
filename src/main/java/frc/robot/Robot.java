@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto autoProgram   = new MASideAutoCargo();
+	private GenericAuto autoProgram   = new PivotBot();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 
@@ -51,13 +51,6 @@ public class Robot extends TimedRobot {
 
 	//UsbCamera cam1;
     int smartDashCounter = 0;
-
-    //pixy
-	public PixyCam pixy = new PixyCam() {{
-		init();
-		run();
-		start();
-	}};
 
 
 	//lidar
@@ -217,7 +210,7 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
-		SmartDashboard.putString("PixyInfo: ", pixy.toString());
+		SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
 
 		/*robotHardware.piXY = piClient.getCentroidXY();
 

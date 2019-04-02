@@ -38,8 +38,12 @@ public abstract class GenericRobot {
 	//pi
     public int[] piXY = new int[2];
 
-    //pixy
-	public Pixy2Line.Vector pixyXY[] = new Pixy2Line.Vector[1];
+	//pixy
+	public PixyCam pixy = new PixyCam() {{
+		init();
+		run();
+		start();
+	}};
 
 	//checking for things
 	public abstract double getDistanceLeftInches();
