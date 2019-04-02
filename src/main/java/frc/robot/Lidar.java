@@ -52,6 +52,21 @@ public class Lidar {
                 try {
                     lString[0] = lidarString.substring(0, lidarString.indexOf(" "));
                 } catch(Exception e) {}
+            } else if (lidarString.indexOf("1-") == lidarString.length() - 2) {
+                for (int k = 1; k < us.numSensors() - 1; k++) {
+                    try {
+                        lString[k] = lidarString.substring(lidarString.indexOf(k + "-") + 2, lidarString.indexOf((k + 1) + "-")).trim();
+                    } catch(Exception e) {}
+                }
+                try {
+                    lString[0] = lidarString.substring(lidarString.indexOf(us.numSensors() - 3 + "-") + 2, lidarString.indexOf("1-")).trim();
+                } catch(Exception e) {}
+                try {
+                    lString[2] = lidarString.substring(lidarString.indexOf(us.numSensors() - 1 + "-") + 2, lidarString.indexOf("0-")).trim();
+                } catch(Exception e) {}
+                try {
+                    lString[1] = lidarString.substring(0, lidarString.indexOf(" "));
+                } catch(Exception e) {}
             } else {
                 for (int k = 1; k < us.numSensors() - 1; k++) {
                     try {
@@ -59,10 +74,10 @@ public class Lidar {
                     } catch(Exception e) {}
                 }
                 try {
-                    lString[0] = lidarString.substring(lidarString.indexOf(us.numSensors() - 2 + "-") + 2, lidarString.indexOf("1-")).trim();
+                    lString[0] = lidarString.substring(lidarString.indexOf(us.numSensors() - 3 + "-") + 2, lidarString.indexOf("1-")).trim();
                 } catch(Exception e) {}
                 try {
-                    lString[1] = lidarString.substring(0, lidarString.indexOf(" "));
+                    lString[2] = lidarString.substring(0, lidarString.indexOf(" "));
                 } catch(Exception e) {}
             }
 
@@ -85,6 +100,10 @@ public class Lidar {
                     us.lidar[j] = l[j];
                 }
             }
+
+            SmartDashboard.putNumber("Left side lidar", us.leftLidar);
+            SmartDashboard.putNumber("Right side lidar", us.rightLidar);
+            SmartDashboard.putNumber("Center lidar", us.centerLidar);
 
         }
     }

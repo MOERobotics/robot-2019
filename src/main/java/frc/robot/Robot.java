@@ -17,13 +17,9 @@ import frc.robot.autonomous.test.*;
 import frc.robot.autonomous.sandstorm.*;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-//import edu.wpi.cscore.UsbCamera;
 import frc.robot.vision.PiClient;
 
-//import javax.sound.sampled.Port;
-
 import java.util.Arrays;
-
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
@@ -38,9 +34,10 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto autoProgram   = new PivotBot();
+	private GenericAuto 	autoProgram   = new MASideAutoCargo();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
+	private GenericAuto 	pixyAlign 	= new PivotBot();
 
 	//presets
 	private GenericAuto[] cargoPos = {new Cargo1(), new Cargo2(), new Cargo3()};
@@ -51,7 +48,6 @@ public class Robot extends TimedRobot {
 
 	//UsbCamera cam1;
     int smartDashCounter = 0;
-
 
 	//lidar
 	SerialPort Blinky;
@@ -72,6 +68,9 @@ public class Robot extends TimedRobot {
     double driveJoyStickX;
     double driveJoyStickY;
 
+    private boolean pixyAligning = false;
+
+    //for the lil nudge
 	int step = 1;
 	double currentEncoder;
 
@@ -122,8 +121,6 @@ public class Robot extends TimedRobot {
 		}
 
 		//Lidar.init(Blinky, robotHardware);
-
-		//CameraServer.getInstance().startAutomaticCapture();
 	}
 
 	@Override
@@ -217,7 +214,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);*/
 
-		//if (PortOpen) Lidar.getLidar(robotHardware);
+		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 	}
 
 	@Override
@@ -375,6 +372,8 @@ public class Robot extends TimedRobot {
 					driveJoyStickY = -functionStick.getY(Hand.kLeft);
 				}
 
+				if (driveJoyStickX != 0) pixyAligning = false;
+
 				if (Math.abs(driveJoyStickY) < 0.03) driveJoyStickY = 0.0;
 				else if (driveJoyStickX > 0) driveJoyStickX -= 0.03;
 				else if (driveJoyStickX < 0) driveJoyStickX += 0.03;
@@ -485,6 +484,10 @@ public class Robot extends TimedRobot {
                 else hatchPos[pos].run();
             }
 
+            if (pixyAligning) {
+            	pixyAlign.run();
+			}
+
 
             //DPAD
 			POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
@@ -508,6 +511,8 @@ public class Robot extends TimedRobot {
 			POVDirection joystickPOV = POVDirection.getDirection(leftJoystick.getPOV());
 			switch (joystickPOV) {
 				case NORTH:
+					pixyAligning = true;
+					break;
 				case SOUTH:
 				case EAST:
 				case WEST:
