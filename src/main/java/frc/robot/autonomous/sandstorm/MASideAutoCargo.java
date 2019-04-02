@@ -7,7 +7,7 @@ import frc.robot.autonomous.GenericAuto;
 
 public class MASideAutoCargo extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
-    PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
+    //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
     double z = 1.33;
     double louWizardry = 0;
@@ -29,6 +29,13 @@ public class MASideAutoCargo extends GenericAuto {
     double armOut = 53;
 
     double orientationTolerance = 0.5;
+
+    int midPoint = 40;
+    int margin = 2; //set margin of error where it wont move at all (prevents jittering)
+
+    int numTimesNull = 0;
+
+    double turnPower = 0.45;
 
     public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
         if (!(Handedness == -1)) {
@@ -81,7 +88,7 @@ public class MASideAutoCargo extends GenericAuto {
         robot.resetYaw();
         MOErioAuto.resetError();
         MOErioAuto.setHeading(0);
-        MOErioTurn.resetError();
+        //MOErioTurn.resetError();
         startTime = System.currentTimeMillis();
 
         if (LeftSide == -1) {
@@ -202,7 +209,7 @@ public class MASideAutoCargo extends GenericAuto {
                 if (leftDistance >= 49) {
                     autoStep++;
                     MOErioAuto.resetError();
-                    MOErioTurn.resetError();
+                    //MOErioTurn.resetError();
                     elevatorPID.resetError();
                 }
                 break;
@@ -211,7 +218,7 @@ public class MASideAutoCargo extends GenericAuto {
             /*Left side- turn 90 degrees to the right*/
             /*turning towards the hatch*/
             case 3:
-                MOErioTurn.setHeading(robot.getHeadingDegrees());
+                //MOErioTurn.setHeading(robot.getHeadingDegrees());
 
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -219,14 +226,15 @@ public class MASideAutoCargo extends GenericAuto {
 
                 robot.setDrivePower(-0.5 * LeftSide, 0.5 * LeftSide);
 
-                if (reachedHeadingHands(80, -1 * LeftSide)) {
-                    MOErioTurn.resetError();
+                if (reachedHeadingHands(90, -1 * LeftSide)) {
+                    //MOErioTurn.resetError();
                     autoStep++;
                 }
                 break;
 
             /*turning cont'd*/
             case 4:
+                /*
                 MOErioTurn.setHeading(robot.getHeadingDegrees() + 90 * LeftSide);
                 correction = MOErioTurn.getCorrection();
                 robot.setDrivePower(correction, -correction);
@@ -242,8 +250,45 @@ public class MASideAutoCargo extends GenericAuto {
                     ++turncounter;
                 } else {
                     turncounter = 0;
+                }*/
+
+                if (robot.pixy.vec.length != 1) {
+                    numTimesNull++;
+                    if (numTimesNull > 4) {
+                        //autoStep = 2;
+                        //System.out.println("Null PixyCam Vectors, next auto activated");
+                        robot.setDrivePower(0,0);
+                    }
+                } else {
+                    //vec = vectors[0]; //set vec
+                    numTimesNull = 0; //reset null exit counter
+                    //System.out.println("Pixy Vector: "+vec.toString());
+                    //System.out.println("test 1");
+
+/*
+                    if (robot.pixy.vec.length == 1) {
+                        System.out.println(robot.pixy.vec[0].getX0());
+                    }
+*/
+
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //System.out.println("test 2");
+                        //which point of vector is higher on screen? get that point's X val
+                        int topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() > robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
+                        }
+
+                        if (topXVal > midPoint + margin) {
+                            robot.setDrivePower(turnPower,-turnPower);
+                        } else if (topXVal < midPoint - margin) {
+                            robot.setDrivePower(-turnPower,turnPower);
+                        } else {
+                            autoStep++;
+                        }
+                    }
                 }
-                break;
+                        break;
 
 
             case 5:
