@@ -1,9 +1,6 @@
 package frc.robot.autonomous;
 
-import frc.robot.autonomous.GenericAuto;
-import io.github.pseudoresonance.pixy2api.Pixy2Line;
-
-public class PivotBot extends GenericAuto {
+public class PivotApproach extends GenericAuto {
 
     int midPoint = 40;
     int margin = 1; //set margin of error where it wont move at all (prevents jittering)
@@ -11,6 +8,8 @@ public class PivotBot extends GenericAuto {
     int numTimesNull = 0;
 
     double turnPower = 0.45;
+
+    long startTime;
 
     @Override
     public void init() {
@@ -84,6 +83,22 @@ public class PivotBot extends GenericAuto {
                         break;
 
                     case 2:
+                        robot.spearUnhook();
+                        robot.setDrivePower(0.3,0.3);
+                        if(robot.lidar[2] < 500){
+                            autoStep++;
+                            startTime = System.currentTimeMillis();
+                        }
+                        break;
+
+                    case 3:
+                        robot.setDrivePower(0.2,0.2);
+                        if(System.currentTimeMillis() - 500 > startTime){
+                            autoStep++;
+                        }
+                        break;
+
+                    case 4:
                         robot.stopDriving();
                         break;
                 }

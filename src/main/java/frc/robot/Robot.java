@@ -34,10 +34,11 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto 	autoProgram   = new MASideAutoCargo();
+	private GenericAuto 	autoProgram   = new PivotApproach();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 	private GenericAuto 	pixyAlign 	= new PivotBot();
+	private GenericAuto 	pixyApproach = new PivotApproach();
 
 	//presets
 	private GenericAuto[] cargoPos = {new Cargo1(), new Cargo2(), new Cargo3()};
@@ -69,6 +70,7 @@ public class Robot extends TimedRobot {
     double driveJoyStickY;
 
     private boolean pixyAligning = false;
+    private boolean pixyApproaching = false;
 
     //for the lil nudge
 	int step = 1;
@@ -89,6 +91,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		autoProgram.robot = robotHardware;
+		pixyAlign.init();
+		pixyAlign.robot = robotHardware;
+		pixyApproach.init();
+		pixyApproach.robot = robotHardware;
 
 		hab2Climb.robot = robotHardware;
 		hab3Climb.robot = robotHardware;
@@ -293,7 +299,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic () {
-	    if (autoEnable) {
+		if (autoEnable) {
 	        autoProgram.run();
             //startAutoStep = autoProgram.autoStep;
         } else teleopPeriodic();
@@ -316,6 +322,9 @@ public class Robot extends TimedRobot {
         atHabHeight2 = false;
         hab2Climb.init();
         hab3Climb.init();
+
+        pixyAlign.init();
+        autoProgram.init();
 	}
 
 	@Override
@@ -372,23 +381,33 @@ public class Robot extends TimedRobot {
 					driveJoyStickY = -functionStick.getY(Hand.kLeft);
 				}
 
-				if (driveJoyStickX != 0) pixyAligning = false;
+				if (pixyAligning) {
+					pixyAlign.run();
+					if ((Math.abs(driveJoyStickY) > 0.03)|| Math.abs(driveJoyStickX) > 0.10) {
+						pixyAligning = false;
+					}
+				} else if (pixyApproaching) {
+					pixyApproach.run();
+					if ((Math.abs(driveJoyStickY) > 0.03)|| Math.abs(driveJoyStickX) > 0.10) {
+						pixyApproaching = false;
+					}
+				} else {
+					if (Math.abs(driveJoyStickY) < 0.03) driveJoyStickY = 0.0;
+					else if (driveJoyStickX > 0) driveJoyStickX -= 0.03;
+					else if (driveJoyStickX < 0) driveJoyStickX += 0.03;
+					//Attempt to drive straight if joystick is within 10% of vertical
+					if (Math.abs(driveJoyStickX) < 0.10) driveJoyStickX = 0.0;
+					else if (driveJoyStickX > 0) driveJoyStickX -= 0.1;
+					else if (driveJoyStickX < 0) driveJoyStickX += 0.1;
 
-				if (Math.abs(driveJoyStickY) < 0.03) driveJoyStickY = 0.0;
-				else if (driveJoyStickX > 0) driveJoyStickX -= 0.03;
-				else if (driveJoyStickX < 0) driveJoyStickX += 0.03;
-				//Attempt to drive straight if joystick is within 10% of vertical
-				if (Math.abs(driveJoyStickX) < 0.10) driveJoyStickX = 0.0;
-				else if (driveJoyStickX > 0) driveJoyStickX -= 0.1;
-				else if (driveJoyStickX < 0) driveJoyStickX += 0.1;
+					driveJoyStickY *= 1.15;
+					driveJoyStickX *= .95;
 
-				driveJoyStickY *= 1.15;
-				driveJoyStickX *= .95;
+					double drivePowerLeft  = driveJoyStickY + driveJoyStickX;
+					double drivePowerRight = driveJoyStickY - driveJoyStickX;
 
-				double drivePowerLeft  = driveJoyStickY + driveJoyStickX;
-				double drivePowerRight = driveJoyStickY - driveJoyStickX;
-
-				robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+					robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+				}
 			}
 
 			if (functionStick.getStartButton()) {
@@ -484,10 +503,6 @@ public class Robot extends TimedRobot {
                 else hatchPos[pos].run();
             }
 
-            if (pixyAligning) {
-            	pixyAlign.run();
-			}
-
 
             //DPAD
 			POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());
@@ -512,8 +527,12 @@ public class Robot extends TimedRobot {
 			switch (joystickPOV) {
 				case NORTH:
 					pixyAligning = true;
+					pixyAlign.init();
 					break;
 				case SOUTH:
+					pixyApproaching = true;
+					pixyApproach.init();
+					break;
 				case EAST:
 				case WEST:
 				case NORTHWEST:
