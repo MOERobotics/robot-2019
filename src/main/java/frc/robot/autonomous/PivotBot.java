@@ -6,7 +6,7 @@ import io.github.pseudoresonance.pixy2api.Pixy2Line;
 public class PivotBot extends GenericAuto {
 
     int midPoint = 40;
-    int margin = 2; //set margin of error where it wont move at all (prevents jittering)
+    int margin = 1; //set margin of error where it wont move at all (prevents jittering)
 
     int numTimesNull = 0;
 

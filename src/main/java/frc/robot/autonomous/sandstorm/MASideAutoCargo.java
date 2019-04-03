@@ -100,6 +100,7 @@ public class MASideAutoCargo extends GenericAuto {
 
     @Override
     public void printSmartDashboard() {
+        /*
         correction = MOErioAuto.getCorrection();
         SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", correction);
@@ -113,6 +114,7 @@ public class MASideAutoCargo extends GenericAuto {
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
         SmartDashboard.putNumber("Left Side", LeftSide);
         SmartDashboard.putBoolean("Level Two", levelTwo);
+        */
     }
 
     @Override
@@ -228,7 +230,7 @@ public class MASideAutoCargo extends GenericAuto {
 
                 if (reachedHeadingHands(90, -1 * LeftSide)) {
                     //MOErioTurn.resetError();
-                    autoStep++;
+                    autoStep=5;
                 }
                 break;
 
@@ -321,7 +323,57 @@ public class MASideAutoCargo extends GenericAuto {
                 break;
 
             /*roll towards the hatch*/
+
             case 8:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
+                elevatorCorrection = elevatorPID.getCorrection();
+
+                robot.driveElevator(elevatorCorrection);
+
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+
+                robot.driveArm(armPowerBias + armCorrection);
+
+                if (robot.pixy.vec.length != 1) {
+                    numTimesNull++;
+                    if (numTimesNull > 4) {
+                        //autoStep = 2;
+                        //System.out.println("Null PixyCam Vectors, next auto activated");
+                        robot.setDrivePower(0,0);
+                    }
+                } else {
+                    //vec = vectors[0]; //set vec
+                    numTimesNull = 0; //reset null exit counter
+                    //System.out.println("Pixy Vector: "+vec.toString());
+                    //System.out.println("test 1");
+
+/*
+                    if (robot.pixy.vec.length == 1) {
+                        System.out.println(robot.pixy.vec[0].getX0());
+                    }
+*/
+
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //System.out.println("test 2");
+                        //which point of vector is higher on screen? get that point's X val
+                        int topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() > robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
+                        }
+
+                        if (topXVal > midPoint + margin) {
+                            robot.setDrivePower(turnPower,-turnPower);
+                        } else if (topXVal < midPoint - margin) {
+                            robot.setDrivePower(-turnPower,turnPower);
+                        } else {
+                            autoStep++;
+                        }
+                    }
+                }
+                break;
+
+            case 9:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
                 elevatorCorrection = elevatorPID.getCorrection();
 
@@ -336,14 +388,14 @@ public class MASideAutoCargo extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.3 * (1 + correction), 0.3 * (1 - correction));
 
-                if (robot.lidar[0] <= 545 - 25.4 + moementumCorrection) {
+                if (robot.lidar[0] <= 750) {
                     autoStep++;
                     startTime = System.currentTimeMillis();
                 }
 
                 break;
 
-            case 9:
+            case 10:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
                 elevatorCorrection = elevatorPID.getCorrection();
 
