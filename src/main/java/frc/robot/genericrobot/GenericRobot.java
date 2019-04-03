@@ -91,8 +91,8 @@ public abstract class GenericRobot {
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);
 
 	//shifting
-	public void shiftLow () { shiftDrive(false); }
-	public void shiftHigh  () { shiftDrive(true); }
+	public void shiftLow () { shiftDrive(true); }
+	public void shiftHigh  () { shiftDrive(false); } //CHANGE THESE BACK BEFORE LEAVINGGGGGGGGGG
 
 	public void shiftDrive(boolean state) {
 		this.shifterSolenoidState = state;

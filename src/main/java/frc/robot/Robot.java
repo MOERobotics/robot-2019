@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto 	autoProgram   = new PivotApproach();
+	private GenericAuto 	autoProgram   = new MASideAutoCargo();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 	private GenericAuto 	pixyAlign 	= new PivotBot();
