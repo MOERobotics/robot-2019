@@ -81,7 +81,7 @@ public class SuperMOEva extends GenericRobot {
     //lidar
     @Override
     public int numSensors() {
-        return 3;
+        return 1;
     }
     //right 0, middle 1, left 2? lol check again
 
@@ -322,12 +322,14 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void climbLDown(double power) {
-        climbInternalK(power,0);
+        froggerLB.set(power);
+        froggerLA.set(power);
     }
 
     @Override
     public void climbRDown(double power) {
-        climbInternalK(0,power);
+        froggerRA.set(power);
+        froggerRB.set(power);
     }
 
     @Override

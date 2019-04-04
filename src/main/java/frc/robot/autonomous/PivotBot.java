@@ -5,12 +5,14 @@ import io.github.pseudoresonance.pixy2api.Pixy2Line;
 
 public class PivotBot extends GenericAuto {
 
-    int midPoint = 40;
+    int midPoint = 34;
     int margin = 1; //set margin of error where it wont move at all (prevents jittering)
+    int biggerMargin = 8;
 
     int numTimesNull = 0;
 
-    double turnPower = 0.45;
+    double turnPower = 0.2;
+    double higherTurnPower = 0.25;
 
     @Override
     public void init() {
@@ -44,7 +46,7 @@ public class PivotBot extends GenericAuto {
             numTimesNull++;
             if (numTimesNull > 4) {
                 //autoStep = 2;
-                System.out.println("Null PixyCam Vectors, next auto activated");
+                //System.out.println("Null PixyCam Vectors, next auto activated");
                 robot.setDrivePower(0,0);
             }
         } else {
@@ -54,9 +56,9 @@ public class PivotBot extends GenericAuto {
             //System.out.println("test 1");
 
 
-            if(robot.pixy.vec.length == 1){
+            /*if(robot.pixy.vec.length == 1){
                 System.out.println(robot.pixy.vec[0].getX0());
-            }
+            }*/
 
 
             if(robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null){
@@ -72,11 +74,19 @@ public class PivotBot extends GenericAuto {
                         double toMove = 0.0;
 
                         if (topXVal > midPoint + margin) {
-                            toMove = midPoint - topXVal;
-                            robot.setDrivePower(turnPower,-turnPower);
+                            if (topXVal > midPoint + biggerMargin) {
+                                toMove = midPoint - topXVal;
+                                robot.setDrivePower(higherTurnPower,-higherTurnPower);
+                            } else {
+                                robot.setDrivePower(turnPower, -turnPower);
+                            }
                         } else if (topXVal < midPoint - margin) {
-                            toMove = midPoint - topXVal;
-                            robot.setDrivePower(-turnPower,turnPower);
+                            if (topXVal < midPoint - biggerMargin) {
+                                toMove = midPoint - topXVal;
+                                robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                            } else {
+                                robot.setDrivePower(-turnPower, turnPower);
+                            }
                         } else {
                             autoStep++;
                         }

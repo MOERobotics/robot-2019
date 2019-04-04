@@ -7,8 +7,8 @@ public class Hatch1 extends GenericAuto {
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double armOut = /*21.3*/ 21.0;
-    double elevatorFloor = -28.6-3.13;
+    double armOut = /*21.3*/ 19;
+    double elevatorFloor = -30;
     boolean armControlling = false;
     boolean elevatorControlling = false;
     double armCorrection;

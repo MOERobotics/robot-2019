@@ -126,7 +126,7 @@ public class Robot extends TimedRobot {
 		  }
 		}
 
-		//Lidar.init(Blinky, robotHardware);
+		//LidarWithThread.init(Blinky, robotHardware);
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
             //autoProgram.printSmartDashboard();
 
-            //SmartDashboard.putString("PixyInfo: ", pixy.toString());
+            SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
         }
 
 		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
@@ -213,14 +213,13 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
-		SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
-
 		/*robotHardware.piXY = piClient.getCentroidXY();
 
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);*/
 
 		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
+		//LidarWithThread.getLidar(robotHardware);
 	}
 
 	@Override
@@ -448,6 +447,7 @@ public class Robot extends TimedRobot {
 			if (Math.abs(elevatorPower) < 0.3) elevatorPower = 0;
 			else if (elevatorPower > 0) elevatorPower -= 0.3;
 			else if (elevatorPower < 0) elevatorPower += 0.3;
+			if (elevatorPower != 0) noPosition();
 			robotHardware.driveElevator(elevatorPower*0.8);
 
 			//Climbing
@@ -526,12 +526,16 @@ public class Robot extends TimedRobot {
 			POVDirection joystickPOV = POVDirection.getDirection(leftJoystick.getPOV());
 			switch (joystickPOV) {
 				case NORTH:
-					pixyAligning = true;
-					pixyAlign.init();
+				    if (robotHardware.pixy.vec.length != 0) {
+                        pixyAligning = true;
+                        pixyAlign.init();
+                    }
 					break;
 				case SOUTH:
-					pixyApproaching = true;
-					pixyApproach.init();
+				    if (robotHardware.pixy.vec.length != 0) {
+                        pixyApproaching = true;
+                        pixyApproach.init();
+                    }
 					break;
 				case EAST:
 				case WEST:

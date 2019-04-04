@@ -101,10 +101,6 @@ public class Lidar {
                 }
             }
 
-            SmartDashboard.putNumber("Left side lidar", us.leftLidar);
-            SmartDashboard.putNumber("Right side lidar", us.rightLidar);
-            SmartDashboard.putNumber("Center lidar", us.centerLidar);
-
         }
     }
 }
@@ -123,7 +119,7 @@ public class Lidar {
 
     //Init - instantiate new LidarThread
     public static void init(SerialPort Blinky, GenericRobot us) {
-        //lidarThread = new LidarThread(Blinky);
+        lidarThread = new LidarThread(Blinky);
         lidarThread.start();
         Lidar.numSensors = us.numSensors();
     }
@@ -135,7 +131,7 @@ public class Lidar {
     }
 
     public static class LidarThread extends Thread {
-        /*public SerialPort Blinky;
+        public SerialPort Blinky;
         public String lidarString = "";
         public boolean isAlive = true;
         int lidar[];// = new int[];
@@ -199,7 +195,6 @@ public class Lidar {
                     } catch (Exception e) { }
                 }
             }
-
         }
     }
 

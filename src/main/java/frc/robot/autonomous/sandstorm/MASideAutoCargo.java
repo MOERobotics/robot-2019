@@ -17,7 +17,7 @@ public class MASideAutoCargo extends GenericAuto {
     double correction = 0;
     double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = false;
+    boolean levelTwo = true;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
@@ -26,16 +26,19 @@ public class MASideAutoCargo extends GenericAuto {
     double armPowerBias = 0;
     double elevatorDeploy = 13.1;
     double elevatorFloor = -28.6/*-3.13*/;
-    double armOut = 53;
+    double armOut = 58;
 
     double orientationTolerance = 0.5;
 
-    int midPoint = 40;
-    int margin = 2; //set margin of error where it wont move at all (prevents jittering)
+    int midPoint = 34;
+    int topXVal;
+
+    int margin = 1;
+    int biggerMargin = 8;
+    double turnPower = 0.2;
+    double higherTurnPower = 0.25;
 
     int numTimesNull = 0;
-
-    double turnPower = 0.45;
 
     public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
         if (!(Handedness == -1)) {
@@ -84,6 +87,7 @@ public class MASideAutoCargo extends GenericAuto {
     @Override
     public void init() {
         autoStep = -2;
+        //autoStep = 9;
         robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.resetError();
@@ -119,6 +123,7 @@ public class MASideAutoCargo extends GenericAuto {
 
     @Override
     public void run() {
+        SmartDashboard.putNumber("autoStep", autoStep);
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
         louWizardry = leftDistance - rightDistance * zEffective;
@@ -247,7 +252,7 @@ public class MASideAutoCargo extends GenericAuto {
 
                 robot.driveElevator(elevatorCorrection);
 
-                robot.driveArm(0.2);
+                robot.driveArm(0.4);
                 if (robot.getArmEncoderCount()  >= armOut){
                     armPID.resetError();
                     autoStep++;
@@ -269,7 +274,6 @@ public class MASideAutoCargo extends GenericAuto {
                 break;
 
             /*roll towards the hatch*/
-
             case 7:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
                 elevatorCorrection = elevatorPID.getCorrection();
@@ -286,7 +290,7 @@ public class MASideAutoCargo extends GenericAuto {
 
                 robot.setDrivePower((0.4) * (1 + correction), (0.4) * (1 - correction));
 
-                if(leftDistance >= 36){ // we may need to tweak this!
+                if(robot.lidar[0] <= 900){ // we may need to tweak this!
                     autoStep++;
                     robot.setDrivePower(0,0);
                 }
@@ -311,33 +315,23 @@ public class MASideAutoCargo extends GenericAuto {
                         robot.setDrivePower(0,0);
                     }
                 } else {
-                    //vec = vectors[0]; //set vec
                     numTimesNull = 0; //reset null exit counter
-                    //System.out.println("Pixy Vector: "+vec.toString());
-                    //System.out.println("test 1");
+                    topXVal = robot.pixy.vec[0].getX1();
 
-/*
-                    if (robot.pixy.vec.length == 1) {
-                        System.out.println(robot.pixy.vec[0].getX0());
-                    }
-*/
-
-                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
-                        //System.out.println("test 2");
-                        //which point of vector is higher on screen? get that point's X val
-                        int topXVal = robot.pixy.vec[0].getX1();
-                        if (robot.pixy.vec[0].getY0() > robot.pixy.vec[0].getY1()) {
-                            topXVal = robot.pixy.vec[0].getX0();
-                        }
-
-                        if (topXVal > midPoint + margin) {
-                            robot.setDrivePower(turnPower,-turnPower);
-                        } else if (topXVal < midPoint - margin) {
-                            robot.setDrivePower(-turnPower,turnPower);
+                    if (topXVal > midPoint + margin) {
+                        if (topXVal > midPoint + biggerMargin) {
+                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
                         } else {
-                            autoStep++;
-                            robot.setDrivePower(0,0);
+                            robot.setDrivePower(turnPower, -turnPower);
                         }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) {
+                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                        } else {
+                            robot.setDrivePower(-turnPower, turnPower);
+                        }
+                    } else {
+                        autoStep++;
                     }
                 }
                 break;
@@ -357,7 +351,7 @@ public class MASideAutoCargo extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.3 * (1 + correction), 0.3 * (1 - correction));
 
-                if (robot.lidar[2] <= 750) {
+                if (robot.lidar[0] <= 850) { //750
                     autoStep++;
                     startTime = System.currentTimeMillis();
                 }
@@ -375,11 +369,12 @@ public class MASideAutoCargo extends GenericAuto {
 
                 robot.driveArm(armPowerBias + armCorrection);
 
-                if (System.currentTimeMillis() - startTime > 500) {
+                if (System.currentTimeMillis() - startTime > 1500) {
                     robot.rollOut(0);
                     robot.stopDriving();
                 } else {
                     robot.rollOut(0.5);
+                    robot.stopDriving();
                 }
                 break;
 

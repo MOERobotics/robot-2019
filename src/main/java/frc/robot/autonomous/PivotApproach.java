@@ -2,12 +2,14 @@ package frc.robot.autonomous;
 
 public class PivotApproach extends GenericAuto {
 
-    int midPoint = 40;
+    int midPoint = 34;
     int margin = 1; //set margin of error where it wont move at all (prevents jittering)
+    int biggerMargin = 8;
 
     int numTimesNull = 0;
 
-    double turnPower = 0.45;
+    double turnPower = 0.2;
+    double higherTurnPower = 0.25;
 
     long startTime;
 
@@ -43,7 +45,7 @@ public class PivotApproach extends GenericAuto {
             numTimesNull++;
             if (numTimesNull > 4) {
                 //autoStep = 2;
-                System.out.println("Null PixyCam Vectors, next auto activated");
+                //System.out.println("Null PixyCam Vectors, next auto activated");
                 robot.setDrivePower(0,0);
             }
         } else {
@@ -53,9 +55,9 @@ public class PivotApproach extends GenericAuto {
             //System.out.println("test 1");
 
 
-            if(robot.pixy.vec.length == 1){
+            /*if(robot.pixy.vec.length == 1){
                 System.out.println(robot.pixy.vec[0].getX0());
-            }
+            }*/
 
 
             if(robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null){
@@ -71,11 +73,19 @@ public class PivotApproach extends GenericAuto {
                         double toMove = 0.0;
 
                         if (topXVal > midPoint + margin) {
-                            toMove = midPoint - topXVal;
-                            robot.setDrivePower(turnPower,-turnPower);
+                            if (topXVal > midPoint + biggerMargin) {
+                                toMove = midPoint - topXVal;
+                                robot.setDrivePower(higherTurnPower,-higherTurnPower);
+                            } else {
+                                robot.setDrivePower(turnPower, -turnPower);
+                            }
                         } else if (topXVal < midPoint - margin) {
-                            toMove = midPoint - topXVal;
-                            robot.setDrivePower(-turnPower,turnPower);
+                            if (topXVal < midPoint - biggerMargin) {
+                                toMove = midPoint - topXVal;
+                                robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                            } else {
+                                robot.setDrivePower(-turnPower, turnPower);
+                            }
                         } else {
                             autoStep++;
                         }
@@ -85,7 +95,7 @@ public class PivotApproach extends GenericAuto {
                     case 2:
                         robot.spearUnhook();
                         robot.setDrivePower(0.3,0.3);
-                        if(robot.lidar[2] < 500){
+                        if(robot.lidar[0] < 500){
                             autoStep++;
                             startTime = System.currentTimeMillis();
                         }
