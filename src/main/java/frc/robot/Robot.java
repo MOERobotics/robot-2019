@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto 	autoProgram   = new MASideAutoCargo();
+	private GenericAuto 	autoProgram   = new MARocketHatch1Auto();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 	private GenericAuto 	pixyAlign 	= new PivotBot();
@@ -126,7 +126,7 @@ public class Robot extends TimedRobot {
 		  }
 		}
 
-		//LidarWithThread.init(Blinky, robotHardware);
+		//if (PortOpen) LidarWithThread.init(Blinky, robotHardware);
 	}
 
 	@Override
@@ -219,7 +219,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);*/
 
 		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
-		//LidarWithThread.getLidar(robotHardware);
+		//if (PortOpen) LidarWithThread.getLidar(robotHardware);
 	}
 
 	@Override
@@ -244,35 +244,35 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getRawButtonPressed(11)){
 			autoProgram = new MAFrontAuto();
 			autoProgram.LeftSide = 1;
-			autoProgram.lastStep = 4;
+			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(6)){
 			autoProgram = new MAFrontAuto();
 			autoProgram.LeftSide = -1;
-			autoProgram.lastStep = 4;
+			autoProgram.lastStep = 4342;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(7)){
-			autoProgram = new MASideAutoCargo();
+			autoProgram = new MASideAutoPixy();
 			autoProgram.LeftSide = 1;
-            autoProgram.lastStep = 9;
+            autoProgram.lastStep = 429;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(8)){
-			autoProgram = new MASideAutoCargo();
+			autoProgram = new MASideAutoPixy();
 			autoProgram.LeftSide = -1;
-            autoProgram.lastStep = 9;
+            autoProgram.lastStep = 659;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(9)) {
 		    autoProgram = new DriveStraightAuto();
             autoProgram.robot = robotHardware;
-            autoProgram.lastStep = 1;
+            autoProgram.lastStep = 4329;
         } else if (leftJoystick.getRawButtonPressed(10)) {
 		    autoProgram = new MASideAutoSimpleArm();
 		    autoProgram.robot = robotHardware;
-		    autoProgram.lastStep = 10;
+		    autoProgram.lastStep = 1232;
         } else if (leftJoystick.getRawButtonPressed(12)) {
 		    autoProgram = new DeployArm();
 		    autoProgram.robot = robotHardware;
-		    autoProgram.lastStep = 42;
+		    autoProgram.lastStep = 2342;
         }
 		/*else if (leftJoystick.getRawButton(9)){
 			autoProgram = new MOErioCargoSideAutoBonus();
@@ -425,11 +425,11 @@ public class Robot extends TimedRobot {
 
 			//roller
 			//TODO: bumpers
-			/*if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
-			else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);*/
-            if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
-            else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollOut(0.5);
-			else                                           robotHardware.driveRoller(0.0);
+			if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
+			else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
+            else                                           robotHardware.rollIn(0.1);
+            /*if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
+            else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollOut(0.5);*/
 
 			//arm
 			double armPower = functionStick.getY(Hand.kRight);

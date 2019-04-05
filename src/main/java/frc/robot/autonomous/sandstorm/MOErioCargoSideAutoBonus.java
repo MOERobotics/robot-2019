@@ -385,7 +385,6 @@ public class MOErioCargoSideAutoBonus extends GenericAuto {
             /*right side- turn right 90 degrees, towards the loading station*/
             /*left side- turn left 90 degrees, towards the loading station*/
             case 13:
-
                 robot.setDrivePower(0.5*LeftSide, -0.5*LeftSide);
 
                 if (reachedHeadingHands(80,1*LeftSide)) {

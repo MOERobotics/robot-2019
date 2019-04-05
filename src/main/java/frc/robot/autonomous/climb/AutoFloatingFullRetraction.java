@@ -54,6 +54,7 @@ public class AutoFloatingFullRetraction extends GenericAuto {
             //Retracting the spear
             case -1:
                 robot.spearHook();
+                robot.driveRoller(0);
                 autoStep++;
                 break;
 

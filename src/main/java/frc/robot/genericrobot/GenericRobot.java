@@ -162,8 +162,8 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Roller <editor-fold>
-	public final void   rollIn      (double power) { driveRoller(-power); }
-	public final void   rollOut     (double power) { driveRoller( power); }
+	public final void   rollIn      (double power) { driveRoller(power); }
+	public final void   rollOut     (double power) { driveRoller(-power); }
 	public final void   driveRoller (double power) {
 		this.rollerPower = power;
 		setRollerInternal(power);
