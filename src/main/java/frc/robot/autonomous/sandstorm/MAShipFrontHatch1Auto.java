@@ -2,9 +2,9 @@ package frc.robot.autonomous.sandstorm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
-import frc.robot.autonomous.*;
+import frc.robot.autonomous.GenericAuto;
 
-public class MARocketHatch1Auto extends GenericAuto  {
+public class MAShipFrontHatch1Auto extends GenericAuto  {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
@@ -18,7 +18,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
     double zEffective;
     boolean levelTwo = false;
 
-    int approachHeading = 40;
+    int approachHeading = 8;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
@@ -217,27 +217,17 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 break;
 
             case 4:
-                /* LFR */
-                if (reachedHeadingHands(approachHeading, LeftSide)) {
-                    autoStep++;
-                    robot.resetDriveEncoders();
-                    MOErioAuto.resetError();
-                }
-                robot.setDrivePower(0.5*LeftSide, -0.5*LeftSide);
-                break;
-
-            case 5:
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.6 * (1 + correction),
                         0.6 * (1 - correction));
 
-                if (robot.getDistanceLeftInches() > 86) {
+                if (robot.getDistanceLeftInches() > 94) {
                     autoStep++;
                 }
                 break;
 
-            case 6:
+            case 5:
                 double toMove = 0.0;
 
                 if (topXVal > midPoint + margin) {
@@ -260,7 +250,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 break;
 
-            case 7:
+            case 6:
                 robot.spearUnhook();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 500){
@@ -269,7 +259,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
-            case 8:
+            case 7:
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 500 > startTime){
                     autoStep++;
@@ -277,13 +267,23 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 break;
 
 
+            case 8:
+                robot.spearOut();
+                robot.stopDriving();
+                autoStep++;
+                break;
 
             case 9:
-                /* LFR */
+                robot.setDrivePower(-0.3,-0.3);
+                if(robot.lidar[0] < 500){
+                    autoStep++;
+                }
+                break;
 
-
+            case 10:
                 robot.stopDriving();
                 break;
+
         }
     }
 
