@@ -10,7 +10,7 @@ public class PixyCam implements Runnable{
     private Pixy2 pixyCam = Pixy2.createInstance(pixySPI);
     private Thread pixyThread;
 
-    Pixy2Line.Vector[] vec;
+    public Pixy2Line.Vector[] vec;
 
     private Pixy2Line.Vector[] sillyNullVector = new Pixy2Line.Vector[0];
 

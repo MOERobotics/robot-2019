@@ -4,6 +4,8 @@ package frc.robot.genericrobot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.Logger;
+import frc.robot.PixyCam;
+import io.github.pseudoresonance.pixy2api.Pixy2Line;
 
 public abstract class GenericRobot {
 
@@ -31,9 +33,21 @@ public abstract class GenericRobot {
     //lidar
 	public abstract int numSensors();
 	public int[] lidar = new int[numSensors()];
+	public long lidarReadTime;
+	public int leftLidar = lidar[0];
+	public int centerLidar = lidar[2];
+	public int rightLidar = lidar[1];
+
 
 	//pi
-    public int[] xy = new int[2];
+    public int[] piXY = new int[2];
+
+	//pixy
+	public PixyCam pixy = new PixyCam() {{
+		init();
+		run();
+		start();
+	}};
 
 	//checking for things
 	public abstract double getDistanceLeftInches();
@@ -78,7 +92,7 @@ public abstract class GenericRobot {
 
 	//shifting
 	public void shiftLow () { shiftDrive(false); }
-	public void shiftHigh  () { shiftDrive(true); }
+	public void shiftHigh  () { shiftDrive(true); } //check on MOEva
 
 	public void shiftDrive(boolean state) {
 		this.shifterSolenoidState = state;
