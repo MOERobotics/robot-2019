@@ -298,13 +298,91 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 break;
 
             case 9:
-                robot.setDrivePower(-0.3,-0.3);
+                robot.setDrivePower(-0.3,-0.3);//post-Lehigh: What is this supposed to do?
                 if(robot.lidar[0] < 500){
                     autoStep++;
+                    robot.resetDriveEncoders();
+                    MOErioAuto.resetError();
                 }
                 break;
 
             case 10:
+                //roll backwards
+                MOErioAuto.setHeading(robot.getHeadingDegrees());
+                correction = MOErioAuto.getCorrection();
+                robot.setDrivePower(-0.3 * (1 + correction),-0.3 * (1 - correction));
+                if(leftDistance > 12){ //this distance needs to be confirmed
+                    autoStep++;
+                }
+                break;
+
+            case 11:
+                //turn around.
+                robot.setDrivePower(0.2,-0.2);
+                if(robot.getHeadingDegrees() > 125){//this heading needs to be confirmed
+                    autoStep++;
+                    robot.resetDriveEncoders();
+                    MOErioAuto.resetError();
+                }
+                break;
+
+            case 12:
+                //roll forward a lot towards the loading station
+                MOErioAuto.setHeading(robot.getHeadingDegrees() - 135);
+                correction = MOErioAuto.getCorrection();
+
+                robot.setDrivePower(0.3*(1+correction), 0.3*(1-correction));
+                if(leftDistance > 96){//this distance also needs to be confirmed
+                    autoStep++;
+                }
+                break;
+
+            case 13:
+                //straighten using pixy align
+                if(pixyWait < 5){ pixyWait++; break; }
+                pixyWait = 0;
+                if (robot.pixy.vec.length != 1) {
+                    //Null counter, if not detecting pixy lines, don't move
+                    numTimesNull++;
+                    if (numTimesNull > 4){
+                        robot.setDrivePower(0, 0);
+                    }
+                } else {
+                    numTimesNull = 0; //reset null exit counter
+                    topXVal = robot.pixy.vec[0].getX1();
+
+                    //If top vec coord is to far to right
+                    if (topXVal > midPoint + margin) {
+                        //If really close, move less
+                        if (topXVal > midPoint + biggerMargin) {
+                            robot.setDrivePower(turnPower, 0);
+                        } else {
+                            robot.setDrivePower(higherTurnPower, 0);
+                        }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) { //big margin because line moves farther, the closer robot is
+                            robot.setDrivePower(0, turnPower);
+                        } else {
+                            robot.setDrivePower(0, higherTurnPower);
+                        }
+                    }
+
+                    if (Math.abs(topXVal - midPoint) <= margin){
+                        autoStep++;
+                        startTime = System.currentTimeMillis();
+                    }
+                }
+                break;
+
+            case 14:
+                //now roll forward
+                robot.setDrivePower(0.3,0.3);
+                if(robot.lidar[0]<475){//this needs to be confirmed
+                    autoStep++;
+                }
+                break;
+
+            case 15:
                 robot.stopDriving();
                 break;
 
