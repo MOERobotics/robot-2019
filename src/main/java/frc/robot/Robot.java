@@ -224,7 +224,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit () {
-		robotHardware.shiftSpearHook(false);
+		// This is to prevent the shaft from pulling back during the Sandstorm transition to teleop.
+		// robotHardware.shiftSpearHook(false);
 		robotHardware.shiftSpearShaft(false);
 	}
 
