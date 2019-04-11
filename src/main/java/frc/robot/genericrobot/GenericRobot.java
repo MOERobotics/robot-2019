@@ -34,9 +34,9 @@ public abstract class GenericRobot {
 	public abstract int numSensors();
 	public int[] lidar = new int[numSensors()];
 	public long lidarReadTime;
-	public int leftLidar = lidar[0];
+	/*public int leftLidar = lidar[0];
 	public int centerLidar = lidar[2];
-	public int rightLidar = lidar[1];
+	public int rightLidar = lidar[1];*/
 
 
 	//pi
@@ -104,11 +104,11 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Elevator <editor-fold>
-	public Logger<Double> elevatorLogger = new Logger<>();
+	//public Logger<Double> elevatorLogger = new Logger<>();
     public final void    elevatorUp       (double power) {driveElevator( power);}
     public final void    elevatorDown     (double power) {driveElevator(-power);}
 	public final void    driveElevator    (double power) {
-    	elevatorLogger.printIfChanged("Elevator", power);
+    	//elevatorLogger.printIfChanged("Elevator", power);
 		this.elevatorPower = power;
 		if      (isElevatorUp  () && power > 0) setElevatorInternal(  0.0);
 		else if (isElevatorDown() && power < 0) setElevatorInternal(  0.0);
@@ -162,8 +162,8 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Roller <editor-fold>
-	public final void   rollIn      (double power) { driveRoller(-power); }
-	public final void   rollOut     (double power) { driveRoller( power); }
+	public final void   rollIn      (double power) { driveRoller(power); }
+	public final void   rollOut     (double power) { driveRoller(-power); }
 	public final void   driveRoller (double power) {
 		this.rollerPower = power;
 		setRollerInternal(power);

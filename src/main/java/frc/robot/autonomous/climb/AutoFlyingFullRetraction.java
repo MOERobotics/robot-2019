@@ -35,7 +35,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
     @Override
     public void init() {
         lastStep = 14;
-        autoStep = 0;
+        autoStep = -1;
         steadyPower = 0.3;
         habLevel = 3;
         withinArmTolerance = false;
@@ -54,6 +54,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
             //Retracting the spear
             case -1:
                 robot.spearHook();
+                robot.driveRoller(0);
                 autoStep++;
                 break;
 
@@ -195,11 +196,13 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 armCorrection = armPID.getCorrection();
                 robot.driveArm(armPowerBias + armCorrection);
 
+                //robot.setDrivePower(0,0);
+
                 if(Math.abs(robot.getClimberLEncoderCount()) > fullRetractHeight + 15){
                     robot.climbLDown(1);
                 } else if (Math.abs(robot.getClimberLEncoderCount()) < fullRetractHeight + 15
                         && Math.abs(robot.getClimberLEncoderCount()) > fullRetractHeight) {
-                    robot.climbLDown(0.2);
+                    robot.climbLDown(0.3);
                 } else {
                     robot.climbLDown(0);
                 }
@@ -208,7 +211,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                     robot.climbRDown(1);
                 } else if (Math.abs(robot.getClimberREncoderCount()) < fullRetractHeight + 15
                         && Math.abs(robot.getClimberREncoderCount()) > fullRetractHeight) {
-                    robot.climbRDown(0.2);
+                    robot.climbRDown(0.3);
                 } else {
                     robot.climbRDown(0);
                 }

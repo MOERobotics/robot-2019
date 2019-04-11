@@ -37,12 +37,10 @@ public class PixyCam implements Runnable{
                 Pixy2Line.Vector[] tmp = pixyCam.getLine().getVectors();
                 if (tmp == null) tmp = sillyNullVector;
                 vec = tmp;
+                Thread.sleep(100);
             }catch(Exception e){
                 e.printStackTrace();
             }
-
-
-
         }
     }
     public Pixy2Line.Vector[] getLastVector(){
