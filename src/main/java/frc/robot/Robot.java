@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto 	autoProgram   = new MAShipFrontHatch1Auto();
+	private GenericAuto 	autoProgram   = new MARocketHatch1Auto();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 	private GenericAuto 	pixyAlign 	= new PivotBot();
@@ -293,7 +293,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit () {
-		robotHardware.shiftLow();
+		robotHardware.shiftHigh();
         autoEnable = true;
 		autoProgram.init();
 	}
@@ -422,7 +422,7 @@ public class Robot extends TimedRobot {
 			if (leftJoystick.getRawButtonPressed(5)) shiftingHigh = true;
 			else if (leftJoystick.getRawButtonPressed(10)) shiftingHigh = false;
 
-			if (shiftingHigh) robotHardware.shiftLow();
+			if (shiftingHigh) robotHardware.shiftLow(); //this makes no sense now – need to switch mechanically
 			else robotHardware.shiftHigh();
 
 			//hatchGrab
