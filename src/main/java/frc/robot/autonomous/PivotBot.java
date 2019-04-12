@@ -10,9 +10,12 @@ public class PivotBot extends GenericAuto {
     int biggerMargin = 8;
 
     int numTimesNull = 0;
+    int pixyWait = 0;
 
     double turnPower = 0.2;
     double higherTurnPower = 0.25;
+
+    long startTime;
 
     @Override
     public void init() {
@@ -47,7 +50,7 @@ public class PivotBot extends GenericAuto {
                     case 1:
                         double toMove = 0.0;
 
-                        if (topXVal > midPoint + margin) {
+                        /*if (topXVal > midPoint + margin) {
                             if (topXVal > midPoint + biggerMargin) {
                                 toMove = midPoint - topXVal;
                                 robot.setDrivePower(higherTurnPower,-higherTurnPower);
@@ -65,7 +68,43 @@ public class PivotBot extends GenericAuto {
                             autoStep++;
                         }
 
+                        break;*/
+
+                        if(pixyWait < 5){ pixyWait++; break; }
+                        pixyWait = 0;
+                        if (robot.pixy.vec.length != 1) {
+                            //Null counter, if not detecting pixy lines, don't move
+                            numTimesNull++;
+                            if (numTimesNull > 4){
+                                robot.setDrivePower(0, 0);
+                            }
+                        } else {
+                            numTimesNull = 0; //reset null exit counter
+                            topXVal = robot.pixy.vec[0].getX1();
+
+                            //If top vec coord is to far to right
+                            if (topXVal > midPoint + margin) {
+                                //If really close, move less
+                                if (topXVal > midPoint + biggerMargin) {
+                                    robot.setDrivePower(turnPower, 0);
+                                } else {
+                                    robot.setDrivePower(higherTurnPower, 0);
+                                }
+                            } else if (topXVal < midPoint - margin) {
+                                if (topXVal < midPoint - biggerMargin) { //big margin because line moves farther, the closer robot is
+                                    robot.setDrivePower(0, turnPower);
+                                } else {
+                                    robot.setDrivePower(0, higherTurnPower);
+                                }
+                            }
+
+                            if (Math.abs(topXVal - midPoint) <= margin){
+                                autoStep++;
+                                startTime = System.currentTimeMillis();
+                            }
+                        }
                         break;
+
 
                     case 2:
                         robot.stopDriving();

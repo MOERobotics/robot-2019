@@ -27,7 +27,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto 	autoProgram   = new MAShipFrontHatch1Auto();
+	private GenericAuto 	autoProgram   = new MARocketHatch1Auto();
 	private GenericAuto	   hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto    hab2Climb     = new AutoFloatingFullRetraction();
 	private GenericAuto 	pixyAlign 	= new PivotBot();
@@ -284,7 +284,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit () {
-		robotHardware.shiftLow();
+		robotHardware.shiftHigh();
         autoEnable = true;
 		autoProgram.init();
 	}
@@ -411,10 +411,10 @@ public class Robot extends TimedRobot {
 			if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
 
 			//hatchGrab
-			if      (functionStick.getAButton()) robotHardware.spearIn    ();
-			else if (functionStick.getBButton()) robotHardware.spearOut   ();
-			if      (functionStick.getXButton()) robotHardware.spearHook  ();
-			else if (functionStick.getYButton()) robotHardware.spearUnhook();
+			if      (functionStick.getAButton()) robotHardware.spearIn    ();//fingers open
+			else if (functionStick.getBButton()) robotHardware.spearOut   ();//fingers closed
+			if      (functionStick.getXButton()) robotHardware.spearHook  ();//spear in
+			else if (functionStick.getYButton()) robotHardware.spearUnhook();//spear out
 
 			//roller
 			//TODO: bumpers

@@ -26,8 +26,8 @@ public class MARocketHatch1Auto extends GenericAuto  {
     double armCorrection;
     double armPowerBias = 0;
     double elevatorDeploy = 13.1;
-    double elevatorFloor = -30/*-3.13*/;
-    double armOut = 19;
+    double elevatorFloor = -25/*-30*//*-3.13*/; //changed for falcon, please change when we get back on MOEva.
+    double armOut = /*19*/23;
 
     double orientationTolerance = 0.5;
 
@@ -83,7 +83,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
         return false;
     }
 
-    //case 7, bonus begins and normal auto ends
 
     @Override
     public void init() {
@@ -101,6 +100,8 @@ public class MARocketHatch1Auto extends GenericAuto  {
         } else {
             zEffective = z;
         }
+
+        robot.shiftHigh();
     }
 
     @Override
@@ -143,13 +144,17 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
-            /*drive off the HAB*/
+            /*drive off the HAB and raise elevator*/
             case -1:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
                 robot.setDrivePower((0.8) * (1 + correction), (0.8) * (1 - correction));
+
+                if (robot.getElevatorEncoderCount() > elevatorDeploy) {
+                    robot.driveElevator(0);
+                } else robot.driveElevator(0.8);
 
                 if (levelTwo) {
                     if (leftDistance >= 48 * 2) {
@@ -168,55 +173,28 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            /*continue to raise the elevator*/
             case 0:
-                robot.stopDriving();
-                robot.driveElevator(0.6);
+                robot.driveElevator(0.8);
                 if(robot.getElevatorEncoderCount()  >= elevatorDeploy){
                     autoStep++;
                     elevatorPID.resetError();
                 }
                 break;
 
+
+            /*keep still*/
             case 1:
-                robot.stopDriving();
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
                 elevatorCorrection = elevatorPID.getCorrection();
 
                 robot.driveElevator(elevatorCorrection);
 
-                robot.driveArm(0.2);
-                if (robot.getArmEncoderCount()  >= armOut){
-                    armPID.resetError();
-                    autoStep++;
-                }
-                break;
-
-            case 2:
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
-
-                robot.driveElevator(-0.3);
-                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
-                    autoStep++;
-                }
-                break;
-
-            case 3:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
                 autoStep++;
                 break;
 
-            case 4:
+            /*turn towards the rocket*/
+            case 2:
                 /* LFR */
                 if (reachedHeadingHands(approachHeading, LeftSide)) {
                     autoStep++;
@@ -226,18 +204,49 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 robot.setDrivePower(0.5*LeftSide, -0.5*LeftSide);
                 break;
 
-            case 5:
+            /*roll towards the rocket, raise arm*/
+            case 3:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
+                elevatorCorrection = elevatorPID.getCorrection();
+
+                robot.driveElevator(elevatorCorrection);
+
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.6 * (1 + correction),
                         0.6 * (1 - correction));
 
-                if (robot.getDistanceLeftInches() > 86) {
+                robot.driveArm(0.2);
+                if (robot.getArmEncoderCount()  >= armOut){
+                    armPID.resetError();
                     autoStep++;
                 }
                 break;
 
-            case 6:
+            /*keep rolling, keep arm and elevator still*/
+            case 4:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
+                elevatorCorrection = elevatorPID.getCorrection();
+
+                robot.driveElevator(elevatorCorrection);
+
+                armPID.setHeading(robot.getArmEncoderCount() - armOut);
+                armCorrection = armPID.getCorrection();
+
+                robot.driveArm(armPowerBias + armCorrection);
+
+                MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
+                correction = MOErioAuto.getCorrection();
+                robot.setDrivePower(0.6 * (1 + correction),
+                        0.6 * (1 - correction));
+
+                if(robot.getDistanceLeftInches() > 86){
+                    autoStep=6;
+                }
+
+
+            /*auto target*/
+            case 5:
                 double toMove = 0.0;
 
                 if (topXVal > midPoint + margin) {
@@ -260,15 +269,37 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 break;
 
-            case 7:
-                robot.spearUnhook();
-                robot.setDrivePower(0.3,0.3);
-                if(robot.lidar[0] < 500){
+            /*lower the elevator*/
+            case 6:
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+
+                robot.driveArm(armPowerBias + armCorrection);
+
+                robot.driveElevator(-0.3);
+                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
                     autoStep++;
-                    startTime = System.currentTimeMillis();
+                    elevatorPID.resetError();
                 }
                 break;
 
+
+            /*spear out, keep elev still*/
+            case 7:
+                elevatorPID.setHeading(robot.getElevatorEncoderCount() - elevatorFloor);
+                elevatorCorrection = elevatorPID.getCorrection();
+
+                robot.driveElevator(elevatorCorrection);
+
+                robot.spearOut();
+                robot.setDrivePower(0.3,0.3);
+                /*if(robot.lidar[0] < 500){*/
+                    autoStep++;
+                    startTime = System.currentTimeMillis();
+                //}
+                break;
+
+            /*drive forward for half a second*/
             case 8:
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 500 > startTime){
@@ -277,13 +308,27 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 break;
 
 
-
+            //fingers in
             case 9:
                 /* LFR */
-
-
+                robot.spearUnhook();
                 robot.stopDriving();
+                autoStep++;
+                robot.resetDriveEncoders();
                 break;
+
+            //back off for ????? in
+            //spear in
+            case 10:
+                robot.spearIn();
+                robot.setDrivePower(-0.2,-0.2);
+                if(Math.abs(robot.getDistanceLeftInches()) > 24){
+                    autoStep++;
+                }
+                break;
+
+            case 11:
+                robot.stopDriving();
         }
     }
 

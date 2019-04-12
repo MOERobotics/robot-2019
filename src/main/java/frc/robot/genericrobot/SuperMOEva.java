@@ -44,8 +44,8 @@ public class SuperMOEva extends GenericRobot {
     TalonSRX rollR = new TalonSRX(10) {{setNeutralMode(NeutralMode.Brake);}};
 
     Solenoid footSpacerCylinder = new Solenoid(0);
-    Solenoid spearShaft = new Solenoid(2); //extend
-    Solenoid spearHook  = new Solenoid(3); //grab
+    Solenoid spearShaft = new Solenoid(3); //extend
+    Solenoid spearHook  = new Solenoid(2); //grab
     //Solenoid floorPickup = new Solenoid(4);
     DoubleSolenoid linearSlider = new DoubleSolenoid(5, 6);
     Solenoid shifter = new Solenoid(7);

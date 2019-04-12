@@ -171,7 +171,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
             case 0:
                 robot.stopDriving();
-                robot.driveElevator(0.6);
+                robot.driveElevator(/*0.6*/0.8);
                 if(robot.getElevatorEncoderCount()  >= elevatorDeploy){
                     autoStep++;
                     elevatorPID.resetError();
@@ -193,18 +193,6 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 break;
 
             case 2:
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
-
-                robot.driveElevator(-0.3);
-                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
-                    autoStep++;
-                }
-                break;
-
-            case 3:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
                 elevatorCorrection = elevatorPID.getCorrection();
 
@@ -218,7 +206,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 autoStep++;
                 break;
 
-            case 4:
+            case 3:
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.4 * (1 + correction),
@@ -229,7 +217,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 }
                 break;
 
-            case 5:
+            case 4:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount() - elevatorFloor);
                 elevatorCorrection = elevatorPID.getCorrection();
 
@@ -275,8 +263,26 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            case 5:
+                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
+                armCorrection = armPID.getCorrection();
+
+                robot.driveArm(armPowerBias + armCorrection);
+
+                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
+                elevatorCorrection = elevatorPID.getCorrection();
+
+                robot.driveElevator(elevatorCorrection);
+
+                robot.driveElevator(-0.3);
+
+                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
+                    autoStep++;
+                }
+                break;
+
             case 6:
-                robot.spearUnhook();
+                robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 475){
                     autoStep++;
@@ -292,12 +298,14 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 break;
 
             case 8:
+                robot.spearUnhook();
                 //robot.spearOut();
                 robot.stopDriving();
                 autoStep++;
                 break;
 
             case 9:
+                robot.spearIn();
                 robot.setDrivePower(-0.3,-0.3);
                 if(robot.lidar[0] < 500){
                     autoStep++;
