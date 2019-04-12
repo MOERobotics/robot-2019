@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.GenericRobot;
-import frc.robot.genericrobot.SuperMOEva;
 
 public class Lidar {
     static int uArtCounter = 0;

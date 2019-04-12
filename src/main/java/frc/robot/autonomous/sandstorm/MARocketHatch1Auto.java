@@ -261,7 +261,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 break;
 
             case 7:
-                robot.spearUnhook();
+                robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 500){
                     autoStep++;

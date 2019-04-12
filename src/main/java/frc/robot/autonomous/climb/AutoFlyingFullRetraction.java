@@ -53,7 +53,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
 
             //Retracting the spear
             case -1:
-                robot.spearHook();
+                robot.spearIn();
                 robot.driveRoller(0);
                 autoStep++;
                 break;

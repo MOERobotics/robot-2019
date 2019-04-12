@@ -68,6 +68,7 @@ public class Robot extends TimedRobot {
 	private boolean functionStickDrive = false;
     double driveJoyStickX;
     double driveJoyStickY;
+    private boolean shiftingHigh;
 
     private boolean pixyAligning = false;
     private boolean pixyApproaching = false;
@@ -325,6 +326,9 @@ public class Robot extends TimedRobot {
 
         pixyAlign.init();
         autoProgram.init();
+
+        shiftingHigh = true;
+        robotHardware.shiftLow();
 	}
 
 	@Override
@@ -415,22 +419,23 @@ public class Robot extends TimedRobot {
 			}
 
 			//Shifting
-			if (leftJoystick.getRawButtonPressed (12)) robotHardware.shiftHigh();
-			if (leftJoystick.getRawButtonReleased(12)) robotHardware.shiftLow ();
+			if (leftJoystick.getRawButtonPressed(5)) shiftingHigh = true;
+			else if (leftJoystick.getRawButtonPressed(10)) shiftingHigh = false;
+
+			if (shiftingHigh) robotHardware.shiftLow();
+			else robotHardware.shiftHigh();
 
 			//hatchGrab
-			if      (functionStick.getAButton()) robotHardware.spearIn    ();
-			else if (functionStick.getBButton()) robotHardware.spearOut   ();
-			if      (functionStick.getXButton()) robotHardware.spearHook  ();
-			else if (functionStick.getYButton()) robotHardware.spearUnhook();
+			if      (functionStick.getAButton()) robotHardware.spearHook ();
+			else if (functionStick.getBButton()) robotHardware.spearUnhook();
+			if      (functionStick.getXButton()) robotHardware.spearIn    ();
+			else if (functionStick.getYButton()) robotHardware.spearOut   ();
 
 			//roller
 			//TODO: bumpers
 			if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
 			else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
             else                                           robotHardware.rollIn(0.1);
-            /*if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollIn (0.8);
-            else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollOut(0.5);*/
 
 			//arm
 			double armPower = functionStick.getY(Hand.kRight);
