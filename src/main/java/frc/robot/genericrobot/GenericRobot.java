@@ -4,6 +4,8 @@ package frc.robot.genericrobot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.Logger;
+import frc.robot.PixyCam;
+import io.github.pseudoresonance.pixy2api.Pixy2Line;
 
 public abstract class GenericRobot {
 
@@ -31,9 +33,21 @@ public abstract class GenericRobot {
     //lidar
 	public abstract int numSensors();
 	public int[] lidar = new int[numSensors()];
+	public long lidarReadTime;
+	/*public int leftLidar = lidar[0];
+	public int centerLidar = lidar[2];
+	public int rightLidar = lidar[1];*/
+
 
 	//pi
-    public int[] xy = new int[2];
+    public int[] piXY = new int[2];
+
+	//pixy
+	public PixyCam pixy = new PixyCam() {{
+		init();
+		run();
+		start();
+	}};
 
 	//checking for things
 	public abstract double getDistanceLeftInches();
@@ -82,7 +96,7 @@ public abstract class GenericRobot {
 	//shifting
 	public Logger<Boolean> shifterLogger = new Logger<>();
 	public void shiftLow () { shiftDrive(false); }
-	public void shiftHigh  () { shiftDrive(true); }
+	public void shiftHigh  () { shiftDrive(true); } //check on MOEva
 
 	public void shiftDrive(boolean state) {
 		shifterLogger.printIfChanged("Is Shifter High?: ", state);
@@ -95,11 +109,11 @@ public abstract class GenericRobot {
 	//</editor-fold>
 
     //Elevator <editor-fold>
-	public Logger<Double> elevatorLogger = new Logger<>();
+	//public Logger<Double> elevatorLogger = new Logger<>();
     public final void    elevatorUp       (double power) {driveElevator( power);}
     public final void    elevatorDown     (double power) {driveElevator(-power);}
 	public final void    driveElevator    (double power) {
-    	elevatorLogger.printIfChanged("Elevator", power);
+    	//elevatorLogger.printIfChanged("Elevator", power);
 		this.elevatorPower = power;
 		if      (isElevatorUp  () && power > 0) setElevatorInternal(  0.0);
 		else if (isElevatorDown() && power < 0) setElevatorInternal(  0.0);
@@ -156,8 +170,8 @@ public abstract class GenericRobot {
 
     //Roller <editor-fold>
 	public Logger<Double> rollerLogger = new Logger<>();
-	public final void   rollIn      (double power) { driveRoller(-power); }
-	public final void   rollOut     (double power) { driveRoller( power); }
+	public final void   rollIn      (double power) { driveRoller(power); }
+	public final void   rollOut     (double power) { driveRoller(-power); }
 	public final void   driveRoller (double power) {
 		rollerLogger.printIfChanged("Roller", power);
 		this.rollerPower = power;

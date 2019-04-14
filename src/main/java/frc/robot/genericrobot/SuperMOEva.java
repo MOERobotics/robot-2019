@@ -35,11 +35,9 @@ public class SuperMOEva extends GenericRobot {
     //Turret
     CANSparkMax elevator = new CANSparkMax(6, CANSparkMaxLowLevel.MotorType.kBrushless);
     CANSparkMax arm = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
-    //TalonSRX arm = new TalonSRX(4) {{setNeutralMode(NeutralMode.Brake);}};
 
     CANEncoder encoderElev = new CANEncoder(elevator);
     CANEncoder encoderArm = new CANEncoder(arm);
-    //Encoder encoderArm = new Encoder(8, 9, true, EncodingType.k2X);
 
     //Cargo/Hatch
     TalonSRX rollL = new TalonSRX(11) {{setNeutralMode(NeutralMode.Brake);}};
@@ -79,11 +77,13 @@ public class SuperMOEva extends GenericRobot {
         froggerRB.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
 
+
     //lidar
     @Override
     public int numSensors() {
         return 1;
     }
+    //right 0, middle 1, left 2? lol check again
 
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
@@ -322,12 +322,14 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public void climbLDown(double power) {
-        climbInternalK(power,0);
+        froggerLB.set(power);
+        froggerLA.set(power);
     }
 
     @Override
     public void climbRDown(double power) {
-        climbInternalK(0,power);
+        froggerRA.set(power);
+        froggerRB.set(power);
     }
 
     @Override
@@ -341,10 +343,10 @@ public class SuperMOEva extends GenericRobot {
     double oldLeftK, oldRightK;
     public void climbInternalK(double leftPower, double rightPower) {
         if (oldLeftK != leftPower || oldRightK != rightPower) {
-            for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+            /*for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
                 System.out.println(e);
             }
-            System.out.printf("L:%f R:%f\n", leftPower, rightPower);
+            System.out.printf("L:%f R:%f\n", leftPower, rightPower);*/
             oldRightK = rightPower;
             oldLeftK = leftPower;
         }
