@@ -162,6 +162,10 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic () {
         //robotHardware.checkSafety();
 
+		Logger.printJoystickIfChanged("Thrustmasta",leftJoystick);
+		Logger.printJoystickIfChanged("Not the Thrustmasta",functionStick);
+
+
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
 	        //robotHardware.getClimberCurrent();
             SmartDashboard.putString("Robot Class", robotHardware.getClass().getSimpleName());
@@ -650,5 +654,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic () {
 	}
+
 
 }
