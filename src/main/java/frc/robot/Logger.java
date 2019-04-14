@@ -11,6 +11,17 @@ public class Logger <valueType>{
             oldValue = newValue;
         }
     }
+
+    //in  =   -1  <->   1
+    //out = -100  <-> 100
+
+    public static int doubleToPercent(Double value) {
+
+        return (int)(value * 100);
+
+
+    }
+
     public static void printLogMessage(String subject, String value) {
 
         System.out.printf(
