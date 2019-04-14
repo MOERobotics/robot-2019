@@ -76,6 +76,9 @@ public class Robot extends TimedRobot {
 	int step = 1;
 	double currentEncoder;
 
+	Logger.Joystick leftJoystickLogger  = new Logger.Joystick("Thrustmasta",leftJoystick);
+	Logger.Joystick functionStickLogger = new Logger.Joystick("Notta masta",functionStick);
+
 	public void noPosition() {
 		pos = -1;
 		positionLock = false;
@@ -133,8 +136,8 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic () {
         //robotHardware.checkSafety();
 
-		Logger.printJoystickIfChanged("Thrustmasta",leftJoystick);
-		Logger.printJoystickIfChanged("Not the Thrustmasta",functionStick);
+		leftJoystickLogger .printIfChanged();
+		functionStickLogger.printIfChanged();
 
 
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
@@ -194,11 +197,11 @@ public class Robot extends TimedRobot {
             String modified = "fail";
             try {
                 modified = new Date(
-                        Robot
-                                .class
-                                .getResource("Main.class")
-                                .openConnection()
-                                .getLastModified()
+					Robot
+						.class
+						.getResource("Main.class")
+						.openConnection()
+						.getLastModified()
                 ).toString();
             } catch (Exception ignored) {
             }
