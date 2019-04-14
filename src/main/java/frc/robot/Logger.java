@@ -24,16 +24,31 @@ public class Logger <valueType>{
 
     public static void printJoystickIfChanged(String joystickName, GenericHID joystick) {
 
-        int num_buttons = joystick.getButtonCount();
+    }
 
-        for (int i = 0; i < num_buttons; i++) {
-            if (joystick.getRawButtonPressed(i)) {
-                printLogMessage(joystickName + " button "+i, "pressed");
-            }
-            if (joystick.getRawButtonReleased(i)) {
-                printLogMessage(joystickName + " button "+i, "released");
-            }
+    public static class Joystick {
+        public GenericHID joystick;
+        public String name;
+        int numButtons;
+        public boolean[] lastState;
+
+        public Joystick(String name, GenericHID joystick) {
+            this.joystick = joystick;
+            this.name = name;
+            this.numButtons = joystick.getButtonCount();
+            this.lastState = new boolean[numButtons];
         }
 
+        public void printIfChanged() {
+            for (int i = 1; i < numButtons; i++) {
+                int rawButtonNumber = i + 1;
+                boolean isButtonPressed = joystick.getRawButton(rawButtonNumber);
+                if (isButtonPressed != lastState[i]) {
+                    String action = (isButtonPressed ? "pressed" : "released");
+                    printLogMessage(name + " button " + rawButtonNumber, action);
+                    lastState[i] = isButtonPressed;
+                }
+            }
+        }
     }
 }
