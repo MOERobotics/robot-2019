@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
 		  }
 		}
 
-		//if (PortOpen) LidarWithThread.init(Blinky, robotHardware);
+		if (PortOpen) LidarWithThread.init(Blinky, robotHardware);
 	}
 
 	@Override
@@ -219,8 +219,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);*/
 
-		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
-		//if (PortOpen) LidarWithThread.getLidar(robotHardware);
+		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
+		if (PortOpen) LidarWithThread.getLidar(robotHardware);
 	}
 
 	@Override

@@ -52,14 +52,12 @@ public class PivotBot extends GenericAuto {
 
                         /*if (topXVal > midPoint + margin) {
                             if (topXVal > midPoint + biggerMargin) {
-                                toMove = midPoint - topXVal;
                                 robot.setDrivePower(higherTurnPower,-higherTurnPower);
                             } else {
                                 robot.setDrivePower(turnPower, -turnPower);
                             }
                         } else if (topXVal < midPoint - margin) {
                             if (topXVal < midPoint - biggerMargin) {
-                                toMove = midPoint - topXVal;
                                 robot.setDrivePower(-higherTurnPower,higherTurnPower);
                             } else {
                                 robot.setDrivePower(-turnPower, turnPower);
