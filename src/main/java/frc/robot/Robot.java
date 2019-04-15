@@ -424,8 +424,7 @@ public class Robot extends TimedRobot {
 			if (leftJoystick.getRawButtonPressed(5)) shiftingHigh = true;
 			else if (leftJoystick.getRawButtonPressed(10)) shiftingHigh = false;
 
-			if (shiftingHigh) robotHardware.shiftLow(); //this makes no sense now – need to switch mechanically
-			else robotHardware.shiftHigh();
+			robotHardware.shiftDrive(shiftingHigh);
 
 			//hatchGrab
 			if      (functionStick.getAButton()) robotHardware.spearHook ();

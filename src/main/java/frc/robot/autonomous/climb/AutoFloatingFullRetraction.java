@@ -18,7 +18,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
     double elevatorBalance = 13;
     //double elevatorFinale = 0;
     double armOut = /*40*/30;
-    boolean withinArmTolerance = false;
 
     double pitchMin = Double.MAX_VALUE;
 
