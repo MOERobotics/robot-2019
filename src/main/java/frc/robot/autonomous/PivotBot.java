@@ -12,10 +12,12 @@ public class PivotBot extends GenericAuto {
     int numTimesNull = 0;
     int pixyWait = 0;
 
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
+    double turnPower = /*0.2*/0.4;
+    double higherTurnPower = /*0.25*/0.45;
 
     long startTime;
+
+    int topXVal;
 
     @Override
     public void init() {
@@ -27,28 +29,9 @@ public class PivotBot extends GenericAuto {
         //if we only get one vector, don't try to get a second vector
 
         //Pixy2Line.Vector vec;
-        if (robot.pixy.vec.length != 1) {
-            numTimesNull++;
-            if (numTimesNull > 4) {
-                //autoStep = 2;
-                //System.out.println("Null PixyCam Vectors, next auto activated");
-                robot.setDrivePower(0,0);
-            }
-        } else {
-            //vec = vectors[0]; //set vec
-            numTimesNull = 0; //reset null exit counter
-
-            if(robot.pixy.vec[0] != null){
-                Pixy2Line.Vector daVec = robot.pixy.vec[0];
-                //which point of vector is higher on screen? get that point's X val
-                int topXVal = daVec.getX1();
-                if (daVec.getY0() < daVec.getY1()) {
-                    topXVal = daVec.getX0();
-                }
-
-                switch (autoStep) {
-                    case 1:
-                        double toMove = 0.0;
+        switch (autoStep) {
+            case 1:
+                double toMove = 0.0;
 
                         /*if (topXVal > midPoint + margin) {
                             if (topXVal > midPoint + biggerMargin) {
@@ -70,50 +53,97 @@ public class PivotBot extends GenericAuto {
 
                         break;*/
 
-                        if(pixyWait < 5){ pixyWait++; break; }
-                        pixyWait = 0;
-                        if (robot.pixy.vec.length != 1) {
-                            //Null counter, if not detecting pixy lines, don't move
-                            numTimesNull++;
-                            if (numTimesNull > 4){
-                                robot.setDrivePower(0, 0);
-                            }
-                        } else {
-                            numTimesNull = 0; //reset null exit counter
-                            topXVal = robot.pixy.vec[0].getX1();
-
-                            //If top vec coord is to far to right
-                            if (topXVal > midPoint + margin) {
-                                //If really close, move less
-                                if (topXVal > midPoint + biggerMargin) {
-                                    robot.setDrivePower(turnPower, 0);
-                                } else {
-                                    robot.setDrivePower(higherTurnPower, 0);
-                                }
-                            } else if (topXVal < midPoint - margin) {
-                                if (topXVal < midPoint - biggerMargin) { //big margin because line moves farther, the closer robot is
-                                    robot.setDrivePower(0, turnPower);
-                                } else {
-                                    robot.setDrivePower(0, higherTurnPower);
-                                }
-                            }
-
-                            if (Math.abs(topXVal - midPoint) <= margin){
-                                autoStep++;
-                                startTime = System.currentTimeMillis();
-                            }
+                if(pixyWait < 5){ pixyWait++; break; }
+                pixyWait = 0;
+                if (robot.pixy.vec.length != 1) {
+                    //Null counter, if not detecting pixy lines, don't move
+                    numTimesNull++;
+                    if (numTimesNull > 4){
+                        robot.setDrivePower(0, 0);
+                    }
+                } else {
+                    numTimesNull = 0; //reset null exit counter
+                    if(robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
                         }
-                        break;
 
+                    }
 
-                    case 2:
-                        robot.stopDriving();
-                        break;
+                        //If top vec coord is to far to right
+                    /*
+                    if (topXVal > midPoint + margin) {
+                        //logic here: if we're closer to the line (vertically speaking), the horizontal margin will be greater.
+                        if (topXVal > midPoint + biggerMargin) {
+                            robot.setDrivePower(turnPower, 0);
+                        } else {
+                            robot.setDrivePower(higherTurnPower, 0);
+                        }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) { //big margin because line moves farther, the closer robot is
+                            robot.setDrivePower(0, turnPower);
+                        } else {
+                            robot.setDrivePower(0, higherTurnPower);
+                        }
+                    }
+
+                    if (Math.abs(topXVal - midPoint) <= margin){
+                        autoStep++;
+                        startTime = System.currentTimeMillis();
+                    }
+                    */
+                    if (topXVal > midPoint + margin) {
+                        if (topXVal > midPoint + biggerMargin) {
+                            toMove = midPoint - topXVal;
+                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
+                        } else {
+                            robot.setDrivePower(turnPower, -turnPower);
+                        }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) {
+                            toMove = midPoint - topXVal;
+                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                        } else {
+                            robot.setDrivePower(-turnPower, turnPower);
+                        }
+                    } else {
+                        autoStep++;
+                    }
                 }
+                break;
+
+
+            case 2:
+                robot.stopDriving();
+                break;
+        }
+        /*
+        if (robot.pixy.vec.length != 1) {
+            numTimesNull++;
+            if (numTimesNull > 4) {
+                //autoStep = 2;
+                //System.out.println("Null PixyCam Vectors, next auto activated");
+                robot.setDrivePower(0,0);
+            }
+        } else {
+            //vec = vectors[0]; //set vec
+            numTimesNull = 0; //reset null exit counter
+
+            if(robot.pixy.vec[0] != null){
+                Pixy2Line.Vector daVec = robot.pixy.vec[0];
+                //which point of vector is higher on screen? get that point's X val
+                int topXVal = daVec.getX1();
+                if (daVec.getY0() < daVec.getY1()) {
+                    topXVal = daVec.getX0();
+                }
+
+
             }
 
 
-        }
+        }*/
     }
 }
 

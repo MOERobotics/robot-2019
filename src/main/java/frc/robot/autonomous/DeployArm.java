@@ -12,7 +12,7 @@ public class DeployArm extends GenericAuto {
     double armPowerBias = 0;
     double elevatorDeploy = 13.1;
     double elevatorFloor = -28.6-3.13;
-    double armOut = /*21.3*/ 21.0;
+    double armOut = 19;
 
     @Override
     public void init() {
@@ -43,7 +43,7 @@ public class DeployArm extends GenericAuto {
 
         switch(autoStep){
             case 0:
-                robot.driveElevator(0.6);
+                robot.driveElevator(0.8);
                 if(robot.getElevatorEncoderCount()  >= elevatorDeploy){
                     autoStep++;
                     elevatorPID.resetError();
@@ -56,7 +56,7 @@ public class DeployArm extends GenericAuto {
 
                 robot.driveElevator(elevatorCorrection);
 
-                robot.driveArm(0.2);
+                robot.driveArm(0.4);
                 if (robot.getArmEncoderCount()  >= armOut){
                     armPID.resetError();
                     autoStep++;
