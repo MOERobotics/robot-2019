@@ -1,4 +1,6 @@
-package frc.robot.autonomous;
+package frc.robot.autonomous.visionAutos;
+
+import frc.robot.autonomous.GenericAuto;
 
 public class PivotApproach extends GenericAuto {
 

@@ -1,20 +1,17 @@
-package frc.robot.autonomous;
+package frc.robot.autonomous.unused;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
 import frc.robot.autonomous.GenericAuto;
 
 
-//rightmost level 1
-public class AutoFrontHatch extends GenericAuto {
+//from rightmost position level 1
+public class AutoRocket extends GenericAuto {
 
     //P = 0.06, I = 0.001, D = 0.0
     PIDModule arcPid = new PIDModule(0.06, 0.001,0.0);
-    double z = 1.34;
-
-    //right front hatch s = 72in then 65in for the second arc...
-    //left front hatch s = 96in then 50in for the second arc....
-
+    double z = 1.07;
+    //1.11 was 0.5 and 0.4
 
     @Override
     public void init() {
@@ -30,7 +27,7 @@ public class AutoFrontHatch extends GenericAuto {
     public void run() {
         double leftDistance = robot.getDistanceLeftInches();
         double rightDistance = robot.getDistanceRightInches();
-        double louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) / z;
+        double louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) * z;
 
         SmartDashboard.putNumber("error",arcPid.getInput());
         SmartDashboard.putNumber("correction", arcPid.getCorrection());
@@ -46,36 +43,24 @@ public class AutoFrontHatch extends GenericAuto {
                 double correction = arcPid.getCorrection();
 
                 //correction negative, left motor decrease. correction positive, left motor power increase.
-                robot.setDrivePower((0.3 ) * (1 + correction),(0.5 * (1 - correction)));
+                robot.setDrivePower((0.5 ) * (1 + correction),(0.4 * (1 - correction)));
 
 
-                if(robot.getDistanceLeftInches() >= 72 / z){
+                if(robot.getDistanceLeftInches() >= 108*2){
                     autoStep++;
                     robot.resetDriveEncoders();
                 }
                 break;
+
             case 1:
-                louWizardry = Math.abs(leftDistance) - Math.abs(rightDistance) * z;
-                arcPid.setHeading(louWizardry);
-                correction = arcPid.getCorrection();
-
-                //correction negative, left motor decrease. correction positive, left motor power increase.
-                robot.setDrivePower((0.5 ) * (1 + correction),(0.3 * (1 - correction)));
-
-
-                if(robot.getDistanceLeftInches() >= 65){
+                if(robot.getHeadingDegrees() > 0){
+                    robot.turnLeftInplace(0.2);
+                } else {
                     autoStep++;
-                    robot.resetDriveEncoders();
                 }
                 break;
+
             case 2:
-                robot.setDrivePower(0.2,0.2);
-                if (robot.getDistanceLeftInches() > 8){
-                    autoStep++;
-                }
-                break;
-
-            case 3:
                 robot.stopDriving();
         }
     }

@@ -15,6 +15,8 @@ import frc.robot.autonomous.climb.AutoFlyingFullRetraction;
 import frc.robot.autonomous.presets.*;
 import frc.robot.autonomous.test.*;
 import frc.robot.autonomous.sandstorm.*;
+import frc.robot.autonomous.visionAutos.PivotApproach;
+import frc.robot.autonomous.visionAutos.PivotBot;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.vision.PiClient;

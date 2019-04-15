@@ -1,4 +1,4 @@
-package frc.robot.autonomous;
+package frc.robot.autonomous.visionAutos;
 
 import frc.robot.autonomous.GenericAuto;
 import io.github.pseudoresonance.pixy2api.Pixy2Line;

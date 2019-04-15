@@ -42,83 +42,6 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
 
-    boolean withinElevatorTolerance = false;
-    boolean withinArmTolerance = false;
-
-    public void raiseElevator(double position){
-        if(robot.getElevatorEncoderCount() < position){
-            robot.driveElevator(0.8);
-        }else{
-            withinElevatorTolerance = true;
-            elevatorPID.resetError();
-        }
-    }
-
-    public void PIDElevator(double position){
-        elevatorPID.setHeading(robot.getElevatorEncoderCount() - position);
-        elevatorCorrection = elevatorPID.getCorrection();
-
-        robot.driveElevator(elevatorCorrection);
-    }
-
-    public void raiseArm(double position){
-        if(robot.getArmEncoderCount() < position){
-            robot.driveArm(0.4);
-        } else{
-            withinArmTolerance = true;
-            armPID.resetError();
-        }
-    }
-
-    public void PIDArm(double position){
-        armPID.setHeading(robot.getArmEncoderCount() - position);
-        armCorrection = armPID.getCorrection();
-
-        robot.driveArm(armPowerBias + armCorrection);
-    }
-
-    public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
-        if (!(Handedness == -1)) {
-            robot.setDrivePower(left * (1 + correction), right * (1 - correction));
-        } else {
-            robot.setDrivePower(right * (1 + correction), left * (1 - correction));
-        }
-    }
-
-    public double getDistanceLeftInchesHands(int Handedness) {
-        if (!(Handedness == -1)) {
-            return (Math.abs(robot.getDistanceLeftInches()));
-        } else {
-            return (Math.abs(robot.getDistanceRightInches()));
-        }
-    }
-
-    public double getDistanceRightInchesHands(int Handedness) {
-        if (!(Handedness == -1)) {
-            return (Math.abs(robot.getDistanceRightInches()));
-        } else {
-            return (Math.abs(robot.getDistanceLeftInches()));
-        }
-    }
-
-    //pass in degrees and direction
-    //1 = to the right
-    //-1 = to the left
-    public boolean reachedHeadingHands(int degrees, int Handedness) {
-        if (Handedness == 1) {
-            if (robot.getHeadingDegrees() >= degrees) {
-                return true;
-            }
-        } else if (Handedness == -1) {
-            if (robot.getHeadingDegrees() <= degrees * Handedness) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-        return false;
-    }
-
     //case 7, bonus begins and normal auto ends
 
     @Override
@@ -137,6 +60,9 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
         } else {
             zEffective = z;
         }
+
+        withinElevatorTolerance = false;
+        withinArmTolerance = false;
     }
 
     @Override
@@ -207,7 +133,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
             case 0:
                 robot.stopDriving();
                 if (!withinElevatorTolerance) {
-                    raiseElevator(elevatorDeploy);
+                    raiseElevator(elevatorDeploy, elevatorPID);
                 } else{
                     autoStep++;
                 }
@@ -215,19 +141,19 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
             case 1:
                 robot.stopDriving();
-                PIDElevator(elevatorDeploy);
+                PIDElevator(elevatorDeploy, elevatorPID);
 
                 if(!withinArmTolerance){
-                    raiseArm(armOut);
-                }else{
+                    raiseArm(armOut, armPID);
+                } else {
                     autoStep++;
                 }
 
                 break;
 
             case 2:
-                PIDElevator(elevatorDeploy);
-                PIDArm(armOut);
+                PIDElevator(elevatorDeploy, elevatorPID);
+                PIDArm(armOut, armPID);
 
                 MOErioAuto.resetError();
                 autoStep++;
@@ -245,8 +171,8 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 break;
 
             case 4:
-                PIDElevator(elevatorDeploy);
-                PIDArm(armOut);
+                PIDElevator(elevatorDeploy, elevatorPID);
+                PIDArm(armOut, armPID);
 
                 if(pixyWait < 5){ pixyWait++; break; }
                 pixyWait = 0;
@@ -298,7 +224,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 break;
 
             case 5:
-                PIDArm(armOut);
+                PIDArm(armOut, armPID);
                 robot.driveElevator(-0.3);
 
                 if(robot.getElevatorEncoderCount()  <= elevatorFloor){
@@ -308,8 +234,8 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 break;
 
             case 6:
-                PIDArm(armOut);
-                PIDElevator(elevatorFloor);
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor, elevatorPID);
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 475){

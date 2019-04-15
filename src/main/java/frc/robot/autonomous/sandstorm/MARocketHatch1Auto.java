@@ -22,14 +22,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double elevatorCorrection;
-    double armCorrection;
-    double armPowerBias = 0;
     double elevatorDeploy = 13.1;
     double elevatorFloor = -25/*-30*//*-3.13*/; //changed for falcon, please change when we get back on MOEva.
     double armOut = /*19*/23;
-
-    double orientationTolerance = 0.5;
 
     int midPoint = 34;
     int topXVal;
@@ -40,84 +35,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
     double higherTurnPower = 0.25;
 
     int numTimesNull = 0;
-
-    boolean withinElevatorTolerance = false;
-    boolean withinArmTolerance = false;
-
-    public void raiseElevator(double position){
-        if(robot.getElevatorEncoderCount() < position){
-            robot.driveElevator(0.8);
-        }else{
-            withinElevatorTolerance = true;
-            elevatorPID.resetError();
-        }
-    }
-
-    public void PIDElevator(double position){
-        elevatorPID.setHeading(robot.getElevatorEncoderCount() - position);
-        elevatorCorrection = elevatorPID.getCorrection();
-
-        robot.driveElevator(elevatorCorrection);
-    }
-
-    public void raiseArm(double position){
-        if(robot.getArmEncoderCount() < position){
-            robot.driveArm(0.4);
-        } else{
-            withinArmTolerance = true;
-            armPID.resetError();
-        }
-    }
-
-    public void PIDArm(double position){
-        armPID.setHeading(robot.getArmEncoderCount() - position);
-        armCorrection = armPID.getCorrection();
-
-        robot.driveArm(armPowerBias + armCorrection);
-    }
-
-    public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
-        if (!(Handedness == -1)) {
-            robot.setDrivePower(left * (1 + correction), right * (1 - correction));
-        } else {
-            robot.setDrivePower(right * (1 + correction), left * (1 - correction));
-        }
-    }
-
-    public double getDistanceLeftInchesHands(int Handedness) {
-        if (!(Handedness == -1)) {
-            return (Math.abs(robot.getDistanceLeftInches()));
-        } else {
-            return (Math.abs(robot.getDistanceRightInches()));
-        }
-    }
-
-    public double getDistanceRightInchesHands(int Handedness) {
-        if (!(Handedness == -1)) {
-            return (Math.abs(robot.getDistanceRightInches()));
-        } else {
-            return (Math.abs(robot.getDistanceLeftInches()));
-        }
-    }
-
-    //pass in degrees and direction
-    //1 = to the right
-    //-1 = to the left
-    public boolean reachedHeadingHands(int degrees, int Handedness) {
-        if (Handedness == 1) {
-            if (robot.getHeadingDegrees() >= degrees) {
-                return true;
-            }
-        } else if (Handedness == -1) {
-            if (robot.getHeadingDegrees() <= degrees * Handedness) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-        return false;
-    }
-
 
     @Override
     public void init() {
@@ -137,12 +54,14 @@ public class MARocketHatch1Auto extends GenericAuto  {
         }
 
         robot.shiftHigh();
+
+        withinElevatorTolerance = false;
+        withinArmTolerance = false;
     }
 
     @Override
     public void printSmartDashboard() {
-        /*
-        correction = MOErioAuto.getCorrection();
+        /*correction = MOErioAuto.getCorrection();
         SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", correction);
         SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());
@@ -154,8 +73,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
         SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
         SmartDashboard.putNumber("Left Side", LeftSide);
-        SmartDashboard.putBoolean("Level Two", levelTwo);
-        */
+        SmartDashboard.putBoolean("Level Two", levelTwo);*/
     }
 
     @Override
@@ -188,7 +106,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 robot.setDrivePower((0.8) * (1 + correction), (0.8) * (1 - correction));
 
                 if(!withinElevatorTolerance){
-                    raiseElevator(elevatorDeploy);
+                    raiseElevator(elevatorDeploy, elevatorPID);
                 }
 
                 if (levelTwo) {
@@ -211,7 +129,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             /*continue to raise the elevator*/
             case 0:
                 if(!withinElevatorTolerance){
-                    raiseElevator(elevatorDeploy);
+                    raiseElevator(elevatorDeploy, elevatorPID);
                 }else{
                     autoStep++;
                 }
@@ -220,7 +138,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*keep still*/
             case 1:
-                PIDElevator(elevatorDeploy);
+                PIDElevator(elevatorDeploy, elevatorPID);
 
                 autoStep++;
                 break;
@@ -238,7 +156,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*roll towards the rocket, raise arm*/
             case 3:
-                PIDElevator(elevatorDeploy);
+                PIDElevator(elevatorDeploy, elevatorPID);
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -246,7 +164,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                         0.6 * (1 - correction));
 
                 if(!withinArmTolerance){
-                    raiseArm(armOut);
+                    raiseArm(armOut, armPID);
                 }else{
                     autoStep++;
                 }
@@ -254,8 +172,8 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*keep rolling, keep arm and elevator still*/
             case 4:
-                PIDElevator(elevatorDeploy);
-                PIDArm(armOut);
+                PIDElevator(elevatorDeploy, elevatorPID);
+                PIDArm(armOut, armPID);
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -293,7 +211,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*lower the elevator*/
             case 6:
-                PIDArm(armOut);
+                PIDArm(armOut, armPID);
 
                 robot.driveElevator(-0.3);
                 if(robot.getElevatorEncoderCount()  <= elevatorFloor){
@@ -305,7 +223,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*spear out, keep elev still*/
             case 7:
-                PIDElevator(elevatorDeploy);
+                PIDElevator(elevatorDeploy, elevatorPID);
 
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);

@@ -1,4 +1,4 @@
-package frc.robot.autonomous;
+package frc.robot.autonomous.sandstorm;
 
 import frc.robot.autonomous.GenericAuto;
 
