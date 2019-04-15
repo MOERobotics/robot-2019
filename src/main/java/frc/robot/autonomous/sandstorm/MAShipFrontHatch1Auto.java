@@ -42,6 +42,41 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
 
+    boolean withinElevatorTolerance = false;
+    boolean withinArmTolerance = false;
+
+    public void raiseElevator(double position){
+        if(robot.getElevatorEncoderCount() < position){
+            robot.driveElevator(0.8);
+        }else{
+            withinElevatorTolerance = true;
+            elevatorPID.resetError();
+        }
+    }
+
+    public void PIDElevator(double position){
+        elevatorPID.setHeading(robot.getElevatorEncoderCount() - position);
+        elevatorCorrection = elevatorPID.getCorrection();
+
+        robot.driveElevator(elevatorCorrection);
+    }
+
+    public void raiseArm(double position){
+        if(robot.getArmEncoderCount() < position){
+            robot.driveArm(0.4);
+        } else{
+            withinArmTolerance = true;
+            armPID.resetError();
+        }
+    }
+
+    public void PIDArm(double position){
+        armPID.setHeading(robot.getArmEncoderCount() - position);
+        armCorrection = armPID.getCorrection();
+
+        robot.driveArm(armPowerBias + armCorrection);
+    }
+
     public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
         if (!(Handedness == -1)) {
             robot.setDrivePower(left * (1 + correction), right * (1 - correction));
@@ -171,37 +206,29 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
             case 0:
                 robot.stopDriving();
-                robot.driveElevator(/*0.6*/0.8);
-                if(robot.getElevatorEncoderCount()  >= elevatorDeploy){
+                if (!withinElevatorTolerance) {
+                    raiseElevator(elevatorDeploy);
+                } else{
                     autoStep++;
-                    elevatorPID.resetError();
                 }
                 break;
 
             case 1:
                 robot.stopDriving();
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
-                elevatorCorrection = elevatorPID.getCorrection();
+                PIDElevator(elevatorDeploy);
 
-                robot.driveElevator(elevatorCorrection);
-
-                robot.driveArm(0.2);
-                if (robot.getArmEncoderCount()  >= armOut){
-                    armPID.resetError();
+                if(!withinArmTolerance){
+                    raiseArm(armOut);
+                }else{
                     autoStep++;
                 }
+
                 break;
 
             case 2:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
-                elevatorCorrection = elevatorPID.getCorrection();
+                PIDElevator(elevatorDeploy);
+                PIDArm(armOut);
 
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
                 MOErioAuto.resetError();
                 autoStep++;
                 break;
@@ -212,24 +239,18 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 robot.setDrivePower(0.4 * (1 + correction),
                         0.4 * (1 - correction));
 
-                    if (robot.getDistanceLeftInches() > 64) {
+                if (robot.getDistanceLeftInches() > 64) {
                     autoStep++;
                 }
                 break;
 
             case 4:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount() - elevatorFloor);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount() - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDElevator(elevatorDeploy);
+                PIDArm(armOut);
 
                 if(pixyWait < 5){ pixyWait++; break; }
                 pixyWait = 0;
+
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
@@ -238,50 +259,57 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-                    topXVal = robot.pixy.vec[0].getX1();
 
-                    //If top vec coord is to far to right
-                    if (topXVal > midPoint + margin) {
-                        //If really close, move less
-                        if (topXVal > midPoint + biggerMargin) {
-                            robot.setDrivePower(turnPower, 0);
-                        } else {
-                            robot.setDrivePower(higherTurnPower, 0);
+                    if (robot.pixy.vec.length != 1) {
+                        //Null counter, if not detecting pixy lines, don't move
+                        numTimesNull++;
+                        if (numTimesNull > 4){
+                            robot.setDrivePower(0, 0);
                         }
-                    } else if (topXVal < midPoint - margin) {
-                        if (topXVal < midPoint - biggerMargin) { //big margin because line moves farther, the closer robot is
-                            robot.setDrivePower(0, turnPower);
-                        } else {
-                            robot.setDrivePower(0, higherTurnPower);
+                    } else {
+                        numTimesNull = 0; //reset null exit counter
+                        if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                            //which point of vector is higher on screen? get that point's X val
+                            topXVal = robot.pixy.vec[0].getX1();
+                            if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                                topXVal = robot.pixy.vec[0].getX0();
+                            }
+
                         }
                     }
 
-                    if (Math.abs(topXVal - midPoint) <= margin){
+                    if (topXVal > midPoint + margin) {
+                        if (topXVal > midPoint + biggerMargin) {
+                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
+                        } else {
+                            robot.setDrivePower(turnPower, -turnPower);
+                        }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) {
+                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                        } else {
+                            robot.setDrivePower(-turnPower, turnPower);
+                        }
+                    } else {
                         autoStep++;
-                        startTime = System.currentTimeMillis();
+                        robot.stopDriving();
                     }
                 }
                 break;
 
             case 5:
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
-
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
+                PIDArm(armOut);
                 robot.driveElevator(-0.3);
 
                 if(robot.getElevatorEncoderCount()  <= elevatorFloor){
                     autoStep++;
+                    elevatorPID.resetError();
                 }
                 break;
 
             case 6:
+                PIDArm(armOut);
+                PIDElevator(elevatorFloor);
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 475){
@@ -298,7 +326,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 break;
 
             case 8:
-                robot.spearUnhook();
+                robot.spearHook();
                 //robot.spearOut();
                 robot.stopDriving();
                 autoStep++;

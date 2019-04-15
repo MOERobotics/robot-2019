@@ -8,10 +8,12 @@ public class PivotApproach extends GenericAuto {
 
     int numTimesNull = 0;
 
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
+    double turnPower = /*0.2*/0.4;
+    double higherTurnPower = /*0.25*/0.45;
 
     long startTime;
+
+    int pixyWait = 0;
 
     @Override
     public void init() {
@@ -72,6 +74,9 @@ public class PivotApproach extends GenericAuto {
                     case 1:
                         double toMove = 0.0;
 
+                        if(pixyWait < 5){ pixyWait++; break; }
+                        pixyWait = 0;
+
                         if (topXVal > midPoint + margin) {
                             if (topXVal > midPoint + biggerMargin) {
                                 toMove = midPoint - topXVal;
@@ -93,7 +98,7 @@ public class PivotApproach extends GenericAuto {
                         break;
 
                     case 2:
-                        robot.spearUnhook();
+                        robot.spearOut();
                         robot.setDrivePower(0.3,0.3);
                         if(robot.lidar[0] < 500){
                             autoStep++;
