@@ -12,10 +12,10 @@ public abstract class GenericAuto {
     public int LeftSide = 1;
     public int lastStep = 42;
     public boolean levelTwo;
-    //public int habLevel;
+    public int habLevel;
 
-    public boolean withinElevatorTolerance;
-    public boolean withinArmTolerance;
+    public boolean withinElevatorTolerance = false;
+    public boolean withinArmTolerance = false;
 
     private boolean haveWeYelledAtTheCoderYet = false;
     public void printSmartDashboard() {

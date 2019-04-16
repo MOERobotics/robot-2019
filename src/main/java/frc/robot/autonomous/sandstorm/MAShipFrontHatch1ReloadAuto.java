@@ -22,9 +22,6 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double elevatorCorrection;
-    double armCorrection;
-    double armPowerBias = 0;
     double elevatorDeploy = 13.1;
     double elevatorFloor = -30/*-3.13*/;
     double armOut = 20;
@@ -41,50 +38,6 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
 
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
-
-    public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
-        if (!(Handedness == -1)) {
-            robot.setDrivePower(left * (1 + correction), right * (1 - correction));
-        } else {
-            robot.setDrivePower(right * (1 + correction), left * (1 - correction));
-        }
-    }
-
-    public double getDistanceLeftInchesHands(int Handedness) {
-        if (!(Handedness == -1)) {
-            return (Math.abs(robot.getDistanceLeftInches()));
-        } else {
-            return (Math.abs(robot.getDistanceRightInches()));
-        }
-    }
-
-    public double getDistanceRightInchesHands(int Handedness) {
-        if (!(Handedness == -1)) {
-            return (Math.abs(robot.getDistanceRightInches()));
-        } else {
-            return (Math.abs(robot.getDistanceLeftInches()));
-        }
-    }
-
-    //pass in degrees and direction
-    //1 = to the right
-    //-1 = to the left
-    public boolean reachedHeadingHands(int degrees, int Handedness) {
-        if (Handedness == 1) {
-            if (robot.getHeadingDegrees() >= degrees) {
-                return true;
-            }
-        } else if (Handedness == -1) {
-            if (robot.getHeadingDegrees() <= degrees * Handedness) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-        return false;
-    }
-
-    //case 7, bonus begins and normal auto ends
 
     @Override
     public void init() {
@@ -172,39 +125,30 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
             /*raise elevator*/
             case 0:
                 robot.stopDriving();
-                robot.driveElevator(0.8);
-                if(robot.getElevatorEncoderCount()  >= elevatorDeploy){
+
+                if(!withinElevatorTolerance){
+                    raiseElevator(elevatorDeploy,elevatorPID);
+                }else{
                     autoStep++;
-                    elevatorPID.resetError();
                 }
                 break;
 
             /*raise arm*/
             case 1:
                 robot.stopDriving();
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
-                elevatorCorrection = elevatorPID.getCorrection();
+                PIDElevator(elevatorDeploy,elevatorPID);
 
-                robot.driveElevator(elevatorCorrection);
-
-                robot.driveArm(0.2);
-                if (robot.getArmEncoderCount()  >= armOut){
-                    armPID.resetError();
-                    autoStep = 3;
+                if(!withinArmTolerance){
+                    raiseArm(armOut,armPID);
+                }else{
+                    autoStep++;
                 }
                 break;
 
             //keep em still
             case 2:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDElevator(elevatorDeploy,elevatorPID);
+                PIDArm(armOut,armPID);
                 MOErioAuto.resetError();
                 autoStep++;
                 break;
@@ -223,15 +167,8 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
 
             //auto targeting
             case 4:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount() - elevatorDeploy);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount() - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDElevator(elevatorDeploy,elevatorPID);
+                PIDArm(armOut,armPID);
 
                 if(pixyWait < 5){ pixyWait++; break; }
                 pixyWait = 0;
@@ -270,10 +207,7 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
 
             //lower elevator
             case 5:
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDArm(armOut,armPID);
 
                 robot.driveElevator(-0.3);
                 if(robot.getElevatorEncoderCount()  <= elevatorFloor){
@@ -283,6 +217,8 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
 
             //spear out, drive forward
             case 6:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 475){
@@ -299,14 +235,14 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 }
                 break;
 
-            //fingers out
+            //fingers in
             case 8:
                 robot.spearHook();
                 robot.stopDriving();
                 autoStep++;
                 break;
 
-
+            //still have no idea what this is but okay
             case 9:
                 robot.setDrivePower(-0.3,-0.3);//post-Lehigh: What is this supposed to do?
                 if(robot.lidar[0] < 500){
@@ -319,7 +255,6 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
             case 10:
                 //fingers in, spear in
                 robot.spearIn();
-                robot.spearUnhook();
                 //roll backwards
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
@@ -331,8 +266,8 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
 
             case 11:
                 //turn around.
-                robot.setDrivePower(0.2,-0.2);
-                if(robot.getHeadingDegrees() > 125){//this heading needs to be confirmed
+                robot.setDrivePower(0.2*LeftSide,-0.2*LeftSide);
+                if(reachedHeadingHands(125,1*LeftSide)){//this heading needs to be confirmed
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.resetError();
@@ -341,7 +276,7 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
 
             case 12:
                 //roll forward a lot towards the loading station (distance needs to be confirmed)
-                MOErioAuto.setHeading(robot.getHeadingDegrees() - 135);
+                MOErioAuto.setHeading(robot.getHeadingDegrees() - 125*LeftSide);
                 correction = MOErioAuto.getCorrection();
 
                 robot.setDrivePower(0.3*(1+correction), 0.3*(1-correction));

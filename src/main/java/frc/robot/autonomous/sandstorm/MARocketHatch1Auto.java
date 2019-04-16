@@ -181,24 +181,21 @@ public class MARocketHatch1Auto extends GenericAuto  {
                         0.6 * (1 - correction));
 
                 if(robot.getDistanceLeftInches() > 86){
-                    autoStep=6;
+                    autoStep++;
                 }
 
 
-            /*auto target*/
+            /*auto target w pixy*/
             case 5:
-                double toMove = 0.0;
 
                 if (topXVal > midPoint + margin) {
                     if (topXVal > midPoint + biggerMargin) {
-                        toMove = midPoint - topXVal;
                         robot.setDrivePower(higherTurnPower,-higherTurnPower);
                     } else {
                         robot.setDrivePower(turnPower, -turnPower);
                     }
                 } else if (topXVal < midPoint - margin) {
                     if (topXVal < midPoint - biggerMargin) {
-                        toMove = midPoint - topXVal;
                         robot.setDrivePower(-higherTurnPower,higherTurnPower);
                     } else {
                         robot.setDrivePower(-turnPower, turnPower);
@@ -245,7 +242,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             //fingers in
             case 9:
                 /* LFR */
-                robot.spearUnhook();
+                robot.spearHook();
                 robot.stopDriving();
                 autoStep++;
                 robot.resetDriveEncoders();
