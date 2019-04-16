@@ -16,20 +16,14 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
     double correction = 0;
     double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = false;
 
     int approachHeading = 8;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double elevatorCorrection;
-    double armCorrection;
-    double armPowerBias = 0;
     double elevatorDeploy = 13.1;
     double elevatorFloor = -30/*-3.13*/;
     double armOut = 20;
-
-    double orientationTolerance = 0.5;
 
     int midPoint = 34;
     int topXVal;
@@ -63,6 +57,8 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
         withinElevatorTolerance = false;
         withinArmTolerance = false;
+
+        levelTwo = false;
     }
 
     @Override
@@ -272,7 +268,6 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
         }
     }
-
 
     //48 in, 60/50 deg, elevator up, arm up, elevator down, 86 inches, autoapproach
 

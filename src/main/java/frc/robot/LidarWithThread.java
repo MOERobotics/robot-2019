@@ -22,6 +22,12 @@ public class LidarWithThread {
         SmartDashboard.putString("Resetting the port: ", "End");
     }
 
+    public static void displayLidar(SerialPort Blinky) {
+        try {
+            SmartDashboard.putString("Straight from Blinky!!!: ", Blinky.readString());
+        } catch (Exception e) {}
+    }
+
     public static class LidarThread extends Thread {
         public SerialPort Blinky;
         public String lidarString = "";
@@ -47,7 +53,6 @@ public class LidarWithThread {
                 try {
                     lidarString = new String(Blinky.readString());
                     ma = p.matcher(lidarString);
-                    SmartDashboard.putString("Straight from Blinky: ", lidarString);
                     SmartDashboard.putString("We caught an error on reading the port", "");
                 } catch (Exception e) {
                     SmartDashboard.putString("We caught an error on reading the port", e.toString());

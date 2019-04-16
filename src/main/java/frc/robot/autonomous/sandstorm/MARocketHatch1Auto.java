@@ -16,7 +16,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
     double correction = 0;
     double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = false;
 
     int approachHeading = 40;
 
@@ -53,7 +52,8 @@ public class MARocketHatch1Auto extends GenericAuto  {
             zEffective = z;
         }
 
-        robot.shiftHigh();
+        robot.shiftHigh(); //remove for MOEva
+        levelTwo = false;
 
         withinElevatorTolerance = false;
         withinArmTolerance = false;

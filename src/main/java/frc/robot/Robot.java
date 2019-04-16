@@ -59,6 +59,8 @@ public class Robot extends TimedRobot {
 	//auto
     boolean autoEnable = true;
     //int startAutoStep;
+	private boolean habLevelSet;
+	private int rightSideSetNum;
 
 	public double ClimbEncoderOrigin = 0;
 	boolean atHabHeight2 = false;
@@ -132,7 +134,7 @@ public class Robot extends TimedRobot {
 		  }
 		}
 
-		if (PortOpen) LidarWithThread.init(Blinky, robotHardware);
+		//if (PortOpen) LidarWithThread.init(Blinky, robotHardware);
 	}
 
 	@Override
@@ -212,7 +214,8 @@ public class Robot extends TimedRobot {
 
             SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
 			SmartDashboard.putBoolean("autoEnable", autoEnable);
-            SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
+            SmartDashboard.putNumber("RightSide: ", rightSideSetNum);
+            SmartDashboard.putBoolean("Hab 2?", habLevelSet);
             //autoProgram.printSmartDashboard();
 
             SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
@@ -223,13 +226,17 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
-		/*robotHardware.piXY = piClient.getCentroidXY();
+		robotHardware.piXY = piClient.getCentroidXY();
 
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
-        SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);*/
+        SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
 
-		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
-		if (PortOpen) LidarWithThread.getLidar(robotHardware);
+		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
+		LidarWithThread.displayLidar(Blinky);
+		/*if (PortOpen) {
+			LidarWithThread.displayLidar(Blinky);
+			LidarWithThread.getLidar(robotHardware);
+		}*/
 	}
 
 	@Override
@@ -252,52 +259,49 @@ public class Robot extends TimedRobot {
 			robotHardware.resetElevatorPosition();
 			robotHardware.resetClimberPosition();
 		}
-		if (leftJoystick.getRawButtonPressed(11)){
-			autoProgram = new MAFrontAuto();
-			autoProgram.LeftSide = 1;
+
+		if (leftJoystick.getRawButtonPressed(11)) {
+			habLevelSet = true;
+		} else if (leftJoystick.getRawButtonPressed(12)){
+			habLevelSet = false;
+		}
+		if (leftJoystick.getRawButtonPressed(16)) {
+			rightSideSetNum = 1;
+		} else if (leftJoystick.getRawButtonPressed(15)) {
+			rightSideSetNum = -1;
+		}
+
+		if (leftJoystick.getRawButtonPressed(5)){
+			autoProgram = new MASideAutoPixy();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(6)){
-			autoProgram = new MAShipFrontHatch1Auto();
-			autoProgram.LeftSide = -1;
-			autoProgram.lastStep = 4342;
+			autoProgram = new MARocketHatch1Auto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(7)){
-			autoProgram = new MASideAutoPixy();
-			autoProgram.LeftSide = 1;
-            autoProgram.lastStep = 429;
+			autoProgram = new MARocketHatch1Auto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(8)){
-			autoProgram = new MASideAutoPixy();
-			autoProgram.LeftSide = -1;
-            autoProgram.lastStep = 659;
+			autoProgram = new DriveStraightAuto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(9)) {
-		    autoProgram = new DriveStraightAuto();
-            autoProgram.robot = robotHardware;
-            autoProgram.lastStep = 4329;
-        } else if (leftJoystick.getRawButtonPressed(10)) {
-		    autoProgram = new MASideAutoSimpleArm();
-		    autoProgram.robot = robotHardware;
-		    autoProgram.lastStep = 1232;
-        } else if (leftJoystick.getRawButtonPressed(12)) {
-		    autoProgram = new DeployArm();
-		    autoProgram.robot = robotHardware;
-		    autoProgram.lastStep = 2342;
+			autoProgram = new DoNothingAuto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 4234;
+			autoProgram.robot = robotHardware;
         }
-		/*else if (leftJoystick.getRawButton(9)){
-			autoProgram = new MOErioCargoSideAutoBonus();
-			autoProgram.LeftSide = 1;
-			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButton(10)){
-			autoProgram = new MOErioCargoSideAutoBonus();
-			autoProgram.LeftSide = -1;
-			autoProgram.robot = robotHardware;
-		}*/
-		/*if (functionStick.getStickButtonPressed(Hand.kLeft)) {
-			functionStickDrive = !functionStickDrive;
-		}*/
-
 	}
 
 	@Override

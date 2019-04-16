@@ -18,7 +18,6 @@ public class MASideAutoPixy extends GenericAuto {
     double correction = 0;
     double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = false;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
@@ -39,26 +38,6 @@ public class MASideAutoPixy extends GenericAuto {
 
     int numTimesNull = 0;
 
-    //pass in degrees and direction
-    //1 = to the right
-    //-1 = to the left
-    public boolean reachedHeadingHands(int degrees, int Handedness) {
-        if (Handedness == 1) {
-            if (robot.getHeadingDegrees() >= degrees) {
-                return true;
-            }
-        } else if (Handedness == -1) {
-            if (robot.getHeadingDegrees() <= degrees * Handedness) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-        return false;
-    }
-
-    //case 7, bonus begins and normal auto ends
-
     @Override
     public void init() {
         autoStep = -2;
@@ -75,6 +54,8 @@ public class MASideAutoPixy extends GenericAuto {
         } else {
             zEffective = z;
         }
+
+        levelTwo = false;
     }
 
     @Override
