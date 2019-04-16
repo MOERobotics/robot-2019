@@ -7,7 +7,7 @@ public class Logger <valueType>{
 
     public void printIfChanged(String subject, valueType newValue) {
         if (oldValue == null || !oldValue.equals(newValue)) {
-            printLogMessage(subject+" power", newValue.toString());
+            printLogMessage(subject, newValue.toString());
             oldValue = newValue;
         }
     }
@@ -22,8 +22,8 @@ public class Logger <valueType>{
         System.out.flush();
     }
 
-    public static void printJoystickIfChanged(String joystickName, GenericHID joystick) {
-
+    public static int doubleToPercent(Double value) {
+        return (int)(value * 100);
     }
 
     public static class Joystick {
@@ -48,6 +48,20 @@ public class Logger <valueType>{
                     printLogMessage(name + " button " + rawButtonNumber, action);
                     lastState[i] = isButtonPressed;
                 }
+            }
+        }
+    }
+
+    public static class AutoStep {
+        public int start;
+
+        public AutoStep(int start) {
+            this.start = start;
+        }
+
+        public void printIfChanged(int autoStep) {
+            if (start != autoStep) {
+                printLogMessage("Autostep is on step: ","hi");
             }
         }
     }

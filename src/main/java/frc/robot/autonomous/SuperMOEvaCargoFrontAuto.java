@@ -49,6 +49,7 @@ public class SuperMOEvaCargoFrontAuto extends GenericAuto {
 
 
         switch (autoStep) {
+
             case -2:
                 MOErioAuto.resetError();
                 robot.resetYaw();

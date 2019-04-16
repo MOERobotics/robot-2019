@@ -13,6 +13,8 @@ public class Lidar {
         SmartDashboard.putString("Resetting the port: ", "End");
     }
 
+    public static Logger<String> lidarLogger = new Logger<>();
+
     public static void getLidar(GenericRobot us, SerialPort Blinky) {
         String lidarString = "", exception = "", readStringBlinky;
         String[] lString = new String[us.numSensors()];
@@ -22,6 +24,7 @@ public class Lidar {
         if (uArtCounter == 5) {
             try {
                 readStringBlinky = Blinky.readString();
+                lidarLogger.printIfChanged("Lidar",readStringBlinky);
                 lidarString = readStringBlinky.substring(0, readStringBlinky.indexOf("0-") + 2);
                 //System.out.println("Straight from Blinky: " + lidarString + ";");
                 SmartDashboard.putString("Straight from Blinky: ", lidarString);
