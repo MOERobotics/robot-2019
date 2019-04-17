@@ -140,6 +140,8 @@ public class Robot extends TimedRobot {
 		functionStickLogger.printIfChanged();
 
 
+
+
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
 	        //robotHardware.getClimberCurrent();
             SmartDashboard.putString("Robot Class", robotHardware.getClass().getSimpleName());
