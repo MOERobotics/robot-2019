@@ -84,6 +84,8 @@ public class Robot extends TimedRobot {
 	//Logger.Joystick leftJoystickLogger  = new Logger.Joystick("Thrustmasta", leftJoystick);
 	//Logger.Joystick functionStickLogger  = new Logger.Joystick("Other masta", functionStick);
 
+	LidarReader Ihopethisworks = new LidarReader(Blinky);
+
 	public void noPosition() {
 		pos = -1;
 		positionLock = false;
@@ -143,6 +145,8 @@ public class Robot extends TimedRobot {
 
 		//leftJoystickLogger.printIfChanged();
 		//functionStickLogger.printIfChanged();
+
+		Ihopethisworks.run();
 
 
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
