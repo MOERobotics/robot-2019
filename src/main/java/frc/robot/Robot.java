@@ -81,8 +81,8 @@ public class Robot extends TimedRobot {
 	int step = 1;
 	double currentEncoder;
 
-	Logger.Joystick leftJoystickLogger  = new Logger.Joystick("Thrustmasta", leftJoystick);
-	Logger.Joystick functionStickLogger  = new Logger.Joystick("Other masta", functionStick);
+	//Logger.Joystick leftJoystickLogger  = new Logger.Joystick("Thrustmasta", leftJoystick);
+	//Logger.Joystick functionStickLogger  = new Logger.Joystick("Other masta", functionStick);
 
 	public void noPosition() {
 		pos = -1;
@@ -141,8 +141,8 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic () {
         //robotHardware.checkSafety();
 
-		leftJoystickLogger.printIfChanged();
-		functionStickLogger.printIfChanged();
+		//leftJoystickLogger.printIfChanged();
+		//functionStickLogger.printIfChanged();
 
 
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
@@ -231,8 +231,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
 
-		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
-		LidarWithThread.displayLidar(Blinky);
+		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
+		//LidarWithThread.displayLidar(Blinky);
 		/*if (PortOpen) {
 			LidarWithThread.displayLidar(Blinky);
 			LidarWithThread.getLidar(robotHardware);
@@ -260,7 +260,7 @@ public class Robot extends TimedRobot {
 			robotHardware.resetClimberPosition();
 		}
 
-		if (leftJoystick.getRawButtonPressed(11)) {
+		/*if (leftJoystick.getRawButtonPressed(11)) {
 			habLevelSet = true;
 		} else if (leftJoystick.getRawButtonPressed(12)){
 			habLevelSet = false;
@@ -301,7 +301,7 @@ public class Robot extends TimedRobot {
 			autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
-        }
+        }*/
 	}
 
 	@Override
