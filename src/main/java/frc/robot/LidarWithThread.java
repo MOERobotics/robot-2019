@@ -98,6 +98,14 @@ public class LidarWithThread {
 
     public static void getLidar(GenericRobot us) {
         //Sends lidar values, read time to robot
+        /*for (int j = 0; j < us.numSensors(); j++) {
+            if (lidarThread.lidar[j] != 0) {
+                SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
+                SmartDashboard.putNumber("LidarReadTime", lidarThread.lidarReadTime);
+                us.lidar[j] = lidarThread.lidar[j];
+                us.lidarReadTime = lidarThread.lidarReadTime;
+            }
+        }*/
         for (int j = 0; j < us.numSensors(); j++) {
             if (lidarThread.lidar[j] != 0) {
                 SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);

@@ -100,6 +100,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+		Ihopethisworks.start();
+
 		autoProgram.robot = robotHardware;
 		pixyAlign.init();
 		pixyAlign.robot = robotHardware;
@@ -135,6 +137,7 @@ public class Robot extends TimedRobot {
 			PortOpen = false;
 		  }
 		}
+		Ihopethisworks.setLidarPort(Blinky, robotHardware);
 
 		//if (PortOpen) LidarWithThread.init(Blinky, robotHardware);
 	}
@@ -145,9 +148,6 @@ public class Robot extends TimedRobot {
 
 		//leftJoystickLogger.printIfChanged();
 		//functionStickLogger.printIfChanged();
-
-		Ihopethisworks.run();
-
 
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
 	        //robotHardware.getClimberCurrent();
@@ -223,6 +223,9 @@ public class Robot extends TimedRobot {
             //autoProgram.printSmartDashboard();
 
             SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
+            SmartDashboard.putNumber("Lidar 0", robotHardware.lidar[0]);
+
+            //Ihopethisworks.run();
         }
 
 		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
@@ -235,7 +238,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
 
-		if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
+		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 	}
 
 	@Override
@@ -259,7 +262,7 @@ public class Robot extends TimedRobot {
 			robotHardware.resetClimberPosition();
 		}
 
-		/*if (leftJoystick.getRawButtonPressed(11)) {
+		if (leftJoystick.getRawButtonPressed(11)) {
 			habLevelSet = true;
 		} else if (leftJoystick.getRawButtonPressed(12)){
 			habLevelSet = false;
@@ -300,7 +303,7 @@ public class Robot extends TimedRobot {
 			autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
-        }*/
+        }
 	}
 
 	@Override
