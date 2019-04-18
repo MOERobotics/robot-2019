@@ -59,8 +59,12 @@ public class LidarReader extends Thread{
     }
 
     public void print() {
+        /*for (int i = 0; i < robot.numSensors(); i++) {
+            if (getValue(i) != 0) {
+                robot.lidar[i] = getValue(i);
+            }
+        }*/
         robot.lidar[0] = getValue(0);
-        //SmartDashboard.putNumber("Lidar 0: ", getValue(0));
     }
 
     public Integer getValue(int id) {
