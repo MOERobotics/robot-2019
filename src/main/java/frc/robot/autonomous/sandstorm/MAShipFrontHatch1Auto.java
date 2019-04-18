@@ -37,8 +37,8 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
     int topXVal;
     int margin = 2;
     int biggerMargin = 6;
-    double turnPower = 0.2/*0.4*/;
-    double higherTurnPower = 0.25/*0.45*/;
+    double turnPower = /*0.2*/0.26;
+    double higherTurnPower = /*0.25*/0.31;
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
 
@@ -259,7 +259,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
             case 9:
                 robot.spearIn();
                 robot.setDrivePower(-0.3,-0.3);
-                if(robot.lidar[0] < 500){
+                if(robot.lidar[0] > 500){
                     autoStep++;
                 }
                 break;

@@ -12,8 +12,8 @@ public class PivotBot extends GenericAuto {
     int numTimesNull = 0;
     int pixyWait = 0;
 
-    double turnPower = 0.2/*0.4*/;
-    double higherTurnPower = 0.25/*0.45*/;
+    double turnPower = /*0.2*/0.28;
+    double higherTurnPower = /*0.25*/0.33;
 
     long startTime;
 
