@@ -59,6 +59,8 @@ public class Robot extends TimedRobot {
 	//auto
     boolean autoEnable = true;
     //int startAutoStep;
+	private boolean habLevelSet;
+	private int rightSideSetNum;
 
 	public double ClimbEncoderOrigin = 0;
 	boolean atHabHeight2 = false;
@@ -79,6 +81,11 @@ public class Robot extends TimedRobot {
 	int step = 1;
 	double currentEncoder;
 
+	//Logger.Joystick leftJoystickLogger  = new Logger.Joystick("Thrustmasta", leftJoystick);
+	//Logger.Joystick functionStickLogger  = new Logger.Joystick("Other masta", functionStick);
+
+	LidarReader Ihopethisworks = new LidarReader(Blinky);
+
 	public void noPosition() {
 		pos = -1;
 		positionLock = false;
@@ -93,6 +100,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+		Ihopethisworks.start();
+
 		autoProgram.robot = robotHardware;
 		pixyAlign.init();
 		pixyAlign.robot = robotHardware;
@@ -128,13 +137,15 @@ public class Robot extends TimedRobot {
 			PortOpen = false;
 		  }
 		}
-
-		if (PortOpen) LidarWithThread.init(Blinky, robotHardware);
+		Ihopethisworks.set(Blinky, robotHardware);
 	}
 
 	@Override
 	public void robotPeriodic () {
         //robotHardware.checkSafety();
+
+		//leftJoystickLogger.printIfChanged();
+		//functionStickLogger.printIfChanged();
 
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
 	        //robotHardware.getClimberCurrent();
@@ -205,10 +216,12 @@ public class Robot extends TimedRobot {
 
             SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
 			SmartDashboard.putBoolean("autoEnable", autoEnable);
-            SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
+            SmartDashboard.putNumber("RightSide: ", rightSideSetNum);
+            SmartDashboard.putBoolean("Hab 2?", habLevelSet);
             //autoProgram.printSmartDashboard();
 
             SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
+            SmartDashboard.putNumber("Lidar 0", robotHardware.lidar[0]);
         }
 
 		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
@@ -216,13 +229,10 @@ public class Robot extends TimedRobot {
 		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
 		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
 
-		/*robotHardware.piXY = piClient.getCentroidXY();
+		robotHardware.piXY = piClient.getCentroidXY();
 
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
-        SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);*/
-
-		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
-		if (PortOpen) LidarWithThread.getLidar(robotHardware);
+        SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
 	}
 
 	@Override
@@ -245,52 +255,49 @@ public class Robot extends TimedRobot {
 			robotHardware.resetElevatorPosition();
 			robotHardware.resetClimberPosition();
 		}
-		if (leftJoystick.getRawButtonPressed(11)){
-			autoProgram = new MAFrontAuto();
-			autoProgram.LeftSide = 1;
+
+		if (leftJoystick.getRawButtonPressed(11)) {
+			habLevelSet = true;
+		} else if (leftJoystick.getRawButtonPressed(12)){
+			habLevelSet = false;
+		}
+		if (leftJoystick.getRawButtonPressed(16)) {
+			rightSideSetNum = 1;
+		} else if (leftJoystick.getRawButtonPressed(15)) {
+			rightSideSetNum = -1;
+		}
+
+		if (leftJoystick.getRawButtonPressed(5)){
+			autoProgram = new MASideAutoPixy();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(6)){
-			autoProgram = new MAShipFrontHatch1Auto();
-			autoProgram.LeftSide = -1;
-			autoProgram.lastStep = 4342;
+			autoProgram = new MARocketHatch1Auto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(7)){
-			autoProgram = new MASideAutoPixy();
-			autoProgram.LeftSide = 1;
-            autoProgram.lastStep = 429;
+			autoProgram = new MARocketHatch1Auto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(8)){
-			autoProgram = new MASideAutoPixy();
-			autoProgram.LeftSide = -1;
-            autoProgram.lastStep = 659;
+			autoProgram = new DriveStraightAuto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(9)) {
-		    autoProgram = new DriveStraightAuto();
-            autoProgram.robot = robotHardware;
-            autoProgram.lastStep = 4329;
-        } else if (leftJoystick.getRawButtonPressed(10)) {
-		    autoProgram = new MASideAutoSimpleArm();
-		    autoProgram.robot = robotHardware;
-		    autoProgram.lastStep = 1232;
-        } else if (leftJoystick.getRawButtonPressed(12)) {
-		    autoProgram = new DeployArm();
-		    autoProgram.robot = robotHardware;
-		    autoProgram.lastStep = 2342;
+			autoProgram = new DoNothingAuto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 4234;
+			autoProgram.robot = robotHardware;
         }
-		/*else if (leftJoystick.getRawButton(9)){
-			autoProgram = new MOErioCargoSideAutoBonus();
-			autoProgram.LeftSide = 1;
-			autoProgram.robot = robotHardware;
-		} else if (leftJoystick.getRawButton(10)){
-			autoProgram = new MOErioCargoSideAutoBonus();
-			autoProgram.LeftSide = -1;
-			autoProgram.robot = robotHardware;
-		}*/
-		/*if (functionStick.getStickButtonPressed(Hand.kLeft)) {
-			functionStickDrive = !functionStickDrive;
-		}*/
-
 	}
 
 	@Override
@@ -424,8 +431,7 @@ public class Robot extends TimedRobot {
 			if (leftJoystick.getRawButtonPressed(5)) shiftingHigh = true;
 			else if (leftJoystick.getRawButtonPressed(10)) shiftingHigh = false;
 
-			if (shiftingHigh) robotHardware.shiftLow(); //this makes no sense now – need to switch mechanically
-			else robotHardware.shiftHigh();
+			robotHardware.shiftDrive(shiftingHigh);
 
 			//hatchGrab
 			if      (functionStick.getAButton()) robotHardware.spearHook ();
@@ -594,5 +600,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic () {
 	}
+
 
 }

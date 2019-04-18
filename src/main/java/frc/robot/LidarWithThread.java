@@ -7,19 +7,26 @@ import java.util.regex.*;
 
 public class LidarWithThread {
     public static LidarThread lidarThread;
+    public static LidarReader lidarReader;
+
     public static int numSensors;
 
     //Init - instantiate new LidarThread
-    public static void init(SerialPort Blinky, GenericRobot us) {
-        lidarThread = new LidarThread(Blinky);
+    public static void init(SerialPort Blinky) {
+        lidarThread.Blinky = Blinky;
         lidarThread.start();
-        LidarWithThread.numSensors = us.numSensors();
     }
 
     public static void serialReset(SerialPort Blinky) {
         SmartDashboard.putString("Resetting the port: ", "Start");
         Blinky.reset();
         SmartDashboard.putString("Resetting the port: ", "End");
+    }
+
+    public static void displayLidar(SerialPort Blinky) {
+        try {
+            SmartDashboard.putString("Straight from Blinky!!!: ", Blinky.readString());
+        } catch (Exception e) {}
     }
 
     public static class LidarThread extends Thread {
@@ -47,7 +54,6 @@ public class LidarWithThread {
                 try {
                     lidarString = new String(Blinky.readString());
                     ma = p.matcher(lidarString);
-                    SmartDashboard.putString("Straight from Blinky: ", lidarString);
                     SmartDashboard.putString("We caught an error on reading the port", "");
                 } catch (Exception e) {
                     SmartDashboard.putString("We caught an error on reading the port", e.toString());
@@ -94,11 +100,9 @@ public class LidarWithThread {
     public static void getLidar(GenericRobot us) {
         //Sends lidar values, read time to robot
         for (int j = 0; j < us.numSensors(); j++) {
-            if (lidarThread.lidar[j] != 0) {
-                SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
-                SmartDashboard.putNumber("LidarReadTime", lidarThread.lidarReadTime);
-                us.lidar[j] = lidarThread.lidar[j];
-                us.lidarReadTime = lidarThread.lidarReadTime;
+            if (lidarReader.getValue(j) != 0) {
+                SmartDashboard.putNumber("Lidar " + j + ": ", lidarReader.getValue(j));
+                us.lidar[j] = lidarReader.getValue(j);
             }
         }
     }

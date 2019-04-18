@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.genericrobot.GenericRobot;
+import frc.robot.genericrobot.SuperMOEva;
 
 public class Lidar {
     static int uArtCounter = 0;
@@ -11,6 +12,8 @@ public class Lidar {
         Blinky.reset();
         SmartDashboard.putString("Resetting the port: ", "End");
     }
+
+    public static Logger<String> lidarLogger = new Logger<>();
 
     public static void getLidar(GenericRobot us, SerialPort Blinky) {
         String lidarString = "", exception = "", readStringBlinky;
@@ -21,6 +24,7 @@ public class Lidar {
         if (uArtCounter == 5) {
             try {
                 readStringBlinky = Blinky.readString();
+                lidarLogger.printIfChanged("Lidar",readStringBlinky);
                 lidarString = readStringBlinky.substring(0, readStringBlinky.indexOf("0-") + 2);
                 //System.out.println("Straight from Blinky: " + lidarString + ";");
                 SmartDashboard.putString("Straight from Blinky: ", lidarString);
