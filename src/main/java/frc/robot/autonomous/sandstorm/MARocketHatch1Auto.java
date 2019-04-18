@@ -5,35 +5,42 @@ import frc.robot.PIDModule;
 import frc.robot.autonomous.*;
 
 public class MARocketHatch1Auto extends GenericAuto  {
+    long startTime = 0;
+
+    //arc PID
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
-    long startTime = 0;
-    double z = 1.33;
-    double louWizardry = 0;
 
     //-1 is left, 1 is right
-    int turncounter = 0;
-    double correction = 0;
-    double moementumCorrection = 100;
+    double z = 1.33;
+    double louWizardry = 0;
     double zEffective;
+    double correction = 0;
 
+    //unused
+    int turncounter = 0;
+    double moementumCorrection = 100;
+
+    //position and power variables
+    boolean levelTwo = false;
     int approachHeading = 40;
 
+    //elevator and arm PID
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double elevatorDeploy = 13.1;
     double elevatorFloor = -25/*-30*//*-3.13*/; //changed for falcon, please change when we get back on MOEva.
     double armOut = /*19*/23;
 
+    //pixy constants + variables
     int midPoint = 34;
-    int topXVal;
-
     int margin = 1;
     int biggerMargin = 8;
     double turnPower = 0.2;
     double higherTurnPower = 0.25;
-
+    int topXVal;
     int numTimesNull = 0;
+    int pixyWait = 0;
 
     @Override
     public void init() {
@@ -52,8 +59,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             zEffective = z;
         }
 
-        robot.shiftHigh(); //remove for MOEva
-        levelTwo = false;
+        robot.shiftHigh();
 
         withinElevatorTolerance = false;
         withinArmTolerance = false;
@@ -181,30 +187,49 @@ public class MARocketHatch1Auto extends GenericAuto  {
                         0.6 * (1 - correction));
 
                 if(robot.getDistanceLeftInches() > 86){
-                    autoStep=6;
+                    autoStep++;
                 }
 
 
-            /*auto target*/
+            /*auto target w pixy*/
             case 5:
-                double toMove = 0.0;
 
-                if (topXVal > midPoint + margin) {
-                    if (topXVal > midPoint + biggerMargin) {
-                        toMove = midPoint - topXVal;
-                        robot.setDrivePower(higherTurnPower,-higherTurnPower);
-                    } else {
-                        robot.setDrivePower(turnPower, -turnPower);
-                    }
-                } else if (topXVal < midPoint - margin) {
-                    if (topXVal < midPoint - biggerMargin) {
-                        toMove = midPoint - topXVal;
-                        robot.setDrivePower(-higherTurnPower,higherTurnPower);
-                    } else {
-                        robot.setDrivePower(-turnPower, turnPower);
+                if (robot.pixy.vec.length != 1) {
+                    //Null counter, if not detecting pixy lines, don't move
+                    numTimesNull++;
+                    if (numTimesNull > 4){
+                        robot.setDrivePower(0, 0);
                     }
                 } else {
-                    autoStep++;
+                    numTimesNull = 0; //reset null exit counter
+
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
+                        }
+                    }
+
+                    if(pixyWait < 5){ pixyWait++; break; }
+                    pixyWait = 0;
+
+                    if (topXVal > midPoint + margin) {
+                        if (topXVal > midPoint + biggerMargin) {
+                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
+                        } else {
+                            robot.setDrivePower(turnPower, -turnPower);
+                        }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) {
+                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                        } else {
+                            robot.setDrivePower(-turnPower, turnPower);
+                        }
+                    } else {
+                        autoStep++;
+                        robot.stopDriving();
+                    }
                 }
 
                 break;
@@ -245,7 +270,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             //fingers in
             case 9:
                 /* LFR */
-                robot.spearUnhook();
+                robot.spearHook();
                 robot.stopDriving();
                 autoStep++;
                 robot.resetDriveEncoders();

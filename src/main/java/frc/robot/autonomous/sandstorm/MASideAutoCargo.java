@@ -17,12 +17,10 @@ public class MASideAutoCargo extends GenericAuto {
     double correction = 0;
     double moementumCorrection = 100;
     double zEffective;
+    boolean levelTwo = true;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double elevatorCorrection;
-    double armCorrection;
-    double armPowerBias = 0;
     double elevatorDeploy = 13.1;
     double elevatorFloor = -28.6/*-3.13*/;
     double armOut = 58;
@@ -57,7 +55,8 @@ public class MASideAutoCargo extends GenericAuto {
             zEffective = z;
         }
 
-        levelTwo = true;
+        withinArmTolerance = false;
+        withinElevatorTolerance = false;
     }
 
     @Override
@@ -145,11 +144,10 @@ public class MASideAutoCargo extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
                 setDrivePowerHands(0.5, 0.7, correction, LeftSide);
 
-
-                if(robot.getElevatorEncoderCount() < elevatorDeploy){
-                    robot.driveElevator(0.6);
-                } else {
-                    robot.driveElevator(0);
+                if(!withinElevatorTolerance){
+                    raiseElevator(elevatorDeploy,elevatorPID);
+                }else{
+                    PIDElevator(elevatorDeploy,elevatorPID);
                 }
 
                 if (getDistanceRightInchesHands(LeftSide) >= 43 /*x2*/) {
@@ -165,17 +163,16 @@ public class MASideAutoCargo extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower((0.4) * (1 + correction), (0.4) * (1 - correction));
 
-                if(robot.getElevatorEncoderCount() < elevatorDeploy){
-                    robot.driveElevator(0.6);
-                } else {
-                    robot.driveElevator(0);
+                if(!withinElevatorTolerance){
+                    raiseElevator(elevatorDeploy,elevatorPID);
+                }else{
+                    PIDElevator(elevatorDeploy,elevatorPID);
                 }
 
                 if (leftDistance >= 49) {
                     autoStep++;
                     MOErioAuto.resetError();
-                    //MOErioTurn.resetError();
-                    elevatorPID.resetError();
+                    //MOErioTurn.resetError()
                 }
                 break;
 
@@ -184,10 +181,7 @@ public class MASideAutoCargo extends GenericAuto {
             /*turning towards the hatch*/
             case 3:
                 //MOErioTurn.setHeading(robot.getHeadingDegrees());
-
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
-                elevatorCorrection = elevatorPID.getCorrection();
-                robot.driveElevator(elevatorCorrection);
+                PIDElevator(elevatorDeploy,elevatorPID);
 
                 robot.setDrivePower(-0.5 * LeftSide, 0.5 * LeftSide);
 
@@ -205,23 +199,17 @@ public class MASideAutoCargo extends GenericAuto {
                 break;
 
             case 5:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorDeploy);
-                elevatorCorrection = elevatorPID.getCorrection();
+                PIDElevator(elevatorDeploy,elevatorPID);
 
-                robot.driveElevator(elevatorCorrection);
-
-                robot.driveArm(0.4);
-                if (robot.getArmEncoderCount()  >= armOut){
-                    armPID.resetError();
+                if(!withinArmTolerance){
+                    raiseArm(armOut,armPID);
+                }else{
                     autoStep++;
                 }
                 break;
 
             case 6:
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDElevator(armOut,armPID);
 
                 robot.driveElevator(-0.3);
                 if(robot.getElevatorEncoderCount()  <= elevatorFloor){
@@ -233,15 +221,8 @@ public class MASideAutoCargo extends GenericAuto {
 
             /*roll towards the hatch*/
             case 7:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDElevator(elevatorFloor+3,elevatorPID);
+                PIDArm(armOut,armPID);
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - -90*LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -255,15 +236,8 @@ public class MASideAutoCargo extends GenericAuto {
                 break;
 
             case 8:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDElevator(elevatorFloor+3,elevatorPID);
+                PIDArm(armOut,armPID);
 
                 if (robot.pixy.vec.length != 1) {
                     numTimesNull++;
@@ -295,15 +269,8 @@ public class MASideAutoCargo extends GenericAuto {
                 break;
 
             case 9:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDElevator(elevatorFloor+3,elevatorPID);
+                PIDArm(armOut,armPID);
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees() + 90 * LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -317,15 +284,8 @@ public class MASideAutoCargo extends GenericAuto {
                 break;
 
             case 10:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFloor);
-                elevatorCorrection = elevatorPID.getCorrection();
-
-                robot.driveElevator(elevatorCorrection);
-
-                armPID.setHeading(robot.getArmEncoderCount()  - armOut);
-                armCorrection = armPID.getCorrection();
-
-                robot.driveArm(armPowerBias + armCorrection);
+                PIDElevator(elevatorFloor+3,elevatorPID);
+                PIDArm(armOut,armPID);
 
                 if (System.currentTimeMillis() - startTime > 1500) {
                     robot.rollOut(0);

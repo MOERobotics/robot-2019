@@ -5,38 +5,42 @@ import frc.robot.PIDModule;
 import frc.robot.autonomous.GenericAuto;
 
 public class MAShipFrontHatch1Auto extends GenericAuto  {
+    long startTime = 0;
+
+    //arc PID
+    //-1 is left, 1 is right
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
-    long startTime = 0;
     double z = 1.33;
     double louWizardry = 0;
-
-    //-1 is left, 1 is right
-    int turncounter = 0;
     double correction = 0;
-    double moementumCorrection = 100;
     double zEffective;
 
+    //unused
+    double moementumCorrection = 100;
+    int turncounter = 0;
+    double orientationTolerance = 0.5;
+
+    //constants
+    boolean levelTwo = false;
     int approachHeading = 8;
 
+    //elevator and arm PID
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double elevatorDeploy = 13.1;
     double elevatorFloor = -30/*-3.13*/;
     double armOut = 20;
 
+    //pixy constants
     int midPoint = 34;
     int topXVal;
-
     int margin = 2;
     int biggerMargin = 6;
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
-
+    double turnPower = /*0.2*/0.26;
+    double higherTurnPower = /*0.25*/0.31;
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
-
-    //case 7, bonus begins and normal auto ends
 
     @Override
     public void init() {
@@ -57,8 +61,6 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
         withinElevatorTolerance = false;
         withinArmTolerance = false;
-
-        levelTwo = false;
     }
 
     @Override
@@ -126,6 +128,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //raise elevator
             case 0:
                 robot.stopDriving();
                 if (!withinElevatorTolerance) {
@@ -135,6 +138,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //raise arm
             case 1:
                 robot.stopDriving();
                 PIDElevator(elevatorDeploy, elevatorPID);
@@ -147,6 +151,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
                 break;
 
+            //keep still
             case 2:
                 PIDElevator(elevatorDeploy, elevatorPID);
                 PIDArm(armOut, armPID);
@@ -155,6 +160,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 autoStep++;
                 break;
 
+            //drive forward ~64 inches
             case 3:
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -166,12 +172,10 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //auto align
             case 4:
                 PIDElevator(elevatorDeploy, elevatorPID);
                 PIDArm(armOut, armPID);
-
-                if(pixyWait < 5){ pixyWait++; break; }
-                pixyWait = 0;
 
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
@@ -182,23 +186,16 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 } else {
                     numTimesNull = 0; //reset null exit counter
 
-                    if (robot.pixy.vec.length != 1) {
-                        //Null counter, if not detecting pixy lines, don't move
-                        numTimesNull++;
-                        if (numTimesNull > 4){
-                            robot.setDrivePower(0, 0);
-                        }
-                    } else {
-                        numTimesNull = 0; //reset null exit counter
-                        if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
-                            //which point of vector is higher on screen? get that point's X val
-                            topXVal = robot.pixy.vec[0].getX1();
-                            if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
-                                topXVal = robot.pixy.vec[0].getX0();
-                            }
-
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
                         }
                     }
+
+                    if(pixyWait < 5){ pixyWait++; break; }
+                    pixyWait = 0;
 
                     if (topXVal > midPoint + margin) {
                         if (topXVal > midPoint + biggerMargin) {
@@ -219,19 +216,21 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //lower elevator
             case 5:
                 PIDArm(armOut, armPID);
                 robot.driveElevator(-0.3);
 
-                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
+                if(robot.getElevatorEncoderCount()  <= elevatorFloor+3){
                     autoStep++;
                     elevatorPID.resetError();
                 }
                 break;
 
+            //out the spear and drive forward (may need to pid the elevator in a preceding step)
             case 6:
                 PIDArm(armOut, armPID);
-                PIDElevator(elevatorFloor, elevatorPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);//in order to give us more leeway from the pegs.
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 475){
@@ -240,6 +239,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //drive forward for 1 second
             case 7:
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 1000 > startTime){
@@ -247,6 +247,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //fingers in
             case 8:
                 robot.spearHook();
                 //robot.spearOut();
@@ -254,20 +255,23 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 autoStep++;
                 break;
 
+            //spear in, drive backwards for some reason.
             case 9:
                 robot.spearIn();
                 robot.setDrivePower(-0.3,-0.3);
-                if(robot.lidar[0] < 500){
+                if(robot.lidar[0] > 500){
                     autoStep++;
                 }
                 break;
 
+            //done.
             case 10:
                 robot.stopDriving();
                 break;
 
         }
     }
+
 
     //48 in, 60/50 deg, elevator up, arm up, elevator down, 86 inches, autoapproach
 

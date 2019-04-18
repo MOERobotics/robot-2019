@@ -15,6 +15,48 @@ public class MOErioCargoFrontGoBackAuto extends GenericAuto {
     //z = 1.67 for left = 0.5 right = 0.15 power
     //z = 1.33 for 0.5 and 0.3
 
+    public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
+        if (!(Handedness==-1))
+        {
+            robot.setDrivePower(left*(1 + correction),right*(1 - correction));
+        }
+        else
+        {
+            robot.setDrivePower(right * (1 + correction), left * (1 - correction));
+        }
+    }
+
+    public double getDistanceLeftInchesHands(int Handedness) {
+        if (!(Handedness==-1)) {
+            return (Math.abs(robot.getDistanceLeftInches()));
+        } else {
+            return (Math.abs(robot.getDistanceRightInches()));
+        }
+    }
+    public double getDistanceRightInchesHands(int Handedness) {
+        if (!(Handedness==-1)) {
+            return (Math.abs(robot.getDistanceRightInches()));
+        } else {
+            return (Math.abs(robot.getDistanceLeftInches()));
+        }
+    }
+
+    //always pass in negative degrees
+    public boolean reachedHeadingHands(int degrees, int Handedness){
+        if(Handedness==1) {
+            if(robot.getHeadingDegrees() <= degrees){
+                return true;
+            }
+        } else if(Handedness==-1) {
+            if(robot.getHeadingDegrees() >= degrees * Handedness){
+                return true;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
+
 @Override
 public void printSmartDashboard() {
     double leftDistance = Math.abs(robot.getDistanceLeftInches());
