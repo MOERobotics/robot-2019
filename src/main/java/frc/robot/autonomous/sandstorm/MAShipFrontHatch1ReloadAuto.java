@@ -1,4 +1,5 @@
 package frc.robot.autonomous.sandstorm;
+//STILL NEEDS TESTING!
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
@@ -170,8 +171,6 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 PIDElevator(elevatorDeploy,elevatorPID);
                 PIDArm(armOut,armPID);
 
-                if(pixyWait < 5){ pixyWait++; break; }
-                pixyWait = 0;
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
@@ -180,29 +179,36 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-                    topXVal = robot.pixy.vec[0].getX1();
 
-                    //If top vec coord is to far to right
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
+                        }
+                    }
+
+                    if(pixyWait < 5){ pixyWait++; break; }
+                    pixyWait = 0;
+
                     if (topXVal > midPoint + margin) {
-                        //If really close, move less
                         if (topXVal > midPoint + biggerMargin) {
-                            robot.setDrivePower(turnPower, 0);
+                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
                         } else {
-                            robot.setDrivePower(higherTurnPower, 0);
+                            robot.setDrivePower(turnPower, -turnPower);
                         }
                     } else if (topXVal < midPoint - margin) {
-                        if (topXVal < midPoint - biggerMargin) { //big margin because line moves farther, the closer robot is
-                            robot.setDrivePower(0, turnPower);
+                        if (topXVal < midPoint - biggerMargin) {
+                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
                         } else {
-                            robot.setDrivePower(0, higherTurnPower);
+                            robot.setDrivePower(-turnPower, turnPower);
                         }
-                    }
-
-                    if (Math.abs(topXVal - midPoint) <= margin){
+                    } else {
                         autoStep++;
-                        startTime = System.currentTimeMillis();
+                        robot.stopDriving();
                     }
                 }
+
                 break;
 
             //lower elevator
@@ -260,7 +266,7 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(-0.3 * (1 + correction),-0.3 * (1 - correction));
                 if(leftDistance > 12){ //this distance needs to be confirmed
-                    autoStep++;
+                    autoStep=15;
                 }
                 break;
 
@@ -287,8 +293,6 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
 
             case 13:
                 //straighten using pixy align
-                if(pixyWait < 5){ pixyWait++; break; }
-                pixyWait = 0;
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
@@ -297,27 +301,33 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-                    topXVal = robot.pixy.vec[0].getX1();
 
-                    //If top vec coord is to far to right
-                    if (topXVal > midPoint + margin) {
-                        //If really close, move less
-                        if (topXVal > midPoint + biggerMargin) {
-                            robot.setDrivePower(turnPower, 0);
-                        } else {
-                            robot.setDrivePower(higherTurnPower, 0);
-                        }
-                    } else if (topXVal < midPoint - margin) {
-                        if (topXVal < midPoint - biggerMargin) { //big margin because line moves farther, the closer robot is
-                            robot.setDrivePower(0, turnPower);
-                        } else {
-                            robot.setDrivePower(0, higherTurnPower);
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
                         }
                     }
 
-                    if (Math.abs(topXVal - midPoint) <= margin){
+                    if(pixyWait < 5){ pixyWait++; break; }
+                    pixyWait = 0;
+
+                    if (topXVal > midPoint + margin) {
+                        if (topXVal > midPoint + biggerMargin) {
+                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
+                        } else {
+                            robot.setDrivePower(turnPower, -turnPower);
+                        }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) {
+                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                        } else {
+                            robot.setDrivePower(-turnPower, turnPower);
+                        }
+                    } else {
                         autoStep++;
-                        startTime = System.currentTimeMillis();
+                        robot.stopDriving();
                     }
                 }
                 break;

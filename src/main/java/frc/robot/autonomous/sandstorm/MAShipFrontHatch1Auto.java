@@ -5,37 +5,40 @@ import frc.robot.PIDModule;
 import frc.robot.autonomous.GenericAuto;
 
 public class MAShipFrontHatch1Auto extends GenericAuto  {
+    long startTime = 0;
+
+    //arc PID
+    //-1 is left, 1 is right
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
-    long startTime = 0;
     double z = 1.33;
     double louWizardry = 0;
-
-    //-1 is left, 1 is right
-    int turncounter = 0;
     double correction = 0;
-    double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = false;
 
+    //unused
+    double moementumCorrection = 100;
+    int turncounter = 0;
+    double orientationTolerance = 0.5;
+
+    //constants
+    boolean levelTwo = false;
     int approachHeading = 8;
 
+    //elevator and arm PID
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double elevatorDeploy = 13.1;
     double elevatorFloor = -30/*-3.13*/;
     double armOut = 20;
 
-    double orientationTolerance = 0.5;
-
+    //pixy constants
     int midPoint = 34;
     int topXVal;
-
     int margin = 2;
     int biggerMargin = 6;
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
-
+    double turnPower = 0.2/*0.4*/;
+    double higherTurnPower = 0.25/*0.45*/;
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
 
@@ -174,9 +177,6 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 PIDElevator(elevatorDeploy, elevatorPID);
                 PIDArm(armOut, armPID);
 
-                if(pixyWait < 5){ pixyWait++; break; }
-                pixyWait = 0;
-
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
@@ -186,23 +186,16 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 } else {
                     numTimesNull = 0; //reset null exit counter
 
-                    if (robot.pixy.vec.length != 1) {
-                        //Null counter, if not detecting pixy lines, don't move
-                        numTimesNull++;
-                        if (numTimesNull > 4){
-                            robot.setDrivePower(0, 0);
-                        }
-                    } else {
-                        numTimesNull = 0; //reset null exit counter
-                        if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
-                            //which point of vector is higher on screen? get that point's X val
-                            topXVal = robot.pixy.vec[0].getX1();
-                            if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
-                                topXVal = robot.pixy.vec[0].getX0();
-                            }
-
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
                         }
                     }
+
+                    if(pixyWait < 5){ pixyWait++; break; }
+                    pixyWait = 0;
 
                     if (topXVal > midPoint + margin) {
                         if (topXVal > midPoint + biggerMargin) {
@@ -228,7 +221,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 PIDArm(armOut, armPID);
                 robot.driveElevator(-0.3);
 
-                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
+                if(robot.getElevatorEncoderCount()  <= elevatorFloor+3){
                     autoStep++;
                     elevatorPID.resetError();
                 }
