@@ -3,6 +3,7 @@ package frc.robot.autonomous.sandstorm;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
 import frc.robot.autonomous.*;
+import frc.robot.genericrobot.MOErio;
 
 public class MARocketHatch1Auto extends GenericAuto  {
     long startTime = 0;
@@ -29,15 +30,15 @@ public class MARocketHatch1Auto extends GenericAuto  {
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double elevatorDeploy = 13.1;
-    double elevatorFloor = -25/*-30*//*-3.13*/; //changed for falcon, please change when we get back on MOEva.
+    double elevatorFloor = -30/*-3.13*/;
     double armOut = /*19*/23;
 
     //pixy constants + variables
     int midPoint = 34;
     int margin = 1;
     int biggerMargin = 8;
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
+    double turnPower = /*0.2*/0.28;
+    double higherTurnPower = /*0.25*/0.33;
     int topXVal;
     int numTimesNull = 0;
     int pixyWait = 0;
@@ -287,6 +288,17 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 break;
 
             case 11:
+                robot.setDrivePower(0.2*LeftSide,-0.2*LeftSide);
+                if(robot.getHeadingDegrees() < 1 && robot.getHeadingDegrees() > -1){
+                    autoStep++;
+                    MOErioAuto.resetError();
+                }
+                break;
+
+            case 12:
+
+
+            case 13:
                 robot.stopDriving();
         }
     }
