@@ -7,13 +7,14 @@ import java.util.regex.*;
 
 public class LidarWithThread {
     public static LidarThread lidarThread;
+    public static LidarReader lidarReader;
+
     public static int numSensors;
 
     //Init - instantiate new LidarThread
-    public static void init(SerialPort Blinky, GenericRobot us) {
-        lidarThread = new LidarThread(Blinky);
+    public static void init(SerialPort Blinky) {
+        lidarThread.Blinky = Blinky;
         lidarThread.start();
-        LidarWithThread.numSensors = us.numSensors();
     }
 
     public static void serialReset(SerialPort Blinky) {
@@ -98,20 +99,10 @@ public class LidarWithThread {
 
     public static void getLidar(GenericRobot us) {
         //Sends lidar values, read time to robot
-        /*for (int j = 0; j < us.numSensors(); j++) {
-            if (lidarThread.lidar[j] != 0) {
-                SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
-                SmartDashboard.putNumber("LidarReadTime", lidarThread.lidarReadTime);
-                us.lidar[j] = lidarThread.lidar[j];
-                us.lidarReadTime = lidarThread.lidarReadTime;
-            }
-        }*/
         for (int j = 0; j < us.numSensors(); j++) {
-            if (lidarThread.lidar[j] != 0) {
-                SmartDashboard.putNumber("Lidar " + j + ": ", lidarThread.lidar[j]);
-                SmartDashboard.putNumber("LidarReadTime", lidarThread.lidarReadTime);
-                us.lidar[j] = lidarThread.lidar[j];
-                us.lidarReadTime = lidarThread.lidarReadTime;
+            if (lidarReader.getValue(j) != 0) {
+                SmartDashboard.putNumber("Lidar " + j + ": ", lidarReader.getValue(j));
+                us.lidar[j] = lidarReader.getValue(j);
             }
         }
     }

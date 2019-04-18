@@ -137,9 +137,7 @@ public class Robot extends TimedRobot {
 			PortOpen = false;
 		  }
 		}
-		Ihopethisworks.setLidarPort(Blinky, robotHardware);
-
-		//if (PortOpen) LidarWithThread.init(Blinky, robotHardware);
+		Ihopethisworks.set(Blinky, robotHardware);
 	}
 
 	@Override
@@ -224,8 +222,6 @@ public class Robot extends TimedRobot {
 
             SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
             SmartDashboard.putNumber("Lidar 0", robotHardware.lidar[0]);
-
-            //Ihopethisworks.run();
         }
 
 		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
@@ -237,8 +233,6 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
-
-		//if (PortOpen) Lidar.getLidar(robotHardware, Blinky);
 	}
 
 	@Override
