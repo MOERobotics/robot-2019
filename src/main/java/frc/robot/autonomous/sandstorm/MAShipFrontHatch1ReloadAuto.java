@@ -337,10 +337,32 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0]<475){//this needs to be confirmed
                     autoStep++;
+                    startTime = System.currentTimeMillis();
                 }
                 break;
 
             case 15:
+                robot.spearOut();
+                robot.setDrivePower(0.2,0.2);
+                if(System.currentTimeMillis() - 1000 > startTime){
+                    autoStep++;
+                    robot.stopDriving();
+                }
+                break;
+
+            case 16:
+                robot.spearUnhook();
+                autoStep++;
+                robot.resetDriveEncoders();
+
+            case 17:
+                robot.setDrivePower(-0.2,-0.2);
+                if(leftDistance > 12){
+                    autoStep++;
+                }
+                break;
+
+            case 18:
                 robot.stopDriving();
                 break;
 
