@@ -27,11 +27,11 @@ public abstract class GenericAuto {
 
     //Raising the elevator until position is reached
     public void raiseElevator(double position, PIDModule elevatorPID){
-        if(robot.getElevatorEncoderCount() < position){
-            robot.driveElevator(0.8);
-        } else {
+        if(robot.getElevatorEncoderCount() > position){
             withinElevatorTolerance = true;
             elevatorPID.resetError();
+        }else{
+            robot.driveElevator(0.7);
         }
     }
 
@@ -88,7 +88,7 @@ public abstract class GenericAuto {
     //pass in degrees and direction
     //1 = to the right
     //-1 = to the left
-    public boolean reachedHeadingHands(int degrees, int Handedness) {
+    public boolean reachedHeadingHands(double degrees, int Handedness) {
         if (Handedness == 1) {
             if (robot.getHeadingDegrees() >= degrees) {
                 return true;
