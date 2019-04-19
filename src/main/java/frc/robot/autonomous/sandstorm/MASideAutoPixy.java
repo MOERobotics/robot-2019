@@ -36,8 +36,6 @@ public class MASideAutoPixy extends GenericAuto {
 
     int margin = 1;
     int biggerMargin = 8;
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
 
     int numTimesNull = 0;
 
@@ -435,8 +433,12 @@ public class MASideAutoPixy extends GenericAuto {
 
                 if (Math.abs(robot.getDistanceLeftInches()) > 144) {
                     robot.stopDriving();
-                    //autoStep++;
+                    autoStep++;
                 }
+                break;
+
+            case 15:
+                robot.stopDriving();
                 break;
         }
     }

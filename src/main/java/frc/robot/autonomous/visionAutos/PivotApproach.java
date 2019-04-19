@@ -10,9 +10,6 @@ public class PivotApproach extends GenericAuto {
 
     int numTimesNull = 0;
 
-    double turnPower = /*0.2*/0.28;
-    double higherTurnPower = /*0.25*/0.33;
-
     long startTime;
 
     int pixyWait = 0;

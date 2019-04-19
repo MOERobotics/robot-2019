@@ -32,8 +32,6 @@ public class MASideAutoCargo extends GenericAuto {
 
     int margin = 1;
     int biggerMargin = 8;
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
 
     int numTimesNull = 0;
 

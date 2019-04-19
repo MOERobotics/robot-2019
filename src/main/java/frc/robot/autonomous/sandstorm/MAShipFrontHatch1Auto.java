@@ -37,8 +37,6 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
     int topXVal;
     int margin = 2;
     int biggerMargin = 6;
-    double turnPower = /*0.2*/0.26;
-    double higherTurnPower = /*0.25*/0.31;
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
 

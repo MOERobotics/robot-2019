@@ -14,6 +14,9 @@ public abstract class GenericAuto {
     public boolean levelTwo;
     public int habLevel;
 
+    public double turnPower = /*0.2*/0.28;
+    public double higherTurnPower = /*0.25*/0.33;
+
     public boolean withinElevatorTolerance = false;
     public boolean withinArmTolerance = false;
 
@@ -39,6 +42,14 @@ public abstract class GenericAuto {
         double elevatorCorrection = elevatorPID.getCorrection();
 
         robot.driveElevator(elevatorCorrection);
+    }
+
+    public void lowerElevator(double position, PIDModule elevatorPID) {
+        robot.driveElevator(-0.3);
+        if(robot.getElevatorEncoderCount()  <= position){
+            autoStep++;
+            elevatorPID.resetError();
+        }
     }
 
     public void raiseArm(double position, PIDModule armPID){

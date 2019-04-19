@@ -59,8 +59,9 @@ public class Robot extends TimedRobot {
 	//auto
     boolean autoEnable = true;
     //int startAutoStep;
-	private boolean habLevelSet;
-	private int rightSideSetNum;
+	private boolean habLevelSet = false;
+	private int rightSideSetNum = 1;
+	private boolean rightSideSet = false;
 
 	public double ClimbEncoderOrigin = 0;
 	boolean atHabHeight2 = false;
@@ -216,8 +217,11 @@ public class Robot extends TimedRobot {
 
             SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
 			SmartDashboard.putBoolean("autoEnable", autoEnable);
-            SmartDashboard.putNumber("RightSide: ", rightSideSetNum);
-            SmartDashboard.putBoolean("Hab 2?", habLevelSet);
+
+            SmartDashboard.putNumber("SET RightSide: ", rightSideSetNum);
+            SmartDashboard.putBoolean("SET Hab 2?", habLevelSet);
+            SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
+            SmartDashboard.putBoolean("Hab 2?", autoProgram.levelTwo);
             //autoProgram.printSmartDashboard();
 
             SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
@@ -261,20 +265,22 @@ public class Robot extends TimedRobot {
 		} else if (leftJoystick.getRawButtonPressed(12)){
 			habLevelSet = false;
 		}
+
 		if (leftJoystick.getRawButtonPressed(16)) {
-			rightSideSetNum = 1;
-		} else if (leftJoystick.getRawButtonPressed(15)) {
-			rightSideSetNum = -1;
+			rightSideSet = !rightSideSet;
 		}
+
+		if (rightSideSet) rightSideSetNum = 1;
+		else rightSideSetNum = -1;
 
 		if (leftJoystick.getRawButtonPressed(5)){
 			autoProgram = new MASideAutoPixy();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
-			autoProgram.lastStep = 4234;
+			autoProgram.lastStep = 15;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(6)){
-			autoProgram = new MARocketHatch1Auto();
+			autoProgram = new MAShipFrontHatch1Auto();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 4234;
@@ -289,15 +295,21 @@ public class Robot extends TimedRobot {
 			autoProgram = new DriveStraightAuto();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
-			autoProgram.lastStep = 4234;
+			autoProgram.lastStep = 1;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(9)) {
-			autoProgram = new DoNothingAuto();
+			autoProgram = new MAShipFrontHatch1ReloadAuto();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 4234;
 			autoProgram.robot = robotHardware;
-        }
+        } else if (leftJoystick.getRawButtonPressed(10)) {
+			autoProgram = new DoNothingAuto();
+			autoProgram.LeftSide = rightSideSetNum;
+			autoProgram.levelTwo = habLevelSet;
+			autoProgram.lastStep = 0;
+			autoProgram.robot = robotHardware;
+		}
 	}
 
 	@Override
@@ -396,12 +408,12 @@ public class Robot extends TimedRobot {
 
 				if (pixyAligning) {
 					pixyAlign.run();
-					if ((Math.abs(driveJoyStickY) > 0.03)|| Math.abs(driveJoyStickX) > 0.10) {
+					if ((Math.abs(driveJoyStickY) > 0.07)|| Math.abs(driveJoyStickX) > 0.14) {
 						pixyAligning = false;
 					}
 				} else if (pixyApproaching) {
 					pixyApproach.run();
-					if ((Math.abs(driveJoyStickY) > 0.03)|| Math.abs(driveJoyStickX) > 0.10) {
+					if ((Math.abs(driveJoyStickY) > 0.07)|| Math.abs(driveJoyStickX) > 0.14) {
 						pixyApproaching = false;
 					}
 				} else {

@@ -36,8 +36,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
     int midPoint = 34;
     int margin = 1;
     int biggerMargin = 8;
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
     int topXVal;
     int numTimesNull = 0;
     int pixyWait = 0;
@@ -237,12 +235,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             /*lower the elevator*/
             case 6:
                 PIDArm(armOut, armPID);
-
-                robot.driveElevator(-0.3);
-                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
-                    autoStep++;
-                    elevatorPID.resetError();
-                }
+                lowerElevator(elevatorFloor, elevatorPID);
                 break;
 
 
