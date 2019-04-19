@@ -18,7 +18,6 @@ public class MASideAutoPixy extends GenericAuto {
     double correction = 0;
     double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = false;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
@@ -29,8 +28,6 @@ public class MASideAutoPixy extends GenericAuto {
     double elevatorFloor = -28.6/*-3.13*/;
     double armOut = 59;
 
-    double orientationTolerance = 0.5;
-
     int midPoint = 34;
     int topXVal;
 
@@ -38,50 +35,6 @@ public class MASideAutoPixy extends GenericAuto {
     int biggerMargin = 8;
 
     int numTimesNull = 0;
-
-    public void setDrivePowerHands(double left, double right, double correction, int Handedness) {
-        if (!(Handedness == -1)) {
-            robot.setDrivePower(left * (1 + correction), right * (1 - correction));
-        } else {
-            robot.setDrivePower(right * (1 + correction), left * (1 - correction));
-        }
-    }
-
-    public double getDistanceLeftInchesHands(int Handedness) {
-        if (!(Handedness == -1)) {
-            return (Math.abs(robot.getDistanceLeftInches()));
-        } else {
-            return (Math.abs(robot.getDistanceRightInches()));
-        }
-    }
-
-    public double getDistanceRightInchesHands(int Handedness) {
-        if (!(Handedness == -1)) {
-            return (Math.abs(robot.getDistanceRightInches()));
-        } else {
-            return (Math.abs(robot.getDistanceLeftInches()));
-        }
-    }
-
-    //pass in degrees and direction
-    //1 = to the right
-    //-1 = to the left
-    public boolean reachedHeadingHands(int degrees, int Handedness) {
-        if (Handedness == 1) {
-            if (robot.getHeadingDegrees() >= degrees) {
-                return true;
-            }
-        } else if (Handedness == -1) {
-            if (robot.getHeadingDegrees() <= degrees * Handedness) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-        return false;
-    }
-
-    //case 7, bonus begins and normal auto ends
 
     @Override
     public void init() {
@@ -99,6 +52,8 @@ public class MASideAutoPixy extends GenericAuto {
         } else {
             zEffective = z;
         }
+
+        levelTwo = false;
     }
 
     @Override

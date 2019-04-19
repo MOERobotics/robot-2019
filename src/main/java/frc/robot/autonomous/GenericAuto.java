@@ -28,15 +28,25 @@ public abstract class GenericAuto {
         }
     }
 
+    //Raising the elevator until position is reached
     public void raiseElevator(double position, PIDModule elevatorPID){
-        if(robot.getElevatorEncoderCount() < position){
-            robot.driveElevator(0.8);
-        }else{
+        if(robot.getElevatorEncoderCount() > position){
             withinElevatorTolerance = true;
             elevatorPID.resetError();
+        }else{
+            robot.driveElevator(0.7);
         }
     }
 
+    /*public void lowerElevator(double position, PIDModule elevatorPID) {
+        robot.driveElevator(-0.3);
+        if(robot.getElevatorEncoderCount()  <= position){
+            autoStep++;
+            elevatorPID.resetError();
+        }
+    }*/
+
+    //PID controlling the elevator
     public void PIDElevator(double position, PIDModule elevatorPID){
         elevatorPID.setHeading(robot.getElevatorEncoderCount() - position);
         double elevatorCorrection = elevatorPID.getCorrection();
@@ -44,14 +54,7 @@ public abstract class GenericAuto {
         robot.driveElevator(elevatorCorrection);
     }
 
-    public void lowerElevator(double position, PIDModule elevatorPID) {
-        robot.driveElevator(-0.3);
-        if(robot.getElevatorEncoderCount()  <= position){
-            autoStep++;
-            elevatorPID.resetError();
-        }
-    }
-
+    //Raising the arm until position is reached
     public void raiseArm(double position, PIDModule armPID){
         if(robot.getArmEncoderCount() < position){
             robot.driveArm(0.4);
@@ -61,6 +64,7 @@ public abstract class GenericAuto {
         }
     }
 
+    //PID controlling the arm
     public void PIDArm(double position, PIDModule armPID){
         armPID.setHeading(robot.getArmEncoderCount() - position);
         double armCorrection = armPID.getCorrection();
@@ -95,7 +99,7 @@ public abstract class GenericAuto {
     //pass in degrees and direction
     //1 = to the right
     //-1 = to the left
-    public boolean reachedHeadingHands(int degrees, int Handedness) {
+    public boolean reachedHeadingHands(double degrees, int Handedness) {
         if (Handedness == 1) {
             if (robot.getHeadingDegrees() >= degrees) {
                 return true;

@@ -23,14 +23,14 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
     //position and power variables
     boolean levelTwo = false;
-    int approachHeading = 40;
+    int approachHeading = 40+5;
 
     //elevator and arm PID
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double elevatorDeploy = 13.1;
-    double elevatorFloor = -25/*-30*//*-3.13*/; //changed for falcon, please change when we get back on MOEva.
-    double armOut = /*19*/23;
+    double elevatorFloor = -30/*-3.13*/;
+    double armOut = /*19*/20;
 
     //pixy constants + variables
     int midPoint = 34;
@@ -107,10 +107,12 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
-                robot.setDrivePower((0.8) * (1 + correction), (0.8) * (1 - correction));
+                robot.setDrivePower((0.4) * (1 + correction), (0.4) * (1 - correction));
 
                 if(!withinElevatorTolerance){
                     raiseElevator(elevatorDeploy, elevatorPID);
+                }else{
+                    PIDElevator(elevatorDeploy,elevatorPID);
                 }
 
                 if (levelTwo) {
@@ -135,6 +137,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 if(!withinElevatorTolerance){
                     raiseElevator(elevatorDeploy, elevatorPID);
                 }else{
+                    PIDElevator(elevatorDeploy,elevatorPID);
                     autoStep++;
                 }
                 break;
@@ -174,9 +177,14 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
-            /*keep rolling, keep arm and elevator still*/
+            /*keep rolling, keep arm still and lower elevator*/
             case 4:
-                PIDElevator(elevatorDeploy, elevatorPID);
+                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
+                    robot.driveElevator(0);
+                }else{
+                    robot.driveElevator(-0.3);
+                }
+
                 PIDArm(armOut, armPID);
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
@@ -186,11 +194,15 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 if(robot.getDistanceLeftInches() > 86){
                     autoStep++;
+                    elevatorPID.resetError();
                 }
+                break;
 
 
-            /*auto target w pixy*/
+            /*auto target w pixy and keeping elevator still*/
             case 5:
+
+                PIDElevator(elevatorFloor,elevatorPID);
 
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
@@ -232,27 +244,18 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 break;
 
-            /*lower the elevator*/
+            /*spear out*/
             case 6:
-                PIDArm(armOut, armPID);
-                lowerElevator(elevatorFloor, elevatorPID);
-                break;
-
-
-            /*spear out, keep elev still*/
-            case 7:
-                PIDElevator(elevatorDeploy, elevatorPID);
-
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
-                /*if(robot.lidar[0] < 500){*/
+                if(robot.lidar[0] < 500){
                     autoStep++;
                     startTime = System.currentTimeMillis();
-                //}
+                }
                 break;
 
             /*drive forward for half a second*/
-            case 8:
+            case 7:
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 500 > startTime){
                     autoStep++;
@@ -261,7 +264,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
 
             //fingers in
-            case 9:
+            case 8:
                 /* LFR */
                 robot.spearHook();
                 robot.stopDriving();
@@ -271,7 +274,8 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //back off for ????? in
             //spear in
-            case 10:
+            case 9:
+                robot.spearHook();
                 robot.spearIn();
                 robot.setDrivePower(-0.2,-0.2);
                 if(Math.abs(robot.getDistanceLeftInches()) > 24){
@@ -279,8 +283,90 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            case 10:
+                robot.setDrivePower(0.5*LeftSide,-0.5*LeftSide);
+                if(reachedHeadingHands(80,1*LeftSide)){
+                    autoStep++;
+                    MOErioAuto.resetError();
+                    robot.resetDriveEncoders();
+                }
+                break;
+
             case 11:
+
+                MOErioAuto.setHeading(robot.getHeadingDegrees()-90*LeftSide);
+                correction = MOErioAuto.getCorrection();
+                robot.setDrivePower(0.3*(1 + correction),0.3*(1 - correction));
+
+                if(robot.lidar[0] <= 580){
+                    autoStep++;
+                    MOErioAuto.resetError();
+                }
+                break;
+
+            case 12:
+                robot.setDrivePower(0.5*LeftSide,-0.5*LeftSide);
+                if(reachedHeadingHands(170, LeftSide)){
+                    autoStep++;
+                    MOErioAuto.resetError();
+                }
+                break;
+
+            case 13:
+                MOErioAuto.setHeading(robot.getHeadingDegrees() - (Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
+                correction = MOErioAuto.getCorrection();
+                robot.setDrivePower(0.3*(1 - correction),0.3*(1 + correction));
+                if(robot.lidar[0] < 900){
+                    autoStep++;
+                }
+                break;
+
+            case 14:
+
+                if (robot.pixy.vec.length != 1) {
+                    //Null counter, if not detecting pixy lines, don't move
+                    numTimesNull++;
+                    if (numTimesNull > 4){
+                        robot.setDrivePower(0, 0);
+                    }
+                } else {
+                    numTimesNull = 0; //reset null exit counter
+
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
+                        }
+                    }
+
+                    if(pixyWait < 5){ pixyWait++; break; }
+                    pixyWait = 0;
+
+                    if (topXVal > midPoint + margin) {
+                        if (topXVal > midPoint + biggerMargin) {
+                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
+                        } else {
+                            robot.setDrivePower(turnPower, -turnPower);
+                        }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) {
+                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                        } else {
+                            robot.setDrivePower(-turnPower, turnPower);
+                        }
+                    } else {
+                        autoStep++;
+                        robot.stopDriving();
+                    }
+                }
+
+                break;
+
+
+            case 15:
                 robot.stopDriving();
+                break;
         }
     }
 

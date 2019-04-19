@@ -190,8 +190,8 @@ public abstract class GenericRobot {
 	public boolean getSpearShaftState() {return spearShaftState;}
 
 	//public Logger<Boolean> spearHookLogger = new Logger<>();
-	public void spearHook  () { shiftSpearHook(false); }
-	public void spearUnhook() { shiftSpearHook( true); }
+	public void spearHook  () { shiftSpearHook(true); }
+	public void spearUnhook() { shiftSpearHook( false); }//these have been switched! (B button used to be fingers in)
 	public void shiftSpearHook(boolean out) {
 		//spearHookLogger.printIfChanged("Is Spear Unhooked?: ", out);
 		this.spearHookState = out;
