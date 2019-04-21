@@ -85,6 +85,16 @@ public abstract class GenericRobot {
         this.rightPower = rightMotor;
         setDrivePowerInternal(leftMotor, rightMotor);
     }
+
+    public double rampPower(double startPower,double finalPower,double startX,double finalX,double measuredX)
+	{
+		if ((measuredX>=startX) && (measuredX<=finalX)) {
+			return (startPower + (finalPower - startPower) * (measuredX - startX) / (finalX - startX));
+		}
+		else
+			return(0.0);
+	}
+
 	public final double getLeftDrivePower  () { return  leftPower; }
 	public final double getRightDrivePower () { return rightPower; }
 	protected abstract void setDrivePowerInternal(double leftMotor, double rightMotor);

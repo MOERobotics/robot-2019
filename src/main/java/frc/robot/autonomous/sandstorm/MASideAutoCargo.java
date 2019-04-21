@@ -2,7 +2,6 @@ package frc.robot.autonomous.sandstorm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
-import frc.robot.PIDModuleLucy;
 import frc.robot.autonomous.GenericAuto;
 
 public class MASideAutoCargo extends GenericAuto {
@@ -34,6 +33,8 @@ public class MASideAutoCargo extends GenericAuto {
     int biggerMargin = 8;
 
     int numTimesNull = 0;
+
+    double drivePower;
 
 
     @Override
@@ -101,7 +102,15 @@ public class MASideAutoCargo extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
-                robot.setDrivePower((0.8) * (1 + correction), (0.8) * (1 - correction));
+                if (leftDistance<24)
+                {
+                    drivePower = robot.rampPower(0.3,0.8,0,24,leftDistance);
+                }
+                else
+                {
+                    drivePower = 0.8;
+                }
+                robot.setDrivePower((drivePower) * (1 + correction), (drivePower) * (1 - correction));
 
                 if (levelTwo) {
                     if (leftDistance >= 48 * 2) {
