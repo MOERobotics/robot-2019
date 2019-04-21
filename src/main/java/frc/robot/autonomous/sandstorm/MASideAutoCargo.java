@@ -102,9 +102,9 @@ public class MASideAutoCargo extends GenericAuto {
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
-                if (leftDistance<24)
+                if (leftDistance<36)
                 {
-                    drivePower = robot.rampPower(0.3,0.8,0,24,leftDistance);
+                    drivePower = robot.rampPower(0.3,0.8,0,36,leftDistance);
                 }
                 else
                 {
