@@ -313,7 +313,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 break;
 
             case 13:
-                MOErioAuto.setHeading(robot.getHeadingDegrees() - (Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
+                MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.3*(1 - correction),0.3*(1 + correction));
                 if(robot.lidar[0] < 900){
