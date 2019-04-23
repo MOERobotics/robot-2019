@@ -11,7 +11,6 @@ public class MARocketAuto extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
-    double z = 1.81;
     double louWizardry = 0;
 
     //-1 is left, 1 is right
@@ -47,13 +46,11 @@ public class MARocketAuto extends GenericAuto {
         } else {
             zEffective = z;
         }
-
-        levelTwo = true;
     }
 
     @Override
     public void printSmartDashboard() {
-        correction = MOErioAuto.getCorrection();
+        /*correction = MOErioAuto.getCorrection();
         SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", correction);
         SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());
@@ -65,7 +62,7 @@ public class MARocketAuto extends GenericAuto {
         SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
         SmartDashboard.putNumber("Left Side", LeftSide);
-        SmartDashboard.putBoolean("Level Two", levelTwo);
+        SmartDashboard.putBoolean("Level Two", levelTwo);*/
     }
 
     @Override

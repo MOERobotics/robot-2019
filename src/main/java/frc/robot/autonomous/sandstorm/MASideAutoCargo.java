@@ -7,40 +7,27 @@ import frc.robot.autonomous.GenericAuto;
 public class MASideAutoCargo extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
-    long startTime = 0;
-    double z = 1.33;
     double louWizardry = 0;
 
-    //-1 is left, 1 is right
-    int turncounter = 0;
     double correction = 0;
-    double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = true;
+    long startTime;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double elevatorDeploy = 13.1;
-    double elevatorFloor = -28.6/*-3.13*/;
-    double armOut = 58;
 
-    double orientationTolerance = 0.5;
+    public double elevatorDeploy = 13.1;
+    public double elevatorFloor = -30/*-3.13*/;
+    public double armOut = 58;
 
-    int midPoint = 34;
     int topXVal;
-
-    int margin = 1;
-    int biggerMargin = 8;
-
     int numTimesNull = 0;
 
     double drivePower;
 
-
     @Override
     public void init() {
         autoStep = -2;
-        //autoStep = 9;
         robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.resetError();
@@ -60,8 +47,7 @@ public class MASideAutoCargo extends GenericAuto {
 
     @Override
     public void printSmartDashboard() {
-        /*
-        correction = MOErioAuto.getCorrection();
+        /*correction = MOErioAuto.getCorrection();
         SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", correction);
         SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());
@@ -79,12 +65,12 @@ public class MASideAutoCargo extends GenericAuto {
 
     @Override
     public void run() {
-        SmartDashboard.putNumber("autoStep", autoStep);
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
         louWizardry = leftDistance - rightDistance * zEffective;
 
         switch (autoStep) {
+            //wait for 0.1 sec
             case -2:
                 MOErioAuto.resetError();
                 robot.resetYaw();
@@ -96,7 +82,7 @@ public class MASideAutoCargo extends GenericAuto {
                 }
                 break;
 
-            /*drive off the HAB*/
+            //drive off the HAB
             case -1:
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
@@ -186,6 +172,7 @@ public class MASideAutoCargo extends GenericAuto {
             /*Right side- turn 90 degrees to the left*/
             /*Left side- turn 90 degrees to the right*/
             /*turning towards the hatch*/
+            //raise elevator
             case 3:
                 //MOErioTurn.setHeading(robot.getHeadingDegrees());
                 PIDElevator(elevatorDeploy,elevatorPID);
@@ -200,26 +187,27 @@ public class MASideAutoCargo extends GenericAuto {
                 break;
 
             /*turning cont'd*/
-
             case 4:
                 autoStep++;
                 break;
 
+            //start raising arm (could we put this in an earlier step?)
             case 5:
                 PIDElevator(elevatorDeploy,elevatorPID);
 
-                if(!withinArmTolerance){
+                if(!withinArmTolerance) {
                     raiseArm(armOut,armPID);
-                }else{
+                } else {
                     autoStep++;
                 }
                 break;
 
+            //pid control arm, lower elevator
             case 6:
-                PIDElevator(armOut,armPID);
+                PIDArm(armOut,armPID);
 
                 robot.driveElevator(-0.3);
-                if(robot.getElevatorEncoderCount()  <= elevatorFloor){
+                if(robot.getElevatorEncoderCount() <= elevatorFloor){
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.resetError();
@@ -228,8 +216,8 @@ public class MASideAutoCargo extends GenericAuto {
 
             /*roll towards the hatch*/
             case 7:
-                PIDElevator(elevatorFloor+3,elevatorPID);
-                PIDArm(armOut,armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+                PIDArm(armOut, armPID);
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - -90*LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -242,6 +230,7 @@ public class MASideAutoCargo extends GenericAuto {
                 }
                 break;
 
+            //pixy align
             case 8:
                 PIDElevator(elevatorFloor+3,elevatorPID);
                 PIDArm(armOut,armPID);
@@ -275,9 +264,10 @@ public class MASideAutoCargo extends GenericAuto {
                 }
                 break;
 
+            //roll forward until lidar hits 850
             case 9:
-                PIDElevator(elevatorFloor+3,elevatorPID);
-                PIDArm(armOut,armPID);
+                PIDElevator(elevatorFloor + 3,elevatorPID);
+                PIDArm(armOut, armPID);
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees() + 90 * LeftSide);
                 correction = MOErioAuto.getCorrection();
@@ -290,8 +280,9 @@ public class MASideAutoCargo extends GenericAuto {
 
                 break;
 
+            //roll out for 1.5 sec (do we need to roll out for this long?)
             case 10:
-                PIDElevator(elevatorFloor+3,elevatorPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
                 PIDArm(armOut,armPID);
 
                 if (System.currentTimeMillis() - startTime > 1500) {
@@ -300,7 +291,13 @@ public class MASideAutoCargo extends GenericAuto {
                 } else {
                     robot.rollOut(0.5);
                     robot.stopDriving();
+                    autoStep++;
                 }
+                break;
+
+            //fin.
+            case 11:
+                robot.stopDriving();
                 break;
 
         }

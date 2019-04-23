@@ -11,11 +11,9 @@ public class MABasicAuto extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
-    double z = 1.33;
     double louWizardry = 0;
 
     //-1 is left, 1 is right
-    int turncounter = 0;
     double correction = 0;
     double moementumCorrection = 100;
     double zEffective;
@@ -45,13 +43,11 @@ public class MABasicAuto extends GenericAuto {
         } else {
             zEffective = z;
         }
-
-        levelTwo = false;
     }
 
     @Override
     public void printSmartDashboard() {
-        correction = MOErioAuto.getCorrection();
+        /*correction = MOErioAuto.getCorrection();
         SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", correction);
         SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());
@@ -63,7 +59,7 @@ public class MABasicAuto extends GenericAuto {
         SmartDashboard.putNumber("Abs Left", Math.abs(robot.getDistanceLeftInches()));
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
         SmartDashboard.putNumber("Left Side", LeftSide);
-        SmartDashboard.putBoolean("Level Two", levelTwo);
+        SmartDashboard.putBoolean("Level Two", levelTwo);*/
     }
 
     @Override
@@ -201,14 +197,6 @@ public class MABasicAuto extends GenericAuto {
                 armCorrection = armPID.getCorrection();
 
                 robot.driveArm(armPowerBias + armCorrection);
-                /*
-                if (System.currentTimeMillis() - startTime > 500) {
-                    robot.rollOut(0);
-                    robot.stopDriving();
-                } else {
-                    robot.rollOut(0.5);
-                }
-                */
                 break;
 
         }

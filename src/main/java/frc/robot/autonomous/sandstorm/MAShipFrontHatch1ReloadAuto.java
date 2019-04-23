@@ -9,15 +9,10 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
-    double z = 1.33;
     double louWizardry = 0;
 
-    //-1 is left, 1 is right
-    int turncounter = 0;
     double correction = 0;
-    double moementumCorrection = 100;
     double zEffective;
-    boolean levelTwo = false;
 
     int approachHeading = 8;
 
@@ -27,16 +22,7 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
     double elevatorFloor = -30/*-3.13*/;
     double armOut = 20;
 
-    double orientationTolerance = 0.5;
-
-    int midPoint = 34;
     int topXVal;
-
-    int margin = 2;
-    int biggerMargin = 6;
-    double turnPower = 0.2;
-    double higherTurnPower = 0.25;
-
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
 
@@ -56,6 +42,9 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
         } else {
             zEffective = z;
         }
+
+        margin = 2;
+        biggerMargin = 6;
     }
 
     @Override
@@ -248,20 +237,20 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 autoStep++;
                 break;
 
-            //still have no idea what this is but okay
+            //roll back until lidar hits 500
             case 9:
-                robot.setDrivePower(-0.3,-0.3);//post-Lehigh: What is this supposed to do?
-                if(robot.lidar[0] < 500){
+                robot.setDrivePower(-0.3,-0.3);
+                if(robot.lidar[0] > 500){ //flipped the < – CHECK THIS!
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.resetError();
                 }
                 break;
 
+            //fingers in, spear in. roll backwards
             case 10:
-                //fingers in, spear in
                 robot.spearIn();
-                //roll backwards
+
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(-0.3 * (1 + correction),-0.3 * (1 - correction));
@@ -270,8 +259,8 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 }
                 break;
 
+            //turn around.
             case 11:
-                //turn around.
                 robot.setDrivePower(0.2*LeftSide,-0.2*LeftSide);
                 if(reachedHeadingHands(125,1*LeftSide)){//this heading needs to be confirmed
                     autoStep++;
@@ -280,8 +269,8 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 }
                 break;
 
+            //roll forward a lot towards the loading station (distance needs to be confirmed)
             case 12:
-                //roll forward a lot towards the loading station (distance needs to be confirmed)
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - 125*LeftSide);
                 correction = MOErioAuto.getCorrection();
 
@@ -291,8 +280,8 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 }
                 break;
 
+            //straighten using pixy align
             case 13:
-                //straighten using pixy align
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
@@ -332,8 +321,9 @@ public class MAShipFrontHatch1ReloadAuto extends GenericAuto  {
                 }
                 break;
 
+            //now roll forward until lidar hits 475
             case 14:
-                //now roll forward
+
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0]<475){//this needs to be confirmed
                     autoStep++;

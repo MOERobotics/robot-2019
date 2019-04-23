@@ -5,20 +5,8 @@ import frc.robot.genericrobot.GenericRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public abstract class GenericAuto {
-    public int autoStep = 0;
     public abstract void init();
     public abstract void run();
-    public GenericRobot robot;
-    public int LeftSide = 1;
-    public int lastStep = 42;
-    public boolean levelTwo;
-    public int habLevel;
-
-    public double turnPower = /*0.2*/0.28;
-    public double higherTurnPower = /*0.25*/0.33;
-
-    public boolean withinElevatorTolerance = false;
-    public boolean withinArmTolerance = false;
 
     private boolean haveWeYelledAtTheCoderYet = false;
     public void printSmartDashboard() {
@@ -27,6 +15,25 @@ public abstract class GenericAuto {
             haveWeYelledAtTheCoderYet = true;
         }
     }
+
+    public GenericRobot robot;
+    public int autoStep = 0;
+    public int LeftSide = 1;
+    public int lastStep = 42;
+    public boolean levelTwo;
+    public int habLevel;
+    public double z = 1.33;
+
+    //pixy
+    public double turnPower = 0.2; //0.28
+    public double higherTurnPower = 0.25; //0.33
+    public int midPoint = 34;
+    public int margin = 1; //set margin of error where it wont move at all (prevents jittering)
+    public int biggerMargin = 8;
+
+    //arm and elevator
+    public boolean withinElevatorTolerance = false;
+    public boolean withinArmTolerance = false;
 
     //Raising the elevator until position is reached
     public void raiseElevator(double position, PIDModule elevatorPID){

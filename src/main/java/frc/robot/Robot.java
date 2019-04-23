@@ -274,10 +274,10 @@ public class Robot extends TimedRobot {
 		else rightSideSetNum = -1;
 
 		if (leftJoystick.getRawButtonPressed(5)){
-			autoProgram = new MASideAutoPixy();
+			autoProgram = new MASideAutoCargo();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
-			autoProgram.lastStep = 15;
+			autoProgram.lastStep = 11;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(6)){
 			autoProgram = new MAShipFrontHatch1Auto();

@@ -9,7 +9,6 @@ public class MASideAuto extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
-    double z = 1.33;
     double louWizardry = 0;
     //int LeftSide = 1;
     //-1 is left, 1 is right
@@ -35,8 +34,6 @@ public class MASideAuto extends GenericAuto {
         } else {
             zEffective = z;
         }
-
-        levelTwo = true;
     }
 
     @Override

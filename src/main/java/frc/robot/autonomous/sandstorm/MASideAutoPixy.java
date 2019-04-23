@@ -10,13 +10,11 @@ public class MASideAutoPixy extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
-    double z = 1.33;
     double louWizardry = 0;
 
     //-1 is left, 1 is right
     int turncounter = 0;
     double correction = 0;
-    double moementumCorrection = 100;
     double zEffective;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
@@ -28,18 +26,13 @@ public class MASideAutoPixy extends GenericAuto {
     double elevatorFloor = -28.6/*-3.13*/;
     double armOut = 59;
 
-    int midPoint = 34;
+
     int topXVal;
-
-    int margin = 1;
-    int biggerMargin = 8;
-
     int numTimesNull = 0;
 
     @Override
     public void init() {
         autoStep = -2;
-        //autoStep = 9;
         robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.resetError();
@@ -52,14 +45,11 @@ public class MASideAutoPixy extends GenericAuto {
         } else {
             zEffective = z;
         }
-
-        levelTwo = false;
     }
 
     @Override
     public void printSmartDashboard() {
-        /*
-        correction = MOErioAuto.getCorrection();
+        /*correction = MOErioAuto.getCorrection();
         SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", correction);
         SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());

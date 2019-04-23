@@ -12,7 +12,6 @@ public class MASideAutoSimpleArm extends GenericAuto {
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
 
     double louWizardry = 0;
-    double z = 1.33;
     double zEffective;
     double correction = 0;
     double elevatorCorrection;
@@ -50,8 +49,6 @@ public class MASideAutoSimpleArm extends GenericAuto {
         } else {
             zEffective = z;
         }
-
-        levelTwo = false;
     }
 
     @Override

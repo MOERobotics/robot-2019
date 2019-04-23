@@ -12,17 +12,11 @@ public class MARocketHatch1Auto extends GenericAuto  {
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
 
     //-1 is left, 1 is right
-    double z = 1.33;
     double louWizardry = 0;
     double zEffective;
     double correction = 0;
 
-    //unused
-    int turncounter = 0;
-    double moementumCorrection = 100;
-
     //position and power variables
-    boolean levelTwo = false;
     int approachHeading = 40+5;
 
     //elevator and arm PID
@@ -33,9 +27,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
     double armOut = /*19*/20;
 
     //pixy constants + variables
-    int midPoint = 34;
-    int margin = 1;
-    int biggerMargin = 8;
     int topXVal;
     int numTimesNull = 0;
     int pixyWait = 0;
@@ -43,7 +34,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
     @Override
     public void init() {
         autoStep = -2;
-        //autoStep = 9;
         robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.resetError();
@@ -56,8 +46,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
         } else {
             zEffective = z;
         }
-
-        robot.shiftHigh();
 
         withinElevatorTolerance = false;
         withinArmTolerance = false;
@@ -82,7 +70,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
     @Override
     public void run() {
-        SmartDashboard.putNumber("autoStep", autoStep);
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
         louWizardry = leftDistance - rightDistance * zEffective;
@@ -134,19 +121,17 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*continue to raise the elevator*/
             case 0:
-                if(!withinElevatorTolerance){
+                if(!withinElevatorTolerance) {
                     raiseElevator(elevatorDeploy, elevatorPID);
-                }else{
+                } else {
                     PIDElevator(elevatorDeploy,elevatorPID);
                     autoStep++;
                 }
                 break;
 
-
             /*keep still*/
             case 1:
                 PIDElevator(elevatorDeploy, elevatorPID);
-
                 autoStep++;
                 break;
 
@@ -170,9 +155,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 robot.setDrivePower(0.6 * (1 + correction),
                         0.6 * (1 - correction));
 
-                if(!withinArmTolerance){
+                if(!withinArmTolerance) {
                     raiseArm(armOut, armPID);
-                }else{
+                } else {
                     autoStep++;
                 }
                 break;
@@ -197,7 +182,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
                     elevatorPID.resetError();
                 }
                 break;
-
 
             /*auto target w pixy and keeping elevator still*/
             case 5:
@@ -262,7 +246,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
-
             //fingers in
             case 8:
                 /* LFR */
@@ -283,6 +266,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //turn in place until reached 80 degrees
             case 10:
                 robot.setDrivePower(0.5*LeftSide,-0.5*LeftSide);
                 if(reachedHeadingHands(80,1*LeftSide)){
@@ -292,8 +276,8 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //roll forward toward the wall
             case 11:
-
                 MOErioAuto.setHeading(robot.getHeadingDegrees()-90*LeftSide);
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.3*(1 + correction),0.3*(1 - correction));
@@ -304,6 +288,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //turn to 170 degrees
             case 12:
                 robot.setDrivePower(0.5*LeftSide,-0.5*LeftSide);
                 if(reachedHeadingHands(170, LeftSide)){
@@ -312,6 +297,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //roll toward the loading station until lidaar hits 900
             case 13:
                 MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
@@ -321,8 +307,8 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
+            //pixy align at the loading station
             case 14:
-
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
@@ -360,16 +346,39 @@ public class MARocketHatch1Auto extends GenericAuto  {
                         robot.stopDriving();
                     }
                 }
-
                 break;
 
-
+            //spear out, roll forward - ADDED BEFORE DETROIT, NEED TO TEST!
             case 15:
+                robot.spearOut();
+                robot.setDrivePower(0.3,0.3);
+                if(robot.lidar[0] < 500){
+                    autoStep++;
+                    startTime = System.currentTimeMillis();
+                }
+                break;
+
+            //drive forward for half a second until bot hits the wall
+            case 16:
+                robot.setDrivePower(0.2,0.2);
+                if(System.currentTimeMillis() - 500 > startTime){
+                    autoStep++;
+                }
+                break;
+
+            //fingers out to grab the hatch panel
+            case 17:
+                robot.spearUnhook();
+                robot.stopDriving();
+                autoStep++;
+                break;
+
+            //fin.
+            case 18:
                 robot.stopDriving();
                 break;
         }
     }
-
 
     //48 in, 60/50 deg, elevator up, arm up, elevator down, 86 inches, autoapproach
 

@@ -10,7 +10,6 @@ public class MAFrontAuto extends GenericAuto {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
     long startTime = 0;
-    double z = 1.81;
     double louWizardry = 0;
     //int LeftSide = 1;
     int turncounter = 0;
@@ -41,8 +40,7 @@ public class MAFrontAuto extends GenericAuto {
 
     @Override
     public void printSmartDashboard() {
-
-        SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
+        /*SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", MOErioAuto.getCorrection());
         SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());
         SmartDashboard.putNumber("kI: ", MOErioAuto.pidController.getI());
@@ -54,7 +52,7 @@ public class MAFrontAuto extends GenericAuto {
         SmartDashboard.putNumber("Abs Right", Math.abs(robot.getDistanceRightInches()));
         SmartDashboard.putBoolean("Level Two", levelTwo);
         SmartDashboard.putNumber("Left Side", LeftSide);
-        SmartDashboard.putNumber("Arc Lengths: ", 49);
+        SmartDashboard.putNumber("Arc Lengths: ", 49);*/
     }
 
 
@@ -62,7 +60,7 @@ public class MAFrontAuto extends GenericAuto {
     public void run() {
         double leftDistance = Math.abs(robot.getDistanceLeftInches());
         double rightDistance = Math.abs(robot.getDistanceRightInches());
-//LFR        louWizardry = leftDistance - rightDistance / zEffective;
+        //LFR        louWizardry = leftDistance - rightDistance / zEffective;
 
         switch (autoStep) {
             case -2:
@@ -166,6 +164,7 @@ public class MAFrontAuto extends GenericAuto {
 
             case 4:
                 robot.stopDriving();
+                break;
         }
     }
 }

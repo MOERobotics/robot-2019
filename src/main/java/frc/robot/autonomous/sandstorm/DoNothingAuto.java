@@ -6,13 +6,13 @@ public class DoNothingAuto extends GenericAuto {
 
     @Override
     public void init() {
-
+        autoStep = 0;
     }
 
     @Override
     public void run() {
         switch(autoStep) {
-            case 1:
+            case 0:
                 robot.setDrivePower(0, 0);
                 break;
 

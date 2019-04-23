@@ -11,39 +11,29 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
     //-1 is left, 1 is right
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
-    double z = 1.33;
     double louWizardry = 0;
     double correction = 0;
     double zEffective;
 
-    //unused
-    double moementumCorrection = 100;
-    int turncounter = 0;
-    double orientationTolerance = 0.5;
+    public double elevatorDeploy = 13.1;
+    public double elevatorFloor = -30/*-3.13*/;
+    public double armOut = 20;
 
     //constants
-    boolean levelTwo = false;
     int approachHeading = 8;
 
     //elevator and arm PID
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double elevatorDeploy = 13.1;
-    double elevatorFloor = -30/*-3.13*/;
-    double armOut = 20;
 
     //pixy constants
-    int midPoint = 34;
     int topXVal;
-    int margin = 2;
-    int biggerMargin = 6;
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
 
     @Override
     public void init() {
         autoStep = -2;
-        //autoStep = 9;
         robot.resetDriveEncoders();
         robot.resetYaw();
         MOErioAuto.resetError();
@@ -59,12 +49,15 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
         withinElevatorTolerance = false;
         withinArmTolerance = false;
+
+        //change if needed ???
+        margin = 2;
+        biggerMargin = 6;
     }
 
     @Override
     public void printSmartDashboard() {
-        /*
-        correction = MOErioAuto.getCorrection();
+        /*correction = MOErioAuto.getCorrection();
         SmartDashboard.putNumber("Error: ", MOErioAuto.getInput());
         SmartDashboard.putNumber("Correction: ", correction);
         SmartDashboard.putNumber("kP: ", MOErioAuto.pidController.getP());
@@ -269,7 +262,6 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
 
         }
     }
-
 
     //48 in, 60/50 deg, elevator up, arm up, elevator down, 86 inches, autoapproach
 

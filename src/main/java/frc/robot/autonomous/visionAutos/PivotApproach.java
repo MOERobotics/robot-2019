@@ -4,14 +4,8 @@ import frc.robot.autonomous.GenericAuto;
 
 public class PivotApproach extends GenericAuto {
 
-    int midPoint = 34;
-    int margin = 1; //set margin of error where it wont move at all (prevents jittering)
-    int biggerMargin = 8;
-
     int numTimesNull = 0;
-
     long startTime;
-
     int pixyWait = 0;
 
     @Override
@@ -23,23 +17,6 @@ public class PivotApproach extends GenericAuto {
     public void run() {//if we get nothing... do nothing.
         //if we only get one vector, don't try to get a second vector
         //if we get two vectors, proceed
-        /*
-        if(robot.pixy.vec){
-            Pixy2Line.Vector vec = robot.pixyXY[0];
-            if(vec != null){
-                System.out.println(vec.toString());
-            }else{
-                System.out.println("Vec was null");
-            }
-        }else{
-            System.out.println("No vecs found");
-        }
-        */
-
-        //Pixy2Line.Vector[] vectors = robot.pixyXY;
-
-        //Pixy2Line.Vector vectors[] = new Pixy2Line.Vector[1];
-        //System.out.println(vectors.length);
 
         //Pixy2Line.Vector vec;
         if (robot.pixy.vec.length != 1) {
@@ -52,14 +29,6 @@ public class PivotApproach extends GenericAuto {
         } else {
             //vec = vectors[0]; //set vec
             numTimesNull = 0; //reset null exit counter
-            //System.out.println("Pixy Vector: "+vec.toString());
-            //System.out.println("test 1");
-
-
-            /*if(robot.pixy.vec.length == 1){
-                System.out.println(robot.pixy.vec[0].getX0());
-            }*/
-
 
             if(robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null){
                 //System.out.println("test 2");
