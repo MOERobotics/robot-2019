@@ -78,6 +78,9 @@ public class Robot extends TimedRobot {
     private boolean pixyAligning = false;
     private boolean pixyApproaching = false;
 
+	private boolean commitment = true;
+    private boolean endToEndQuality = true;
+
     //for the lil nudge
 	int step = 1;
 	double currentEncoder;
@@ -230,8 +233,9 @@ public class Robot extends TimedRobot {
 
 		if (leftJoystick.getRawButtonPressed (11)) robotHardware.setOffsets();
 		if (leftJoystick.getRawButtonReleased(11)) robotHardware.clearOffsets();
-		if (leftJoystick.getThrottle() < -0.95) robotHardware.setSafetyOverride(true);
-		else if (leftJoystick.getThrottle() > 0.95) robotHardware.setSafetyOverride(false);
+
+		if (leftJoystick.getRawButtonPressed(13)) robotHardware.setSafetyOverride(true);
+		else if (leftJoystick.getRawButtonReleased(13)) robotHardware.setSafetyOverride(false);
 
 		robotHardware.piXY = piClient.getCentroidXY();
 
@@ -261,9 +265,7 @@ public class Robot extends TimedRobot {
 		}
 
 		if (leftJoystick.getRawButtonPressed(11)) {
-			habLevelSet = true;
-		} else if (leftJoystick.getRawButtonPressed(12)){
-			habLevelSet = false;
+			habLevelSet = !habLevelSet;
 		}
 
 		if (leftJoystick.getRawButtonPressed(16)) {
@@ -277,19 +279,19 @@ public class Robot extends TimedRobot {
 			autoProgram = new MASideAutoCargo();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
-			autoProgram.lastStep = 11;
+			autoProgram.lastStep = 365;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(6)){
 			autoProgram = new MAShipFrontHatch1Auto();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
-			autoProgram.lastStep = 4234;
+			autoProgram.lastStep = 365;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(7)){
 			autoProgram = new MARocketHatch1Auto();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
-			autoProgram.lastStep = 4234;
+			autoProgram.lastStep = 365;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(8)){
 			autoProgram = new DriveStraightAuto();
@@ -301,7 +303,7 @@ public class Robot extends TimedRobot {
 			autoProgram = new MAShipFrontHatch1ReloadAuto();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
-			autoProgram.lastStep = 4234;
+			autoProgram.lastStep = 365;
 			autoProgram.robot = robotHardware;
         } else if (leftJoystick.getRawButtonPressed(10)) {
 			autoProgram = new DoNothingAuto();
