@@ -15,6 +15,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
     double louWizardry = 0;
     double zEffective;
     double correction = 0;
+    double drivePower;
 
     //position and power variables
     int approachHeading = 40+5;
@@ -254,8 +255,119 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 autoStep++;
                 robot.resetDriveEncoders();
                 break;
+                //diverges here
 
-            //back off for ????? in
+            //back away until off of line (need value for this)
+            case 9:
+                robot.spearHook();
+                robot.spearIn();
+                robot.setDrivePower(-0.2,-0.2);
+                if(Math.abs(robot.getDistanceLeftInches()) > 12){
+                    autoStep++;
+                }
+                break;
+
+            //turn until facing loading station
+            case 10:
+                robot.setDrivePower(0.5*LeftSide,-0.5*LeftSide);
+                if(reachedHeadingHands(170,1*LeftSide)){
+                    autoStep++;
+                    MOErioAuto.resetError();
+                    robot.resetDriveEncoders();
+                }
+                break;
+
+            //drive until at loading station; ramps power up, then down (CHECK ENCODER VALUES)
+            case 11:
+                MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
+                correction = MOErioAuto.getCorrection();
+                if (leftDistance < 36) {
+                    drivePower = robot.rampPower(0.3,0.8,0,36,leftDistance);
+                } else if (leftDistance > 36 && leftDistance < 144){
+                    drivePower = 0.8;
+                } else if (leftDistance > 144) {
+                    drivePower = robot.rampPower(0.8, 0.3, 144, 180, leftDistance);
+                }
+                robot.setDrivePower(drivePower*(1 + correction), drivePower*(1 - correction));
+
+                if (robot.getDistanceLeftInches() > 180) {
+                    robot.setDrivePower(0, 0);
+                    autoStep++;
+                }
+                break;
+
+            //pixy align
+            case 12:
+                if (robot.pixy.vec.length != 1) {
+                    //Null counter, if not detecting pixy lines, don't move
+                    numTimesNull++;
+                    if (numTimesNull > 4){
+                        robot.setDrivePower(0, 0);
+                    }
+                } else {
+                    numTimesNull = 0; //reset null exit counter
+
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
+                        }
+                    }
+
+                    if(pixyWait < 5){ pixyWait++; break; }
+                    pixyWait = 0;
+
+                    if (topXVal > midPoint + margin) {
+                        if (topXVal > midPoint + biggerMargin) {
+                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
+                        } else {
+                            robot.setDrivePower(turnPower, -turnPower);
+                        }
+                    } else if (topXVal < midPoint - margin) {
+                        if (topXVal < midPoint - biggerMargin) {
+                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
+                        } else {
+                            robot.setDrivePower(-turnPower, turnPower);
+                        }
+                    } else {
+                        autoStep++;
+                        robot.stopDriving();
+                    }
+                }
+                break;
+
+            //spear out, roll forward - ADDED BEFORE DETROIT, NEED TO TEST!
+            case 13:
+                robot.spearOut();
+                robot.setDrivePower(0.3,0.3);
+                if(robot.lidar[0] < 500){
+                    autoStep++;
+                    startTime = System.currentTimeMillis();
+                }
+                break;
+
+            //drive forward for half a second until bot hits the wall
+            case 14:
+                robot.setDrivePower(0.2,0.2);
+                if(System.currentTimeMillis() - 500 > startTime){
+                    autoStep++;
+                }
+                break;
+
+            //fingers out to grab the hatch panel
+            case 15:
+                robot.spearUnhook();
+                robot.stopDriving();
+                autoStep++;
+                break;
+
+            //fin.
+            case 16:
+                robot.stopDriving();
+                break;
+
+            /*//back off for ????? in
             //spear in
             case 9:
                 robot.spearHook();
@@ -297,7 +409,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 }
                 break;
 
-            //roll toward the loading station until lidaar hits 900
+            //roll toward the loading station until lidar hits 900
             case 13:
                 MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
@@ -377,6 +489,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             case 18:
                 robot.stopDriving();
                 break;
+            */
         }
     }
 
