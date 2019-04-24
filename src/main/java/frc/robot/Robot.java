@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto 	autoProgram   = new MARocketHatch1Auto();
+	private GenericAuto 	autoProgram   = new DeployArm();
 	private GenericAuto	    hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto     hab2Climb     = new AutoFloatingFullRetraction();
 	private GenericAuto 	pixyAlign 	= new PivotBot();
@@ -448,8 +448,8 @@ public class Robot extends TimedRobot {
 			robotHardware.shiftDrive(shiftingHigh);
 
 			//hatchGrab
-			if      (functionStick.getAButton()) robotHardware.spearHook ();
-			else if (functionStick.getBButton()) robotHardware.spearUnhook();
+			if      (functionStick.getAButton()) robotHardware.spearUnhook ();
+			else if (functionStick.getBButton()) robotHardware.spearHook();
 			if      (functionStick.getXButton()) robotHardware.spearIn    ();
 			else if (functionStick.getYButton()) robotHardware.spearOut   ();
 
@@ -476,7 +476,7 @@ public class Robot extends TimedRobot {
 			else if (elevatorPower > 0) elevatorPower -= 0.3;
 			else if (elevatorPower < 0) elevatorPower += 0.3;
 			if (elevatorPower != 0) noPosition();
-			robotHardware.driveElevator(elevatorPower*0.8);
+			robotHardware.driveElevator(elevatorPower);
 
 			//Climbing
 			if (leftJoystick.getRawButtonPressed(8)) {

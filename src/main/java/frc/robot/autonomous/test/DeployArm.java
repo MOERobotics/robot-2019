@@ -11,7 +11,7 @@ public class DeployArm extends GenericAuto {
     double armCorrection;
     double armPowerBias = 0;
     double elevatorDeploy = 13.1;
-    double elevatorFloor = -28.6-3.13;
+    double elevatorFloor = -31;
     double armOut = 19;
 
     @Override
@@ -19,12 +19,10 @@ public class DeployArm extends GenericAuto {
         autoStep = 0;
         elevatorPID.resetError();
         armPID.resetError();
-
     }
 
     @Override
     public void printSmartDashboard(){
-
         SmartDashboard.putNumber("Elevator Error: ", elevatorPID.getInput());
         SmartDashboard.putNumber("Arm Error: ", armPID.getInput());
         SmartDashboard.putNumber("Elevator Correction: ", elevatorCorrection);
@@ -35,7 +33,6 @@ public class DeployArm extends GenericAuto {
         SmartDashboard.putNumber("Arm kP: ", armPID.pidController.getP());
         SmartDashboard.putNumber("Arm kI: ", armPID.pidController.getI());
         SmartDashboard.putNumber("Arm kD: ", armPID.pidController.getD());
-
     }
 
     @Override
