@@ -179,7 +179,7 @@ public class MASideAutoCargo extends GenericAuto {
 
                 robot.setDrivePower(-0.5 * LeftSide, 0.5 * LeftSide);
 
-                if (reachedHeadingHands(80, -1 * LeftSide)) {
+                if (reachedHeadingHands(75, -1 * LeftSide)) {
                     //MOErioTurn.resetError();
                     robot.setDrivePower(0,0);
                     autoStep++;
