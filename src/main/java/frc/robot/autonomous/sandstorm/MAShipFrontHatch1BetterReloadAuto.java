@@ -291,6 +291,7 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 robot.setDrivePower(-0.3 * (1 - correction),-0.3 * (1 + correction));
                 if(leftDistance > 12){ //this distance needs to be confirmed
                     autoStep++;
+                    robot.setDrivePower(0,0);
                 }
                 break;
 
