@@ -18,7 +18,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
     double drivePower;
 
     //position and power variables
-    int approachHeading = 40+5;
+    int approachHeading = 45;
 
     //elevator and arm PID
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
@@ -97,7 +97,15 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
-                robot.setDrivePower((0.4) * (1 + correction), (0.4) * (1 - correction));
+                if (leftDistance<36)
+                {
+                    drivePower = robot.rampPower(0.3,0.8,0,36,leftDistance);
+                }
+                else
+                {
+                    drivePower = 0.8;
+                }
+                robot.setDrivePower((drivePower) * (1 + correction), (drivePower) * (1 - correction));
 
                 if(!withinElevatorTolerance){
                     raiseElevator(elevatorDeploy, elevatorPID);
@@ -140,7 +148,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*turn towards the rocket*/
             case 2:
-                /* LFR */
                 if (reachedHeadingHands(approachHeading, LeftSide)) {
                     autoStep++;
                     robot.resetDriveEncoders();
@@ -248,6 +255,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 500 > startTime){
                     autoStep++;
+                    robot.setDrivePower(0,0);
                 }
                 break;
 
@@ -263,9 +271,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //back away until off of line (need value for this)
             case 9:
-                /*robot.spearHook();
                 robot.spearIn();
-                robot.setDrivePower(-0.2,-0.2);
+                robot.spearHook();
+                /*robot.setDrivePower(-0.2,-0.2);
                 if(Math.abs(robot.getDistanceLeftInches()) > 12){
                     autoStep++;
                 }*/
@@ -279,6 +287,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                     autoStep++;
                     MOErioAuto.resetError();
                     robot.resetDriveEncoders();
+                    robot.stopDriving();
                 }
                 break;
 
@@ -293,7 +302,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 } else if (leftDistance > 125) {
                     drivePower = robot.rampPower(0.8, 0.3, 125, 149, leftDistance);
                 }
-                robot.setDrivePower(drivePower*(1 + correction), drivePower*(1 - correction));
+                robot.setDrivePower(drivePower*(1 - correction), drivePower*(1 + correction));
 
                 if (robot.getDistanceLeftInches() > 149) {
                     robot.setDrivePower(0, 0);
@@ -361,6 +370,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 500 > startTime){
                     autoStep++;
+                    robot.stopDriving();
                 }
                 break;
 

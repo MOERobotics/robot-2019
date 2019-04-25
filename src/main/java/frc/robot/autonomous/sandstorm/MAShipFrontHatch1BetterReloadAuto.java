@@ -130,7 +130,7 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
             /*raise arm*/
             case 1:
                 robot.stopDriving();
-                PIDElevator(elevatorDeploy,elevatorPID);
+                PIDElevator(elevatorDeploy, elevatorPID);
 
                 if(!withinArmTolerance){
                     raiseArm(armOut,armPID);
@@ -154,7 +154,7 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 robot.setDrivePower(0.4 * (1 + correction),
                         0.4 * (1 - correction));
 
-                if (robot.getDistanceLeftInches() > 64) {
+                if (robot.getDistanceLeftInches() > 55) { //64
                     startTime = System.currentTimeMillis();
                     autoStep++;
                 }
@@ -162,8 +162,8 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //auto targeting
             case 4:
-                PIDElevator(elevatorDeploy,elevatorPID);
-                PIDArm(armOut,armPID);
+                PIDElevator(elevatorDeploy, elevatorPID);
+                PIDArm(armOut, armPID);
 
                 currentTime = System.currentTimeMillis() - startTime;
                 drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
@@ -183,9 +183,12 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                     numTimesNull = 0; //reset null exit counter
                     if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
                         //which point of vector is higher on screen? get that point's X val
-                        topXVal = robot.pixy.vec[0].getX1();
+                        //topXVal = robot.pixy.vec[0].getX1();
+                        topXVal = (int) (0.9*robot.pixy.vec[0].getX1() + 0.1*robot.pixy.vec[0].getX0());
                         if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
-                            topXVal = robot.pixy.vec[0].getX0();
+                            //topXVal = robot.pixy.vec[0].getX0();
+                            topXVal = (int) (0.9*robot.pixy.vec[0].getX0() + 0.1*robot.pixy.vec[0].getX1());
+
                         }
                     }
                 }
@@ -277,7 +280,7 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //turn around 90 degrees to the right [left]
             case 12:
-                robot.setDrivePower(0.2*LeftSide,-0.2*LeftSide);
+                robot.setDrivePower(0.3*LeftSide,-0.3*LeftSide);
                 if(reachedHeadingHands(75,1*LeftSide)){
                     autoStep++;
                     robot.resetDriveEncoders();
