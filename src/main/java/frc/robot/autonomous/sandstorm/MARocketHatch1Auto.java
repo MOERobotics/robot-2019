@@ -184,13 +184,14 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
                 correction = MOErioAuto.getCorrection();
-                robot.setDrivePower(0.6 * (1 + correction),
-                        0.6 * (1 - correction));
+                robot.setDrivePower(0.5 * (1 + correction),
+                        0.5 * (1 - correction));
 
-                if(robot.getDistanceLeftInches() > 86){
+                if(robot.getDistanceLeftInches() > 80){ //86
                     autoStep++;
                     elevatorPID.resetError();
                     startTime = System.currentTimeMillis();
+                    robot.setDrivePower(0, 0);
                 }
                 break;
 
@@ -259,7 +260,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 PIDElevator(elevatorFloor,elevatorPID);
                 PIDArm(armOut, armPID);
 
-                robot.setDrivePower(0.2,0.2);
+                robot.setDrivePower(0.3,0.3);
                 if(System.currentTimeMillis() - 1000 > startTime){ //500
                     autoStep++;
                     robot.setDrivePower(0,0);
@@ -312,7 +313,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 PIDElevator(elevatorFloor,elevatorPID);
                 PIDArm(armOut, armPID);
 
-                MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
+                MOErioAuto.setHeading(180/Math.PI*(Math.sin((robot.getHeadingDegrees() + LeftSide*5) * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
                 if (leftDistance < 24) {
                     drivePower = robot.rampPower(0.3,0.8,0,24,leftDistance);

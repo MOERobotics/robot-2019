@@ -285,7 +285,7 @@ public class Robot extends TimedRobot {
 			autoProgram.lastStep = 365;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(6)){
-			autoProgram = new MAShipFrontHatch1Auto();
+			autoProgram = new MASideAutoHatch();
 			//autoProgram.LeftSide = rightSideSetNum;
 			//autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 365;
