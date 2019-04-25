@@ -31,6 +31,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
     int topXVal;
     int numTimesNull = 0;
     int pixyWait = 0;
+    int counter = 0;
 
     @Override
     public void init() {
@@ -186,7 +187,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*auto target w pixy and keeping elevator still*/
             case 5:
-
                 PIDElevator(elevatorFloor,elevatorPID);
 
                 if (robot.pixy.vec.length != 1) {
@@ -259,12 +259,13 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //back away until off of line (need value for this)
             case 9:
-                robot.spearHook();
+                /*robot.spearHook();
                 robot.spearIn();
                 robot.setDrivePower(-0.2,-0.2);
                 if(Math.abs(robot.getDistanceLeftInches()) > 12){
                     autoStep++;
-                }
+                }*/
+                autoStep++;
                 break;
 
             //turn until facing loading station
@@ -281,16 +282,16 @@ public class MARocketHatch1Auto extends GenericAuto  {
             case 11:
                 MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
-                if (leftDistance < 36) {
-                    drivePower = robot.rampPower(0.3,0.8,0,36,leftDistance);
-                } else if (leftDistance > 36 && leftDistance < 144){
+                if (leftDistance < 24) {
+                    drivePower = robot.rampPower(0.3,0.8,0,24,leftDistance);
+                } else if (leftDistance > 24 && leftDistance < 125){
                     drivePower = 0.8;
-                } else if (leftDistance > 144) {
-                    drivePower = robot.rampPower(0.8, 0.3, 144, 180, leftDistance);
+                } else if (leftDistance > 125) {
+                    drivePower = robot.rampPower(0.8, 0.3, 125, 149, leftDistance);
                 }
                 robot.setDrivePower(drivePower*(1 + correction), drivePower*(1 - correction));
 
-                if (robot.getDistanceLeftInches() > 180) {
+                if (robot.getDistanceLeftInches() > 149) {
                     robot.setDrivePower(0, 0);
                     autoStep++;
                 }
@@ -298,6 +299,8 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //pixy align
             case 12:
+                if(pixyWait < 5){ pixyWait++; break; }
+                pixyWait = 0;
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
@@ -306,8 +309,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-
-                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                    if(robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
                         //which point of vector is higher on screen? get that point's X val
                         topXVal = robot.pixy.vec[0].getX1();
                         if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
@@ -315,24 +317,27 @@ public class MARocketHatch1Auto extends GenericAuto  {
                         }
                     }
 
-                    if(pixyWait < 5){ pixyWait++; break; }
-                    pixyWait = 0;
-
                     if (topXVal > midPoint + margin) {
+                        counter = 0;
                         if (topXVal > midPoint + biggerMargin) {
                             robot.setDrivePower(higherTurnPower,-higherTurnPower);
                         } else {
                             robot.setDrivePower(turnPower, -turnPower);
                         }
                     } else if (topXVal < midPoint - margin) {
+                        counter = 0;
                         if (topXVal < midPoint - biggerMargin) {
                             robot.setDrivePower(-higherTurnPower,higherTurnPower);
                         } else {
                             robot.setDrivePower(-turnPower, turnPower);
                         }
                     } else {
-                        autoStep++;
-                        robot.stopDriving();
+                        robot.setDrivePower(0, 0);
+                        counter++;
+                        if (counter > 4) {
+                            autoStep++;
+                            counter = 0;
+                        }
                     }
                 }
                 break;

@@ -7,8 +7,8 @@ public class Cargo3 extends GenericAuto {
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
-    double armOut = /*21.3*/ 73;
-    double elevatorFloor = 43;
+    double armOut = /*21.3*/ 75;
+    double elevatorFloor = 40.7;
     boolean armControlling = false;
     boolean elevatorControlling = false;
     double armCorrection;
@@ -34,11 +34,11 @@ public class Cargo3 extends GenericAuto {
             }
             else if (robot.getArmEncoderCount()<armOut)
             {
-                robot.driveArm(0.4);
+                robot.driveArm(0.6);
             }
             else
             {
-                robot.driveArm(-0.4);
+                robot.driveArm(-0.6);
             }
         }
         else
@@ -54,11 +54,11 @@ public class Cargo3 extends GenericAuto {
                     elevatorPID.resetError();
                 } else if (robot.getElevatorEncoderCount()<elevatorFloor)
                 {
-                    robot.driveElevator(0.5);
+                    robot.driveElevator(0.8);
                 }
                 else
                 {
-                    robot.driveElevator(-0.5);
+                    robot.driveElevator(-0.8);
                 }
             }
             else

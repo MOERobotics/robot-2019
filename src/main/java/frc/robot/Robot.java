@@ -17,6 +17,7 @@ import frc.robot.autonomous.test.*;
 import frc.robot.autonomous.sandstorm.*;
 import frc.robot.autonomous.visionAutos.PivotApproach;
 import frc.robot.autonomous.visionAutos.PivotBot;
+import frc.robot.autonomous.visionAutos.PivotBot2;
 import frc.robot.genericrobot.*;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.vision.PiClient;
@@ -36,10 +37,10 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto 	autoProgram   = new DeployArm();
+	private GenericAuto 	autoProgram   = new MAShipFrontHatch1Auto();
 	private GenericAuto	    hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto     hab2Climb     = new AutoFloatingFullRetraction();
-	private GenericAuto 	pixyAlign 	= new PivotBot();
+	private GenericAuto 	pixyAlign 	= new PivotBot2();
 	private GenericAuto 	pixyApproach = new PivotApproach();
 
 	//presets
@@ -335,7 +336,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit () {
-		robotHardware.shiftLow();
         //autoProgram.autoStep = startAutoStep;
         ClimbEncoderOrigin = robotHardware.getClimberLEncoderCount();
 		autoEnable = false;
@@ -351,7 +351,6 @@ public class Robot extends TimedRobot {
         autoProgram.init();
 
         shiftingHigh = true;
-        robotHardware.shiftLow();
 	}
 
 	@Override
@@ -529,8 +528,17 @@ public class Robot extends TimedRobot {
             } else if (positionLock && pos != -1) {
                 if (cargo) cargoPos[pos].run();
                 else hatchPos[pos].run();
-            }
 
+				if (switchBox.getRawButtonPressed(2)) {
+					pos = 0;
+				}
+				else if (switchBox.getRawButtonPressed(3)) {
+					pos = 1;
+				}
+				else if (switchBox.getRawButtonPressed(4)) {
+					pos = 2;
+				}
+            }
 
             //DPAD
 			POVDirection controlPadDirection = POVDirection.getDirection(functionStick.getPOV());

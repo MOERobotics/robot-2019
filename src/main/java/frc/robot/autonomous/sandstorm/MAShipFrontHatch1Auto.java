@@ -30,6 +30,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
     int topXVal;
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
+    int counter = 0;
 
     @Override
     public void init() {
@@ -168,6 +169,8 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                 PIDElevator(elevatorDeploy, elevatorPID);
                 PIDArm(armOut, armPID);
 
+                if(pixyWait < 5){ pixyWait++; break; }
+                pixyWait = 0;
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
@@ -176,8 +179,7 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-
-                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                    if(robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
                         //which point of vector is higher on screen? get that point's X val
                         topXVal = robot.pixy.vec[0].getX1();
                         if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
@@ -185,24 +187,27 @@ public class MAShipFrontHatch1Auto extends GenericAuto  {
                         }
                     }
 
-                    if(pixyWait < 5){ pixyWait++; break; }
-                    pixyWait = 0;
-
                     if (topXVal > midPoint + margin) {
+                        counter = 0;
                         if (topXVal > midPoint + biggerMargin) {
                             robot.setDrivePower(higherTurnPower,-higherTurnPower);
                         } else {
                             robot.setDrivePower(turnPower, -turnPower);
                         }
                     } else if (topXVal < midPoint - margin) {
+                        counter = 0;
                         if (topXVal < midPoint - biggerMargin) {
                             robot.setDrivePower(-higherTurnPower,higherTurnPower);
                         } else {
                             robot.setDrivePower(-turnPower, turnPower);
                         }
                     } else {
-                        autoStep++;
-                        robot.stopDriving();
+                        robot.setDrivePower(0, 0);
+                        counter++;
+                        if (counter > 4) {
+                            autoStep++;
+                            counter = 0;
+                        }
                     }
                 }
                 break;

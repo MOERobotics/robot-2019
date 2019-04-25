@@ -7,6 +7,7 @@ public class PivotApproach extends GenericAuto {
     int numTimesNull = 0;
     long startTime;
     int pixyWait = 0;
+    int counter = 0;
 
     @Override
     public void init() {
@@ -40,27 +41,29 @@ public class PivotApproach extends GenericAuto {
 
                 switch (autoStep) {
                     case 1:
-                        double toMove = 0.0;
-
                         if(pixyWait < 5){ pixyWait++; break; }
                         pixyWait = 0;
 
                         if (topXVal > midPoint + margin) {
+                            counter = 0;
                             if (topXVal > midPoint + biggerMargin) {
-                                toMove = midPoint - topXVal;
                                 robot.setDrivePower(higherTurnPower,-higherTurnPower);
                             } else {
                                 robot.setDrivePower(turnPower, -turnPower);
                             }
                         } else if (topXVal < midPoint - margin) {
+                            counter = 0;
                             if (topXVal < midPoint - biggerMargin) {
-                                toMove = midPoint - topXVal;
                                 robot.setDrivePower(-higherTurnPower,higherTurnPower);
                             } else {
                                 robot.setDrivePower(-turnPower, turnPower);
                             }
                         } else {
-                            autoStep++;
+                            if (counter > 5) {
+                                counter = 0;
+                                autoStep++;
+                            }
+                            counter++;
                         }
 
                         break;

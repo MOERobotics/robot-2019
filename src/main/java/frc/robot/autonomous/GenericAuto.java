@@ -25,11 +25,11 @@ public abstract class GenericAuto {
     public double z = 1.33;
 
     //pixy
-    public double turnPower = 0.2; //0.28
-    public double higherTurnPower = 0.25; //0.33
+    public double turnPower = 0.14; //0.2
+    public double higherTurnPower = 0.22; //0.25
     public int midPoint = 34;
-    public int margin = 1; //set margin of error where it wont move at all (prevents jittering)
-    public int biggerMargin = 8;
+    public int margin = 2; //set margin of error where it wont move at all (prevents jittering)
+    public int biggerMargin = 16;
 
     //arm and elevator
     public boolean withinElevatorTolerance = false;
