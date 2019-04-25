@@ -27,6 +27,8 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
     int topXVal;
     int numTimesNull = 0;
     int pixyWait = 0; //frame counter for waiting between pixy adjustments
+    long currentTime;
+    int midCounter = 0;
 
     @Override
     public void init() {
@@ -152,7 +154,8 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 robot.setDrivePower(0.4 * (1 + correction),
                         0.4 * (1 - correction));
 
-                    if (robot.getDistanceLeftInches() > 64) {
+                if (robot.getDistanceLeftInches() > 64) {
+                    startTime = System.currentTimeMillis();
                     autoStep++;
                 }
                 break;
@@ -162,15 +165,22 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 PIDElevator(elevatorDeploy,elevatorPID);
                 PIDArm(armOut,armPID);
 
+                currentTime = System.currentTimeMillis() - startTime;
+                drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
+
+                if (pixyWait < 5) {
+                    pixyWait++;
+                    break;
+                }
+                pixyWait = 0;
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
-                    if (numTimesNull > 4){
+                    if (numTimesNull > 4) {
                         robot.setDrivePower(0, 0);
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-
                     if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
                         //which point of vector is higher on screen? get that point's X val
                         topXVal = robot.pixy.vec[0].getX1();
@@ -178,28 +188,23 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                             topXVal = robot.pixy.vec[0].getX0();
                         }
                     }
-
-                    if(pixyWait < 5){ pixyWait++; break; }
-                    pixyWait = 0;
-
-                    if (topXVal > midPoint + margin) {
-                        if (topXVal > midPoint + biggerMargin) {
-                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
-                        } else {
-                            robot.setDrivePower(turnPower, -turnPower);
-                        }
-                    } else if (topXVal < midPoint - margin) {
-                        if (topXVal < midPoint - biggerMargin) {
-                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
-                        } else {
-                            robot.setDrivePower(-turnPower, turnPower);
-                        }
-                    } else {
-                        autoStep++;
-                        robot.stopDriving();
-                    }
                 }
 
+                if ( (currentTime < 2000) && (Math.abs(topXVal-midPoint) > margin)) {
+                    if (topXVal - midPoint > margin) {
+                        midCounter = 0;
+                        robot.setDrivePower(drivePower, -drivePower);
+                    } else if (topXVal - midPoint < -margin) {
+                        midCounter = 0;
+                        robot.setDrivePower(-drivePower, drivePower);
+                    }
+                } else {
+                    ++midCounter;
+                    robot.setDrivePower(0, 0);
+                    if ((midCounter>5) || (currentTime >= 2000)) {
+                        autoStep++;
+                    }
+                }
                 break;
 
             //lower elevator
@@ -228,19 +233,28 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
             case 7:
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 1000 > startTime){
+                    startTime = System.currentTimeMillis();
+                    autoStep++;
+                }
+                break;
+
+            //pause for 3 sec
+            case 8:
+                robot.setDrivePower(0,0);
+                if (System.currentTimeMillis() - 3000 > startTime) {
                     autoStep++;
                 }
                 break;
 
             //fingers in
-            case 8:
+            case 9:
                 robot.spearHook();
                 robot.stopDriving();
                 autoStep++;
                 break;
 
             //roll back until lidar hits 500
-            case 9:
+            case 10:
                 robot.setDrivePower(-0.3,-0.3);
                 if(robot.lidar[0] > 500){ //flipped the < – CHECK THIS!
                     autoStep++;
@@ -250,19 +264,19 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 break;
 
             //fingers in, spear in. roll backwards
-            case 10:
+            case 11:
                 robot.spearIn();
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(-0.3 * (1 - correction),-0.3 * (1 + correction));
                 if(leftDistance > 12){ //this distance needs to be confirmed
-                    autoStep=15;
+                    autoStep++;
                 }
                 break;
 
             //turn around 90 degrees to the right [left]
-            case 11:
+            case 12:
                 robot.setDrivePower(0.2*LeftSide,-0.2*LeftSide);
                 if(reachedHeadingHands(75,1*LeftSide)){
                     autoStep++;
@@ -272,27 +286,29 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 break;
 
             //roll forward towards the wall until lidar hits 360
-            case 12:
+            case 13:
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - 90*LeftSide);
                 correction = MOErioAuto.getCorrection();
 
                 robot.setDrivePower(0.3*(1+correction), 0.3*(1-correction));
                 if(robot.lidar[0] < 360){
+                    robot.setDrivePower(0,0);
                     autoStep++;
                 }
                 break;
 
             //turn around another 90 degrees (so your yaw will be 180) to the right [left]
-            case 13:
+            case 14:
                 robot.setDrivePower(0.2*LeftSide, -0.2*LeftSide);
                 if(reachedHeadingHands(170,1*LeftSide)){
                     autoStep++;
                     MOErioAuto.resetError();
+                    robot.resetDriveEncoders();
                 }
                 break;
 
             //roll forwards + ramp power! about 108 inches (is this distance correct on MOEva as well? do we need to ramp?)
-            case 14:
+            case 15:
                 MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
                 if (leftDistance < 22) {
@@ -300,39 +316,47 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 } else if (leftDistance > 22 && leftDistance < 86){
                     drivePower = 0.8;
                 } else if (leftDistance > 86) {
-                    drivePower = robot.rampPower(0.8, 0.3, 22, 86, leftDistance);
+                    drivePower = robot.rampPower(0.8, 0.3, 86, 108, leftDistance);
                 }
-                robot.setDrivePower(drivePower*(1 + correction), drivePower*(1 - correction));
+                robot.setDrivePower(drivePower*(1 - correction), drivePower*(1 + correction));
 
                 if (robot.getDistanceLeftInches() > 108) {
-                    robot.setDrivePower(0, 0);
                     autoStep++;
                 }
                 break;
 
             //continue until lidar is less than 800.
-            case 15:
+            case 16:
                 MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
 
-                robot.setDrivePower(0.3*(1 + correction), drivePower*(1 - correction));
+                robot.setDrivePower(0.3*(1 - correction), drivePower*(1 + correction));
 
                 if(robot.lidar[0] < 800){
                     autoStep++;
+                    robot.setDrivePower(0,0);
+                    startTime = System.currentTimeMillis();
                 }
                 break;
 
             //straighten using pixy align
-            case 16:
+            case 17:
+                currentTime = System.currentTimeMillis() - startTime;
+                drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
+
+                if (pixyWait < 5) {
+                    pixyWait++;
+                    break;
+                }
+                pixyWait = 0;
                 if (robot.pixy.vec.length != 1) {
                     //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
-                    if (numTimesNull > 4){
+                    if (numTimesNull > 4) {
                         robot.setDrivePower(0, 0);
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-
                     if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
                         //which point of vector is higher on screen? get that point's X val
                         topXVal = robot.pixy.vec[0].getX1();
@@ -340,57 +364,54 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                             topXVal = robot.pixy.vec[0].getX0();
                         }
                     }
+                }
 
-                    if(pixyWait < 5){ pixyWait++; break; }
-                    pixyWait = 0;
-
-                    if (topXVal > midPoint + margin) {
-                        if (topXVal > midPoint + biggerMargin) {
-                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
-                        } else {
-                            robot.setDrivePower(turnPower, -turnPower);
-                        }
-                    } else if (topXVal < midPoint - margin) {
-                        if (topXVal < midPoint - biggerMargin) {
-                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
-                        } else {
-                            robot.setDrivePower(-turnPower, turnPower);
-                        }
-                    } else {
+                if ( (currentTime < 2000) && (Math.abs(topXVal-midPoint) > margin)) {
+                    if (topXVal - midPoint > margin) {
+                        midCounter = 0;
+                        robot.setDrivePower(drivePower, -drivePower);
+                    } else if (topXVal - midPoint < -margin) {
+                        midCounter = 0;
+                        robot.setDrivePower(-drivePower, drivePower);
+                    }
+                } else {
+                    ++midCounter;
+                    robot.setDrivePower(0, 0);
+                    if ((midCounter>5) || (currentTime >= 2000)) {
                         autoStep++;
-                        robot.stopDriving();
                     }
                 }
                 break;
 
             //now roll forward until lidar hits 475 + spear out
             //YOU SHOULD BE IN FRONT OF THE LOADING STATION ACCEPTING A HATCH.
-            case 17:
+            case 18:
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
-                if(robot.lidar[0]<475){//this needs to be confirmed
+                if(robot.lidar[0] < 475){//this needs to be confirmed
                     autoStep++;
                     startTime = System.currentTimeMillis();
                 }
                 break;
 
             //roll another second.
-            case 18:
+            case 19:
                 robot.setDrivePower(0.3,0.3);
 
                 if(System.currentTimeMillis() - 1000 > startTime){
                     autoStep++;
+                    robot.setDrivePower(0,0);
                 }
                 break;
 
             //fingers out
-            case 19:
+            case 20:
                 robot.spearUnhook();
                 autoStep++;
                 break;
 
             //stop. (drive backwards?)
-            case 20:
+            case 21:
                 robot.stopDriving();
                 break;
 

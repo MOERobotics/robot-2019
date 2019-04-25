@@ -16,6 +16,7 @@ import frc.robot.autonomous.presets.*;
 import frc.robot.autonomous.test.*;
 import frc.robot.autonomous.sandstorm.*;
 import frc.robot.autonomous.visionAutos.PivotApproach;
+import frc.robot.autonomous.visionAutos.PivotApproach2;
 import frc.robot.autonomous.visionAutos.PivotBot;
 import frc.robot.autonomous.visionAutos.PivotBot2;
 import frc.robot.genericrobot.*;
@@ -41,7 +42,7 @@ public class Robot extends TimedRobot {
 	private GenericAuto	    hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto     hab2Climb     = new AutoFloatingFullRetraction();
 	private GenericAuto 	pixyAlign 	= new PivotBot2();
-	private GenericAuto 	pixyApproach = new PivotApproach();
+	private GenericAuto 	pixyApproach = new PivotApproach2();
 
 	//presets
 	private GenericAuto[] cargoPos = {new Cargo1(), new Cargo2(), new Cargo3()};
@@ -301,7 +302,7 @@ public class Robot extends TimedRobot {
 			autoProgram.lastStep = 1;
 			autoProgram.robot = robotHardware;
 		} else if (leftJoystick.getRawButtonPressed(9)) {
-			autoProgram = new MAShipFrontHatch1ReloadAuto();
+			autoProgram = new MAShipFrontHatch1BetterReloadAuto();
 			autoProgram.LeftSide = rightSideSetNum;
 			autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 365;

@@ -1,8 +1,8 @@
 package frc.robot.autonomous.visionAutos;
 
-import frc.robot.autonomous.*;
+import frc.robot.autonomous.GenericAuto;
 
-public class PivotBot2 extends GenericAuto {
+public class PivotApproach2 extends GenericAuto {
 
     int numTimesNull = 0;
     int pixyWait = 0;
@@ -11,8 +11,6 @@ public class PivotBot2 extends GenericAuto {
 
     long currentTime, startTime;
     double drivePower;
-
-    //boolean wasHighGear;
 
     @Override
     public void init() {
@@ -24,11 +22,11 @@ public class PivotBot2 extends GenericAuto {
     @Override
     public void run() {//if we get nothing... do nothing.
         //if we only get one vector, don't try to get a second vector
+        //if we get two vectors, proceed
 
         currentTime = System.currentTimeMillis() - startTime;
         drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
 
-        //Pixy2Line.Vector vec;
         switch (autoStep) {
             case 1:
                 if (pixyWait < 5) {
@@ -70,10 +68,27 @@ public class PivotBot2 extends GenericAuto {
                 }
                 break;
 
-            case 2:
-                robot.stopDriving();
-                break;
+                case 2:
+                    robot.spearOut();
+                    robot.setDrivePower(0.3,0.3);
+                    if(robot.lidar[0] < 500){
+                        autoStep++;
+                        startTime = System.currentTimeMillis();
+                    }
+                    break;
+
+                case 3:
+                    robot.setDrivePower(0.2,0.2);
+                    if(System.currentTimeMillis() - 500 > startTime){
+                        autoStep++;
+                    }
+                    break;
+
+                case 4:
+                    robot.stopDriving();
+                    break;
+            }
         }
 
-    }
+
 }

@@ -22,6 +22,9 @@ public class MASideAutoCargo extends GenericAuto {
 
     int topXVal;
     int numTimesNull = 0;
+    long currentTime;
+    int midCounter = 0;
+    int pixyWait;
 
     double drivePower;
 
@@ -227,6 +230,7 @@ public class MASideAutoCargo extends GenericAuto {
                 if(robot.lidar[0] <= 900){ // we may need to tweak this!
                     autoStep++;
                     robot.setDrivePower(0,0);
+                    startTime = System.currentTimeMillis();
                 }
                 break;
 
@@ -235,30 +239,43 @@ public class MASideAutoCargo extends GenericAuto {
                 PIDElevator(elevatorFloor+3,elevatorPID);
                 PIDArm(armOut,armPID);
 
+                currentTime = System.currentTimeMillis() - startTime;
+                drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
+
+                if (pixyWait < 5) {
+                    pixyWait++;
+                    break;
+                }
+                pixyWait = 0;
                 if (robot.pixy.vec.length != 1) {
+                    //Null counter, if not detecting pixy lines, don't move
                     numTimesNull++;
                     if (numTimesNull > 4) {
-                        //autoStep = 2;
-                        //System.out.println("Null PixyCam Vectors, next auto activated");
-                        robot.setDrivePower(0,0);
+                        robot.setDrivePower(0, 0);
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-                    topXVal = robot.pixy.vec[0].getX1();
+                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                        //which point of vector is higher on screen? get that point's X val
+                        topXVal = robot.pixy.vec[0].getX1();
+                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                            topXVal = robot.pixy.vec[0].getX0();
+                        }
+                    }
+                }
 
-                    if (topXVal > midPoint + margin) {
-                        if (topXVal > midPoint + biggerMargin) {
-                            robot.setDrivePower(higherTurnPower,-higherTurnPower);
-                        } else {
-                            robot.setDrivePower(turnPower, -turnPower);
-                        }
-                    } else if (topXVal < midPoint - margin) {
-                        if (topXVal < midPoint - biggerMargin) {
-                            robot.setDrivePower(-higherTurnPower,higherTurnPower);
-                        } else {
-                            robot.setDrivePower(-turnPower, turnPower);
-                        }
-                    } else {
+                if ( (currentTime < 2000) && (Math.abs(topXVal-midPoint) > margin)) {
+                    if (topXVal - midPoint > margin) {
+                        midCounter = 0;
+                        robot.setDrivePower(drivePower, -drivePower);
+                    } else if (topXVal - midPoint < -margin) {
+                        midCounter = 0;
+                        robot.setDrivePower(-drivePower, drivePower);
+                    }
+                } else {
+                    ++midCounter;
+                    robot.setDrivePower(0, 0);
+                    if ((midCounter>5) || (currentTime >= 2000)) {
                         autoStep++;
                     }
                 }

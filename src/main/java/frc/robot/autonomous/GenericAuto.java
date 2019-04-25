@@ -31,6 +31,10 @@ public abstract class GenericAuto {
     public int margin = 2; //set margin of error where it wont move at all (prevents jittering)
     public int biggerMargin = 16;
 
+    public double a1 = 0.1;
+    public double a2 = 0.08;
+    public int lambda = 1000;
+
     //arm and elevator
     public boolean withinElevatorTolerance = false;
     public boolean withinArmTolerance = false;
