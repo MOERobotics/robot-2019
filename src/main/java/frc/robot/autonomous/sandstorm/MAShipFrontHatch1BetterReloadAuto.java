@@ -97,7 +97,7 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 correction = MOErioAuto.getCorrection();
 
                 //correction negative, left motor decrease, correction positive, left motor power increase
-                robot.setDrivePower((0.4) * (1 + correction), (0.4) * (1 - correction));
+                robot.setDrivePower((0.6) * (1 + correction), (0.6) * (1 - correction));
 
                 if (levelTwo) {
                     if (leftDistance >= 48 * 2) {
@@ -149,10 +149,12 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //drive toward cargo ship
             case 3:
+                PIDElevator(elevatorDeploy,elevatorPID);
+                PIDArm(armOut,armPID);
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
                 correction = MOErioAuto.getCorrection();
-                robot.setDrivePower(0.4 * (1 + correction),
-                        0.4 * (1 - correction));
+                robot.setDrivePower(0.6 * (1 + correction),
+                        0.6 * (1 - correction));
 
                 if (robot.getDistanceLeftInches() > 55) { //64
                     startTime = System.currentTimeMillis();
@@ -184,11 +186,10 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                     if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
                         //which point of vector is higher on screen? get that point's X val
                         //topXVal = robot.pixy.vec[0].getX1();
-                        topXVal = (int) (0.9*robot.pixy.vec[0].getX1() + 0.1*robot.pixy.vec[0].getX0());
+                        topXVal = (int) (0.8*robot.pixy.vec[0].getX1() + 0.2*robot.pixy.vec[0].getX0());
                         if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
                             //topXVal = robot.pixy.vec[0].getX0();
-                            topXVal = (int) (0.9*robot.pixy.vec[0].getX0() + 0.1*robot.pixy.vec[0].getX1());
-
+                            topXVal = (int) (0.8*robot.pixy.vec[0].getX0() + 0.2*robot.pixy.vec[0].getX1());
                         }
                     }
                 }
@@ -234,6 +235,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //drive forward one second
             case 7:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 1000 > startTime){
                     startTime = System.currentTimeMillis();
@@ -243,6 +247,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //pause for 3 sec
             case 8:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.setDrivePower(0,0);
                 if (System.currentTimeMillis() - 3000 > startTime) {
                     autoStep++;
@@ -251,6 +258,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //fingers in
             case 9:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.spearHook();
                 robot.stopDriving();
                 autoStep++;
@@ -258,6 +268,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //roll back until lidar hits 500
             case 10:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.setDrivePower(-0.3,-0.3);
                 if(robot.lidar[0] > 500){ //flipped the < – CHECK THIS!
                     autoStep++;
@@ -268,6 +281,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //fingers in, spear in. roll backwards
             case 11:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.spearIn();
 
                 MOErioAuto.setHeading(robot.getHeadingDegrees());
@@ -280,6 +296,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //turn around 90 degrees to the right [left]
             case 12:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.setDrivePower(0.3*LeftSide,-0.3*LeftSide);
                 if(reachedHeadingHands(75,1*LeftSide)){
                     autoStep++;
@@ -290,6 +309,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //roll forward towards the wall until lidar hits 360
             case 13:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 MOErioAuto.setHeading(robot.getHeadingDegrees() - 90*LeftSide);
                 correction = MOErioAuto.getCorrection();
 
@@ -302,6 +324,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //turn around another 90 degrees (so your yaw will be 180) to the right [left]
             case 14:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.setDrivePower(0.2*LeftSide, -0.2*LeftSide);
                 if(reachedHeadingHands(170,1*LeftSide)){
                     autoStep++;
@@ -312,6 +337,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //roll forwards + ramp power! about 108 inches (is this distance correct on MOEva as well? do we need to ramp?)
             case 15:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
                 if (leftDistance < 22) {
@@ -330,6 +358,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //continue until lidar is less than 800.
             case 16:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
 
@@ -344,6 +375,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //straighten using pixy align
             case 17:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 currentTime = System.currentTimeMillis() - startTime;
                 drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
 
@@ -389,6 +423,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
             //now roll forward until lidar hits 475 + spear out
             //YOU SHOULD BE IN FRONT OF THE LOADING STATION ACCEPTING A HATCH.
             case 18:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 475){//this needs to be confirmed
@@ -399,6 +436,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //roll another second.
             case 19:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.setDrivePower(0.3,0.3);
 
                 if(System.currentTimeMillis() - 1000 > startTime){
@@ -409,6 +449,9 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //fingers out
             case 20:
+                PIDArm(armOut, armPID);
+                PIDElevator(elevatorFloor + 3, elevatorPID);
+
                 robot.spearUnhook();
                 autoStep++;
                 break;

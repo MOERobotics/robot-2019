@@ -197,6 +197,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             /*auto target w pixy and keeping elevator still*/
             case 5:
                 PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
 
                 currentTime = System.currentTimeMillis() - startTime;
                 drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
@@ -242,6 +243,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*spear out*/
             case 6:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 500){
@@ -252,6 +256,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*drive forward for half a second*/
             case 7:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 500 > startTime){
                     autoStep++;
@@ -262,6 +269,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
             //fingers in
             case 8:
                 /* LFR */
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 robot.spearHook();
                 robot.stopDriving();
                 autoStep++;
@@ -271,6 +281,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //back away until off of line (need value for this)
             case 9:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 robot.spearIn();
                 robot.spearHook();
                 /*robot.setDrivePower(-0.2,-0.2);
@@ -282,6 +295,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //turn until facing loading station
             case 10:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 robot.setDrivePower(0.5*LeftSide,-0.5*LeftSide);
                 if(reachedHeadingHands(170,1*LeftSide)){
                     autoStep++;
@@ -293,6 +309,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //drive until at loading station; ramps power up, then down (CHECK ENCODER VALUES)
             case 11:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 MOErioAuto.setHeading(180/Math.PI*(Math.sin(robot.getHeadingDegrees() * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
                 if (leftDistance < 24) {
@@ -313,6 +332,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //pixy align
             case 12:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 currentTime = System.currentTimeMillis() - startTime;
                 drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
 
@@ -357,6 +379,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //spear out, roll forward - ADDED BEFORE DETROIT, NEED TO TEST!
             case 13:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 robot.spearOut();
                 robot.setDrivePower(0.3,0.3);
                 if(robot.lidar[0] < 500){
@@ -367,6 +392,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //drive forward for half a second until bot hits the wall
             case 14:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 500 > startTime){
                     autoStep++;
@@ -376,6 +404,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //fingers out to grab the hatch panel
             case 15:
+                PIDElevator(elevatorFloor,elevatorPID);
+                PIDArm(armOut, armPID);
+
                 robot.spearUnhook();
                 robot.stopDriving();
                 autoStep++;
