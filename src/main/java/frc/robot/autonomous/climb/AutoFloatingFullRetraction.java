@@ -30,6 +30,8 @@ public class AutoFloatingFullRetraction extends GenericAuto {
 
     int pulseCounter = 0;
 
+    boolean withinArmTolerance = false;
+
     //pitch positive is up
     @Override
     public void init() {
@@ -109,24 +111,12 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 robot.LinearSlider(DoubleSolenoid.Value.kReverse);
                 startTime = System.currentTimeMillis();
 
-                autoStep = 5;
+                autoStep++;
                 break;
 
-            //Move arm out, start driving forward, continue PID controlling elevator
+            //Nothing
             case 4:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
-                elevatorCorrection = elevatorPID.getCorrection();
-                robot.driveElevator(elevatorCorrection);
-
-                //robot.footSpacerCylinder(true);
-                robot.driveArm(0.2/*0.1*/);
-                robot.setDrivePower(steadyPower,steadyPower);
-
-                if (robot.getArmEncoderCount() >= armOut){
-                    armPID.resetError();
-                    startTime = System.currentTimeMillis();
-                    autoStep++;
-                }
+                autoStep++;
                 break;
 
             //Drive forward for 2 seconds, continue PID controlling elevator
@@ -157,7 +147,15 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                     if (Math.abs(robot.getArmEncoderCount()-armOut) < 5) {
                         withinArmTolerance = true;
                         armPID.resetError();
+                        robot.driveArm(0);
                     }
+
+                    if (robot.getArmEncoderCount() > armOut + 5) {
+                        withinArmTolerance = false;
+                        armPID.resetError();
+                        robot.driveArm(0);
+                    }
+
                     robot.climb(1);
                     autoStep++;
                 }
@@ -184,6 +182,13 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 } else if (Math.abs(robot.getArmEncoderCount() - armOut) < 5) {
                     withinArmTolerance = true;
                     armPID.resetError();
+                    robot.driveArm(0);
+                }
+
+                if (robot.getArmEncoderCount() > armOut + 5) {
+                    withinArmTolerance = false;
+                    armPID.resetError();
+                    robot.driveArm(0);
                 }
 
                 robot.setDrivePower(steadyPower,steadyPower);
@@ -204,6 +209,12 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 armPID.setHeading(robot.getArmEncoderCount()  - armOut);
                 armCorrection = armPID.getCorrection();
                 robot.driveArm(armPowerBias + armCorrection);
+
+                if (robot.getArmEncoderCount() > armOut + 5) {
+                    withinArmTolerance = false;
+                    armPID.resetError();
+                    robot.driveArm(0);
+                }
 
                 //robot.setDrivePower(0,0);
 

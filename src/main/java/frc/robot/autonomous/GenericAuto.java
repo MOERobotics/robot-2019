@@ -36,8 +36,8 @@ public abstract class GenericAuto {
     public int lambda = 1000;
 
     //arm and elevator
-    public boolean withinElevatorTolerance = false;
-    public boolean withinArmTolerance = false;
+    public boolean withinElevatorTolerance;
+    public boolean withinArmTolerance;
 
     //Raising the elevator until position is reached
     public void raiseElevator(double position, PIDModule elevatorPID){

@@ -8,7 +8,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
     long startTime = 0;
 
     //arc PID
-    PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
+    PIDModule MOErioAuto = new PIDModule(0.05, 0.001, 0); //kP = 0.06
     //PIDModuleLucy MOErioTurn = new PIDModuleLucy(2.5e-2, 1.75e-3, 0);
 
     //-1 is left, 1 is right
@@ -182,18 +182,18 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 PIDArm(armOut, armPID);
 
-                if (robot.getDistanceLeftInches() < 26) {
+                if (robot.getDistanceLeftInches() < 46) {
                     MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading+10) * LeftSide);
                     correction = MOErioAuto.getCorrection();
-                } else if (robot.getDistanceLeftInches() >= 26) {
-                    MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading-10) * LeftSide);
+                } else if (robot.getDistanceLeftInches() >= 46) {
+                    MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading-5) * LeftSide);
                     correction = MOErioAuto.getCorrection();
                 }
 
                 robot.setDrivePower(0.5 * (1 + correction),
                         0.5 * (1 - correction));
 
-                if(robot.getDistanceLeftInches() > 92){ //86
+                if(robot.getDistanceLeftInches() > 92 || robot.lidar[0] < 768){ //86
                     autoStep++;
                     elevatorPID.resetError();
                     startTime = System.currentTimeMillis();
@@ -295,11 +295,11 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 robot.spearIn();
                 robot.spearHook();
-                /*robot.setDrivePower(-0.2,-0.2);
-                if(Math.abs(robot.getDistanceLeftInches()) > 12){
+                robot.setDrivePower(-0.2,-0.2);
+                if(Math.abs(robot.getDistanceLeftInches()) > 1){
                     autoStep++;
-                }*/
-                autoStep++;
+                }
+                //autoStep++;
                 break;
 
             //turn until facing loading station

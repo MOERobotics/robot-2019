@@ -107,24 +107,12 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                 robot.LinearSlider(DoubleSolenoid.Value.kReverse);
                 startTime = System.currentTimeMillis();
 
-                autoStep = 5;
+                autoStep++;
                 break;
 
-            //Move arm out, start driving forward, continue PID controlling elevator
+            //Nothing.
             case 4:
-                elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorBalance);
-                elevatorCorrection = elevatorPID.getCorrection();
-                robot.driveElevator(elevatorCorrection);
-
-                //robot.footSpacerCylinder(true);
-                robot.driveArm(0.2);
-                robot.setDrivePower(steadyPower,steadyPower);
-
-                if (robot.getArmEncoderCount() >= armOut){
-                    armPID.resetError();
-                    startTime = System.currentTimeMillis();
-                    autoStep++;
-                }
+                autoStep++;
                 break;
 
             //Drive forward for 2 seconds, continue PID controlling elevator
@@ -157,6 +145,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
                         withinArmTolerance = true;
                         armPID.resetError();
                     }
+
                     robot.climb(1);
                     autoStep++;
                 }
@@ -257,6 +246,7 @@ public class AutoFlyingFullRetraction extends GenericAuto {
             //Wait for 25 pulses, continue PID controlling elevator
             case 11:
                 elevatorPID.setHeading(robot.getElevatorEncoderCount()  - elevatorFinale);
+                elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
                 robot.driveArm(0);
@@ -283,7 +273,6 @@ public class AutoFlyingFullRetraction extends GenericAuto {
 
             //Unreachable step - Stop everything
             case 13:
-
                 robot.driveArm(0);
 
                 robot.resetDriveEncoders();

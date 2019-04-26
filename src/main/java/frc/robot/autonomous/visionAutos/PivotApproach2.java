@@ -94,7 +94,7 @@ public class PivotApproach2 extends GenericAuto {
 
                 case 3:
                     robot.setDrivePower(0.2,0.2);
-                    if(System.currentTimeMillis() - 500 > startTime){
+                    if(System.currentTimeMillis() - 1000 > startTime){
                         autoStep++;
                     }
                     break;

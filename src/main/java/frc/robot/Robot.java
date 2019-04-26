@@ -443,6 +443,7 @@ public class Robot extends TimedRobot {
 
 			if (functionStick.getStartButton()) {
 				robotHardware.resetElevatorPosition();
+				robotHardware.resetArmPosition();
 			}
 
 			//Shifting
