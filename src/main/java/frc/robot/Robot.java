@@ -79,6 +79,7 @@ public class Robot extends TimedRobot {
 
     private boolean pixyAligning = false;
     private boolean pixyApproaching = false;
+    private boolean wasHighGear;
 
 	private boolean commitment = true;
     private boolean endToEndQuality = true;
@@ -350,7 +351,7 @@ public class Robot extends TimedRobot {
         hab3Climb.init();
 
         pixyAlign.init();
-        autoProgram.init();
+        pixyApproach.init();
 
         shiftingHigh = true;
 	}
@@ -413,11 +414,13 @@ public class Robot extends TimedRobot {
 					pixyAlign.run();
 					if ((Math.abs(driveJoyStickY) > 0.07)|| Math.abs(driveJoyStickX) > 0.14) {
 						pixyAligning = false;
+						shiftingHigh = wasHighGear;
 					}
 				} else if (pixyApproaching) {
 					pixyApproach.run();
 					if ((Math.abs(driveJoyStickY) > 0.07)|| Math.abs(driveJoyStickX) > 0.14) {
 						pixyApproaching = false;
+						shiftingHigh = wasHighGear;
 					}
 				} else {
 					if (Math.abs(driveJoyStickY) < 0.03) driveJoyStickY = 0.0;
@@ -567,12 +570,16 @@ public class Robot extends TimedRobot {
 				    if (robotHardware.pixy.vec.length != 0) {
                         pixyAligning = true;
                         pixyAlign.init();
+                        wasHighGear = shiftingHigh;
+                        shiftingHigh = false;
                     }
 					break;
 				case SOUTH:
 				    if (robotHardware.pixy.vec.length != 0) {
                         pixyApproaching = true;
                         pixyApproach.init();
+                        wasHighGear = shiftingHigh;
+                        shiftingHigh = false;
                     }
 					break;
 				case EAST:

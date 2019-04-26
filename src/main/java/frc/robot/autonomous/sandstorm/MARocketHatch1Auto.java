@@ -148,7 +148,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             /*turn towards the rocket*/
             case 2:
-                if (reachedHeadingHands(approachHeading, LeftSide)) {
+                if (reachedHeadingHands(approachHeading+10, LeftSide)) {
                     autoStep++;
                     robot.resetDriveEncoders();
                     MOErioAuto.resetError();
@@ -160,7 +160,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             case 3:
                 PIDElevator(elevatorDeploy, elevatorPID);
 
-                MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
+                MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading+10) * LeftSide);
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.6 * (1 + correction),
                         0.6 * (1 - correction));
@@ -182,12 +182,18 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 PIDArm(armOut, armPID);
 
-                MOErioAuto.setHeading(robot.getHeadingDegrees() - approachHeading * LeftSide);
-                correction = MOErioAuto.getCorrection();
+                if (robot.getDistanceLeftInches() < 26) {
+                    MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading+10) * LeftSide);
+                    correction = MOErioAuto.getCorrection();
+                } else if (robot.getDistanceLeftInches() >= 26) {
+                    MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading-10) * LeftSide);
+                    correction = MOErioAuto.getCorrection();
+                }
+
                 robot.setDrivePower(0.5 * (1 + correction),
                         0.5 * (1 - correction));
 
-                if(robot.getDistanceLeftInches() > 80){ //86
+                if(robot.getDistanceLeftInches() > 92){ //86
                     autoStep++;
                     elevatorPID.resetError();
                     startTime = System.currentTimeMillis();
@@ -219,8 +225,10 @@ public class MARocketHatch1Auto extends GenericAuto  {
                     if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
                         //which point of vector is higher on screen? get that point's X val
                         topXVal = robot.pixy.vec[0].getX1();
+                        //topXVal = (int) (0.8*robot.pixy.vec[0].getX1() + 0.2*robot.pixy.vec[0].getX0());
                         if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
                             topXVal = robot.pixy.vec[0].getX0();
+                            //topXVal = (int) (0.8*robot.pixy.vec[0].getX0() + 0.2*robot.pixy.vec[0].getX1());
                         }
                     }
                 }
@@ -313,18 +321,18 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 PIDElevator(elevatorFloor,elevatorPID);
                 PIDArm(armOut, armPID);
 
-                MOErioAuto.setHeading(180/Math.PI*(Math.sin((robot.getHeadingDegrees() + LeftSide*5) * Math.PI / 180)));
+                MOErioAuto.setHeading(180/Math.PI*(Math.sin((robot.getHeadingDegrees() + LeftSide*3) * Math.PI / 180)));
                 correction = MOErioAuto.getCorrection();
                 if (leftDistance < 24) {
                     drivePower = robot.rampPower(0.3,0.8,0,24,leftDistance);
                 } else if (leftDistance > 24 && leftDistance < 125){
                     drivePower = 0.8;
                 } else if (leftDistance > 125) {
-                    drivePower = robot.rampPower(0.8, 0.3, 125, 149, leftDistance);
+                    drivePower = robot.rampPower(0.8, 0.3, 125, 151, leftDistance);
                 }
                 robot.setDrivePower(drivePower*(1 - correction), drivePower*(1 + correction));
 
-                if (robot.getDistanceLeftInches() > 149) {
+                if (robot.getDistanceLeftInches() > 151) {
                     robot.setDrivePower(0, 0);
                     startTime = System.currentTimeMillis();
                     autoStep++;
@@ -397,7 +405,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 PIDArm(armOut, armPID);
 
                 robot.setDrivePower(0.2,0.2);
-                if(System.currentTimeMillis() - 500 > startTime){
+                if(System.currentTimeMillis() - 1500 > startTime){
                     autoStep++;
                     robot.stopDriving();
                 }

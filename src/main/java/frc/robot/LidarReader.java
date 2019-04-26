@@ -31,7 +31,7 @@ public class LidarReader extends Thread{
              try {
                  newbyte = lidarPort.read(1)[0];
              } catch (Exception e) {
-                 System.out.println(e.toString());
+                 //System.out.println(e.toString());
              }
 
             if (newbyte != ' ') {

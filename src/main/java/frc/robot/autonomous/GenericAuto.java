@@ -28,7 +28,7 @@ public abstract class GenericAuto {
     public double turnPower = 0.14; //0.2
     public double higherTurnPower = 0.22; //0.25
     public int midPoint = 34;
-    public int margin = 2; //set margin of error where it wont move at all (prevents jittering)
+    public int margin = 1; //set margin of error where it wont move at all (prevents jittering)
     public int biggerMargin = 16;
 
     public double a1 = 0.15; //0.1

@@ -14,7 +14,7 @@ public class PivotApproach2 extends GenericAuto {
 
     @Override
     public void init() {
-        autoStep = 1;
+        autoStep = 0;
         startTime = System.currentTimeMillis();
         midCounter = 0;
     }
@@ -28,6 +28,11 @@ public class PivotApproach2 extends GenericAuto {
         drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
 
         switch (autoStep) {
+            case 0:
+                robot.shiftLow();
+                autoStep++;
+                break;
+
             case 1:
                 if (pixyWait < 5) {
                     pixyWait++;
@@ -42,11 +47,21 @@ public class PivotApproach2 extends GenericAuto {
                     }
                 } else {
                     numTimesNull = 0; //reset null exit counter
-                    if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
-                        //which point of vector is higher on screen? get that point's X val
-                        topXVal = robot.pixy.vec[0].getX1();
-                        if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
-                            topXVal = robot.pixy.vec[0].getX0();
+                    if (Math.abs(robot.getHeadingDegrees()) < 15) {
+                        if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                            //which point of vector is higher on screen? get that point's X val
+                            topXVal = (int) (0.8*robot.pixy.vec[0].getX1() + 0.2*robot.pixy.vec[0].getX0());
+                            if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                                topXVal = (int) (0.8*robot.pixy.vec[0].getX0() + 0.2*robot.pixy.vec[0].getX1());
+                            }
+                        }
+                    } else {
+                        if (robot.pixy.vec.length != 0 && robot.pixy.vec[0] != null) {
+                            //which point of vector is higher on screen? get that point's X val
+                            topXVal = robot.pixy.vec[0].getX1();
+                            if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
+                                topXVal = robot.pixy.vec[0].getX0();
+                            }
                         }
                     }
                 }
@@ -89,6 +104,4 @@ public class PivotApproach2 extends GenericAuto {
                     break;
             }
         }
-
-
 }
