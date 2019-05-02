@@ -3,9 +3,7 @@ package frc.robot.genericrobot;
 /*code*/
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import frc.robot.Logger;
-import frc.robot.PixyCam;
-import io.github.pseudoresonance.pixy2api.Pixy2Line;
+import frc.robot.vision.PixyCam;
 
 public abstract class GenericRobot {
 
@@ -136,8 +134,6 @@ public abstract class GenericRobot {
 	public boolean isElevReverseLimitEnabled() {return false;}
 	/*public boolean atElevForwardLimit() {return false;}
 	public boolean atElevReverseLimit() {return false;}*/
-
-	//</editor-fold>
 
     //Turret <editor-fold>
     /*public final void    turretLeft     (double power) {driveTurret( power);}
@@ -279,6 +275,5 @@ public abstract class GenericRobot {
 	public double getElevatorEncoderCount() {
 		return getElevatorEncoderCountInternal() - elevatorEncoderOffset;
 	}
-
 }
 

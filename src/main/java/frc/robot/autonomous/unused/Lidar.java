@@ -1,9 +1,9 @@
-package frc.robot;
+package frc.robot.autonomous.unused;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Logger;
 import frc.robot.genericrobot.GenericRobot;
-import frc.robot.genericrobot.SuperMOEva;
 
 public class Lidar {
     static int uArtCounter = 0;

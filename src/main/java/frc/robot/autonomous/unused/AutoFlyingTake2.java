@@ -1,4 +1,4 @@
-package frc.robot.autonomous.climb;
+package frc.robot.autonomous.unused;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

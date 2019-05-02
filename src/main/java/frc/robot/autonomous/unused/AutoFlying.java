@@ -1,12 +1,11 @@
-package frc.robot.autonomous.climb;
+package frc.robot.autonomous.unused;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
 import frc.robot.autonomous.GenericAuto;
 
-public class AutoFloating extends GenericAuto {
-
+public class AutoFlying extends GenericAuto {
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
 
@@ -15,11 +14,12 @@ public class AutoFloating extends GenericAuto {
     double armPowerBias = 0;
     double elevatorDeploy = 37;
     double elevatorFloor = -28.6-3.13;
+    //double elevatorBalance = -28;
     double elevatorBalance = 13;
-    double armOut = 25;
+    double armOut = /*40*/25;
 
-    double hab2Height = 187.5;
-    double retractHeight = 80;
+    double hab3Height = 350;
+    double retractHeight = 120;
     double steadyPower;
     double startPitch;
     double startTime;
@@ -40,7 +40,7 @@ public class AutoFloating extends GenericAuto {
         SmartDashboard.putNumber("Climb autoStep: ", autoStep);
 
         switch(autoStep) {
-            /* assuming Alex has rested both arm and elevator on the HAB*/
+             /* assuming Alex has rested both arm and elevator on the HAB*/
 
             case 0:
                 robot.driveElevator(-0.4);
@@ -73,7 +73,7 @@ public class AutoFloating extends GenericAuto {
                 //robot.driveArm(-0.1);
                 robot.climb(-1.0);
 
-                if (Math.abs(robot.getClimberLEncoderCount()) >= hab2Height) {
+                if (Math.abs(robot.getClimberLEncoderCount()) >= hab3Height) {
                     robot.climb(0);
                     autoStep++;
                 }
@@ -157,7 +157,6 @@ public class AutoFloating extends GenericAuto {
                     autoStep++;
                     robot.climb(0);
                     robot.setDrivePower(0,0);
-                    armOut = 40;
                 }
                 break;
 
@@ -210,7 +209,6 @@ public class AutoFloating extends GenericAuto {
 
                 robot.setDrivePower(0,0);
                 robot.footSpacerCylinder(false);
-
                 break;
 
             case 13:
@@ -221,5 +219,4 @@ public class AutoFloating extends GenericAuto {
                 break;
         }
     }
-
 }

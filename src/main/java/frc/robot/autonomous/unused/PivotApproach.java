@@ -1,4 +1,4 @@
-package frc.robot.autonomous.visionAutos;
+package frc.robot.autonomous.unused;
 
 import frc.robot.autonomous.GenericAuto;
 

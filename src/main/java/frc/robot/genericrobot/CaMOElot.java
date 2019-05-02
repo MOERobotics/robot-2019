@@ -40,7 +40,6 @@ public class CaMOElot extends GenericRobot {
 
     AHRS navx = new AHRS(SPI.Port.kMXP,(byte) 50);
 
-
     public CaMOElot() {
         leftMotorA.setNeutralMode(NeutralMode.Brake);
         leftMotorB.setNeutralMode(NeutralMode.Brake);
@@ -52,7 +51,6 @@ public class CaMOElot extends GenericRobot {
         rightMotorB.setInverted(true);
         rightMotorC.setInverted(true);
     }
-
 
     @Override
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {

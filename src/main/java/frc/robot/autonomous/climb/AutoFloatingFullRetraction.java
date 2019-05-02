@@ -91,8 +91,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //robot.footSpacerCylinder(true);
-                //robot.driveArm(-0.1);
                 robot.climb(-1.0);
 
                 if (Math.abs(robot.getClimberLEncoderCount()) >= hab2Height) {
@@ -107,7 +105,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 elevatorCorrection = elevatorPID.getCorrection();
                 robot.driveElevator(elevatorCorrection);
 
-                //robot.footSpacerCylinder(true);
                 robot.LinearSlider(DoubleSolenoid.Value.kReverse);
                 startTime = System.currentTimeMillis();
 
@@ -195,7 +192,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 robot.climb(1);
                 if (Math.abs(robot.getClimberLEncoderCount()) < 50 ||
                         Math.abs(robot.getClimberREncoderCount()) < 50) {
-                    //robot.setDrivePower(0,0);
                     autoStep++;
                 }
                 break;
@@ -215,8 +211,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                     armPID.resetError();
                     robot.driveArm(0);
                 }
-
-                //robot.setDrivePower(0,0);
 
                 if(Math.abs(robot.getClimberLEncoderCount()) > fullRetractHeight + 15){
                     robot.climbLDown(1);
@@ -307,7 +301,6 @@ public class AutoFloatingFullRetraction extends GenericAuto {
                 robot.driveArm(0);
 
                 robot.resetDriveEncoders();
-                //PIDTune to 0 distance on the ENCODERS
                 robot.stopEverything();
                 break;
         }

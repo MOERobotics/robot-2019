@@ -1,6 +1,5 @@
-package frc.robot.autonomous.visionAutos;
+package frc.robot.autonomous.unused;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
 import frc.robot.autonomous.GenericAuto;
 

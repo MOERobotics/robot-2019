@@ -1,7 +1,8 @@
-package frc.robot;
+package frc.robot.autonomous.unused;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.vision.LidarReader;
 import frc.robot.genericrobot.GenericRobot;
 import java.util.regex.*;
 

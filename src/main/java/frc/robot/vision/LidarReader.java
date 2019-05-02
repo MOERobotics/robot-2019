@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.vision;
 import edu.wpi.first.wpilibj.SerialPort;
 import frc.robot.genericrobot.*;
 

@@ -1,7 +1,6 @@
-package frc.robot.autonomous.visionAutos;
+package frc.robot.autonomous.unused;
 
 import frc.robot.autonomous.GenericAuto;
-import io.github.pseudoresonance.pixy2api.Pixy2Line;
 
 public class PivotBot extends GenericAuto {
 

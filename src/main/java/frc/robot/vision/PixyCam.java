@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.vision;
 
 import io.github.pseudoresonance.pixy2api.Pixy2;
 import io.github.pseudoresonance.pixy2api.Pixy2Line;

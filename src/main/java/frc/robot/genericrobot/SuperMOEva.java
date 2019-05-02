@@ -62,9 +62,6 @@ public class SuperMOEva extends GenericRobot {
     DigitalInput elevatorTopLimit = new DigitalInput(6);
     DigitalInput elevatorBottomLimit = new DigitalInput(7);
 
-    //DigitalInput climbLLimit = new DigitalInput(6);
-    //DigitalInput climbRLimit = new DigitalInput(7);
-
     {
         driveLA.setInverted(true);
         driveLB.setInverted(true);
@@ -77,13 +74,11 @@ public class SuperMOEva extends GenericRobot {
         froggerRB.setIdleMode(CANSparkMax.IdleMode.kCoast);
     }
 
-
     //lidar
     @Override
     public int numSensors() {
         return 1;
     }
-    //right 0, middle 1, left 2? lol check again
 
     //Drive Functions
     public void setDrivePowerInternal(double leftMotor, double rightMotor) {
@@ -224,12 +219,14 @@ public class SuperMOEva extends GenericRobot {
 
     @Override
     public boolean isArmForwardLimitEnabled() {
-        return false;// arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;
+        //arm.getForwardLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     @Override
     public boolean isArmReverseLimitEnabled() {
-        return false;//arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
+        return false;
+        //arm.getReverseLimitSwitch(CANDigitalInput.LimitSwitchPolarity.kNormallyClosed).isLimitSwitchEnabled();
     }
 
     public boolean atArmForwardLimit() {
@@ -251,17 +248,7 @@ public class SuperMOEva extends GenericRobot {
     public double getArmEncoderCountInternal() {
         return encoderArm.getPosition();
     }
-/*
-    @Override
-    public double getElevatorEncoderStart() {
-        return elevatorEncoderStart;
-    }
 
-    @Override
-    public double getArmEncoderStart() {
-        return armEncoderStart;
-    }
-*/
     //Cargo/Hatch
     @Override
     public void setRollerInternal(double power) {
