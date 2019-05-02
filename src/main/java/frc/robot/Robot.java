@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
 
     private PiClient piClient = PiClient.getInstance();
 
-	private GenericAuto 	autoProgram   = new MAShipFrontHatch1Auto();
+	private GenericAuto 	autoProgram   = new DoNothingAuto();
 	private GenericAuto	    hab3Climb 	 = new AutoFlyingFullRetraction();
 	private GenericAuto     hab2Climb     = new AutoFloatingFullRetraction();
 	private GenericAuto 	pixyAlign 	= new PivotBot2();
@@ -149,11 +149,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic () {
-        //robotHardware.checkSafety();
-
-		//leftJoystickLogger.printIfChanged();
-		//functionStickLogger.printIfChanged();
-
 	    if (0==(smartDashCounter++ % 10)) { //-Brian
 	        //robotHardware.getClimberCurrent();
             SmartDashboard.putString("Robot Class", robotHardware.getClass().getSimpleName());
@@ -162,8 +157,7 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Yaw: ", robotHardware.getHeadingDegrees());
             SmartDashboard.putNumber("Roll: ", robotHardware.getRollDegrees());
             SmartDashboard.putNumber("Pitch: ", robotHardware.getPitchDegrees());
-            //SmartDashboard.putNumber("Left Encoder (Raw): ", robotHardware.getDistanceLeftInches() * 462);
-            //SmartDashboard.putNumber("Right Encoder (Raw): ", robotHardware.getDistanceRightInches() * 462);
+
             SmartDashboard.putNumber("Left Encoder (Inches): ", robotHardware.getDistanceLeftInches());
             SmartDashboard.putNumber("Right Encoder (Inches): ", robotHardware.getDistanceRightInches());
             SmartDashboard.putNumber("Arm Encoder: ", robotHardware.getArmEncoderCount());
@@ -176,23 +170,12 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("Roller Power: ", robotHardware.getRollerPower());
             SmartDashboard.putNumber("Climber Power: ", robotHardware.getClimbPower());
 
-            //SmartDashboard.putBoolean("ALEX DRIVE", functionStickDrive);
-
-            //SmartDashboard.putBoolean("Is ArmDown: ", robotHardware.isArmDown());
-            //SmartDashboard.putBoolean("Is ArmUp: ", robotHardware.isArmUp());
-            //SmartDashboard.putBoolean("Is Elevator Down: ", robotHardware.isElevatorDown());
-            //SmartDashboard.putBoolean("Is Elevator Up: ", robotHardware.isElevatorUp());
             SmartDashboard.putBoolean("SAFETY MOEVERRIDE", robotHardware.getSafetyOverride());
 
             SmartDashboard.putBoolean("Shifter State: ", robotHardware.getShifterSolenoidState());
             SmartDashboard.putBoolean("Spear State: ", robotHardware.getSpearShaftState());
             SmartDashboard.putBoolean("Hatch Grabber State: ", robotHardware.getSpearHookState());
             SmartDashboard.putBoolean("Floor Pickup State: ", robotHardware.getFloorPickupState());
-
-            //SmartDashboard.putBoolean("Elevator Forward Limit Enabled: ", robotHardware.isElevForwardLimitEnabled());
-            //SmartDashboard.putBoolean("Elevator Reverse Limit Enabled: ", robotHardware.isElevReverseLimitEnabled());
-            //SmartDashboard.putBoolean("Arm Forward Limit Enabled: ", robotHardware.isArmForwardLimitEnabled());
-            //SmartDashboard.putBoolean("Arm Reverse Limit Enabled: ", robotHardware.isArmReverseLimitEnabled());
 
             SmartDashboard.putNumber("Climber Power: ", robotHardware.getClimbPower());
             SmartDashboard.putNumber("Climber Left Encoder: ", robotHardware.getClimberLEncoderCount());
@@ -224,8 +207,6 @@ public class Robot extends TimedRobot {
             SmartDashboard.putNumber("autostep: ", autoProgram.autoStep);
 			SmartDashboard.putBoolean("autoEnable", autoEnable);
 
-            //SmartDashboard.putNumber("SET RightSide: ", rightSideSetNum);
-            //SmartDashboard.putBoolean("SET Hab 2?", habLevelSet);
             SmartDashboard.putNumber("RightSide: ", autoProgram.LeftSide);
             SmartDashboard.putBoolean("Hab 2?", autoProgram.levelTwo);
             //autoProgram.printSmartDashboard();
@@ -267,7 +248,7 @@ public class Robot extends TimedRobot {
 			robotHardware.resetClimberPosition();
 		}
 
-		if (leftJoystick.getRawButtonPressed(11)) {
+		/*if (leftJoystick.getRawButtonPressed(11)) {
 			//habLevelSet = !habLevelSet;
 			autoProgram.levelTwo = !autoProgram.levelTwo;
 		}
@@ -315,7 +296,7 @@ public class Robot extends TimedRobot {
 			//autoProgram.levelTwo = habLevelSet;
 			autoProgram.lastStep = 0;
 			autoProgram.robot = robotHardware;
-		}
+		}*/
 	}
 
 	@Override
@@ -360,19 +341,19 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic () {
 	    //Initial auto
 		if (autoEnable) {
-            autoProgram.run();
+            /*autoProgram.run();
             if (leftJoystick.getRawButtonPressed(5))
-                autoEnable = false;
+                autoEnable = false;*/
         }
 		//Climbing - all drive functionalities disabled
         else if (hab2Enabled) {
-			hab2Climb.run();
+			/*hab2Climb.run();
 			if (leftJoystick.getRawButtonPressed(14))
-				hab2Enabled = false;
+				hab2Enabled = false;*/
 		} else if (hab3Enabled) {
-		    hab3Climb.run();
+		    /*hab3Climb.run();
 		    if (leftJoystick.getRawButtonPressed(8))
-		        hab3Enabled = false;
+		        hab3Enabled = false;*/
         }
         //Normal driving, functions
         else {
@@ -417,7 +398,7 @@ public class Robot extends TimedRobot {
 						shiftingHigh = wasHighGear;
 					}
 				} else if (pixyApproaching) {
-					pixyApproach.run();
+					//pixyApproach.run();
 					if ((Math.abs(driveJoyStickY) > 0.07)|| Math.abs(driveJoyStickX) > 0.14) {
 						pixyApproaching = false;
 						shiftingHigh = wasHighGear;
@@ -450,7 +431,7 @@ public class Robot extends TimedRobot {
 			if (leftJoystick.getRawButtonPressed(5)) shiftingHigh = true;
 			else if (leftJoystick.getRawButtonPressed(10)) shiftingHigh = false;
 
-			robotHardware.shiftDrive(shiftingHigh);
+			//robotHardware.shiftDrive(shiftingHigh);
 
 			//hatchGrab
 			if      (functionStick.getAButton()) robotHardware.spearUnhook ();
@@ -470,7 +451,7 @@ public class Robot extends TimedRobot {
 			else if (armPower > 0) armPower -= 0.2;
 			else if (armPower < 0) armPower += 0.2;
 			if (armPower != 0) noPosition();
-			robotHardware.driveArm(-armPower);
+			robotHardware.driveArm(-armPower*0.8);
 
 			//elevator
 			//elevator position = -29.7
@@ -481,15 +462,15 @@ public class Robot extends TimedRobot {
 			else if (elevatorPower > 0) elevatorPower -= 0.3;
 			else if (elevatorPower < 0) elevatorPower += 0.3;
 			if (elevatorPower != 0) noPosition();
-			robotHardware.driveElevator(elevatorPower);
+			robotHardware.driveElevator(elevatorPower*0.8);
 
 			//Climbing
 			if (leftJoystick.getRawButtonPressed(8)) {
-				hab3Enabled = true;
+				//hab3Enabled = true;
 			} else if (leftJoystick.getRawButtonPressed(14)) {
-			    hab2Enabled = true;
+			    //hab2Enabled = true;
             }
-			if (leftJoystick.getRawButton(6)) {
+			/*if (leftJoystick.getRawButton(6)) {
 				robotHardware.climb(-1.0);
 			} else if (leftJoystick.getRawButton(9)) {
 				robotHardware.climb(0.4);
@@ -503,17 +484,17 @@ public class Robot extends TimedRobot {
 				//else if (functionStick.getX(Hand.kRight) < -0.9) robotHardware.climb(-0.3);
 				//else
 				robotHardware.climb(0);
-			}
+			}*/
 
 			//Foot Toggle
-			if (leftJoystick.getRawButtonPressed(11)) {
+			/*if (leftJoystick.getRawButtonPressed(11)) {
 				footToggle = !footToggle;
 			}
 			if (functionStick.getStickButtonPressed(Hand.kRight)) {
 				footToggle = !footToggle;
 			}
-			if (footToggle) robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
-			else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);
+			/*if (footToggle) robotHardware.LinearSlider(DoubleSolenoid.Value.kForward);
+			else robotHardware.LinearSlider(DoubleSolenoid.Value.kReverse);*/
 
 			//Auto Positioning
 			if (switchBox.getRawButtonPressed(5)) cargo = true;
@@ -577,10 +558,10 @@ public class Robot extends TimedRobot {
 					break;
 				case SOUTH:
 				    if (robotHardware.pixy.vec.length != 0) {
-                        pixyApproaching = true;
-                        pixyApproach.init();
-                        wasHighGear = shiftingHigh;
-                        shiftingHigh = false;
+                        //pixyApproaching = true;
+                        //pixyApproach.init();
+                        //wasHighGear = shiftingHigh;
+                        //shiftingHigh = false;
                     }
 					break;
 				case EAST:
