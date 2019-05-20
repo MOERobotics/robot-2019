@@ -358,9 +358,9 @@ public class Robot extends TimedRobot {
         //Normal driving, functions
         else {
 			//Driving Adjustments
-			/*if (functionStick.getStickButtonPressed(Hand.kLeft)) {
+			if (functionStick.getStickButtonPressed(Hand.kLeft)) {
 				functionStickDrive = !functionStickDrive;
-			}*/
+			}
 
 			if (leftJoystick.getTrigger())  robotHardware.moveForward     (.25);
 			else if (leftJoystick.getRawButton(3))  robotHardware.turnLeftInplace (.25);
@@ -386,24 +386,7 @@ public class Robot extends TimedRobot {
 				if (!functionStickDrive) {
 					driveJoyStickX = leftJoystick.getX();
 					driveJoyStickY = -leftJoystick.getY();
-				} else {
-					driveJoyStickX =  functionStick.getX(Hand.kLeft);
-					driveJoyStickY = -functionStick.getY(Hand.kLeft);
-				}
 
-				if (pixyAligning) {
-					pixyAlign.run();
-					if ((Math.abs(driveJoyStickY) > 0.07)|| Math.abs(driveJoyStickX) > 0.14) {
-						pixyAligning = false;
-						shiftingHigh = wasHighGear;
-					}
-				} else if (pixyApproaching) {
-					//pixyApproach.run();
-					if ((Math.abs(driveJoyStickY) > 0.07)|| Math.abs(driveJoyStickX) > 0.14) {
-						pixyApproaching = false;
-						shiftingHigh = wasHighGear;
-					}
-				} else {
 					if (Math.abs(driveJoyStickY) < 0.03) driveJoyStickY = 0.0;
 					else if (driveJoyStickX > 0) driveJoyStickX -= 0.03;
 					else if (driveJoyStickX < 0) driveJoyStickX += 0.03;
@@ -418,7 +401,26 @@ public class Robot extends TimedRobot {
 					double drivePowerLeft  = driveJoyStickY + driveJoyStickX;
 					double drivePowerRight = driveJoyStickY - driveJoyStickX;
 
-					robotHardware.setDrivePower(drivePowerLeft, drivePowerRight);
+					robotHardware.setDrivePower(drivePowerLeft * 0.7, drivePowerRight * 0.7);
+				} else {
+					driveJoyStickX =  functionStick.getX(Hand.kLeft);
+					driveJoyStickY = -functionStick.getY(Hand.kLeft);
+
+					if (Math.abs(driveJoyStickY) < 0.13) driveJoyStickY = 0.0;
+					else if (driveJoyStickX > 0) driveJoyStickX -= 0.13;
+					else if (driveJoyStickX < 0) driveJoyStickX += 0.13;
+					//Attempt to drive straight if joystick is within 10% of vertical
+					if (Math.abs(driveJoyStickX) < 0.20) driveJoyStickX = 0.0;
+					else if (driveJoyStickX > 0) driveJoyStickX -= 0.2;
+					else if (driveJoyStickX < 0) driveJoyStickX += 0.2;
+
+					driveJoyStickY *= 1.15;
+					driveJoyStickX *= .95;
+
+					double drivePowerLeft  = driveJoyStickY + driveJoyStickX;
+					double drivePowerRight = driveJoyStickY - driveJoyStickX;
+
+					robotHardware.setDrivePower(drivePowerLeft * 0.7, drivePowerRight * 0.7);
 				}
 			}
 
@@ -443,7 +445,7 @@ public class Robot extends TimedRobot {
 			//TODO: bumpers
 			if      (functionStick.getBumper(Hand.kLeft )) robotHardware.rollOut (0.5);
 			else if (functionStick.getBumper(Hand.kRight)) robotHardware.rollIn(0.8);
-            else                                           robotHardware.rollIn(0.1);
+            else                                           robotHardware.rollIn(0);
 
 			//arm
 			double armPower = functionStick.getY(Hand.kRight);
@@ -451,7 +453,7 @@ public class Robot extends TimedRobot {
 			else if (armPower > 0) armPower -= 0.2;
 			else if (armPower < 0) armPower += 0.2;
 			if (armPower != 0) noPosition();
-			robotHardware.driveArm(-armPower*0.8);
+			robotHardware.driveArm(-armPower*0.7);
 
 			//elevator
 			//elevator position = -29.7
@@ -462,7 +464,7 @@ public class Robot extends TimedRobot {
 			else if (elevatorPower > 0) elevatorPower -= 0.3;
 			else if (elevatorPower < 0) elevatorPower += 0.3;
 			if (elevatorPower != 0) noPosition();
-			robotHardware.driveElevator(elevatorPower*0.8);
+			robotHardware.driveElevator(elevatorPower*0.7);
 
 			//Climbing
 			if (leftJoystick.getRawButtonPressed(8)) {
