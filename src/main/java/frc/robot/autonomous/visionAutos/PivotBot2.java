@@ -53,10 +53,10 @@ public class PivotBot2 extends GenericAuto {
                             //which point of vector is higher on screen? get that point's X val
                             //which point of vector is higher on screen? get that point's X val
                             //topXVal = robot.pixy.vec[0].getX1();
-                            topXVal = (int) (0.8*robot.pixy.vec[0].getX1() + 0.2*robot.pixy.vec[0].getX0());
+                            topXVal = (int) (1.0*robot.pixy.vec[0].getX1() + 0.0*robot.pixy.vec[0].getX0());
                             if (robot.pixy.vec[0].getY0() < robot.pixy.vec[0].getY1()) {
                                 //topXVal = robot.pixy.vec[0].getX0();
-                                topXVal = (int) (0.8*robot.pixy.vec[0].getX0() + 0.2*robot.pixy.vec[0].getX1());
+                                topXVal = (int) (1.0*robot.pixy.vec[0].getX0() + 0.0*robot.pixy.vec[0].getX1());
                             }
                         }
                     } else {
@@ -71,7 +71,7 @@ public class PivotBot2 extends GenericAuto {
                 }
 
 
-                if ( (currentTime < 2000) && (Math.abs(topXVal-midPoint) > margin)) {
+                if ( (currentTime < 8000) && (Math.abs(topXVal-midPoint) > margin)) {
                     if (topXVal - midPoint > margin) {
                         midCounter = 0;
                         robot.setDrivePower(drivePower, -drivePower);
@@ -82,7 +82,7 @@ public class PivotBot2 extends GenericAuto {
                 } else {
                     ++midCounter;
                     robot.setDrivePower(0, 0);
-                    if ((midCounter>5) || (currentTime >= 2000)) {
+                    if ((midCounter>5) || (currentTime >= 8000)) {
                         autoStep++;
                     }
                 }
