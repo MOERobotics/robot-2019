@@ -24,6 +24,7 @@ public class PivotBot2 extends GenericAuto {
         //if we only get one vector, don't try to get a second vector
 
         currentTime = System.currentTimeMillis() - startTime;
+        //a1, a2, and lambda defined in GenericAuto
         drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
 
         //Pixy2Line.Vector vec;

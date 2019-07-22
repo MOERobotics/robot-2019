@@ -1,6 +1,8 @@
 package frc.robot.autonomous.visionAutos;
 
 import frc.robot.autonomous.GenericAuto;
+import frc.robot.PIDModule;
+
 
 public class PivotApproach2 extends GenericAuto {
 
@@ -11,6 +13,8 @@ public class PivotApproach2 extends GenericAuto {
 
     long currentTime, startTime;
     double drivePower;
+
+    PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
 
     @Override
     public void init() {
@@ -85,7 +89,14 @@ public class PivotApproach2 extends GenericAuto {
 
                 case 2:
                     robot.spearOut();
-                    robot.setDrivePower(0.3,0.3);
+
+                    //Is this right?
+                    robot.resetDriveEncoders();
+                    MOErioAuto.setHeading(robot.getHeadingDegrees());
+                    double correction = MOErioAuto.getCorrection();
+                    robot.setDrivePower((0.3) * (1 + correction), (0.3) * (1 - correction));
+
+                    //robot.setDrivePower(0.3,0.3);
                     if(robot.lidar[0] < 500){
                         autoStep++;
                         startTime = System.currentTimeMillis();
