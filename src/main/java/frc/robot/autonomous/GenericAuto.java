@@ -27,7 +27,7 @@ public abstract class GenericAuto {
     //pixy
     public double turnPower = 0.14; //0.2
     public double higherTurnPower = 0.22; //0.25
-    public int midPoint = 36;
+    public int midPoint = 32;
     public int margin = 1; //set margin of error where it wont move at all (prevents jittering)
     public int biggerMargin = 16;
 

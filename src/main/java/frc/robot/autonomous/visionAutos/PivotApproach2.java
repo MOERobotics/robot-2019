@@ -1,5 +1,6 @@
 package frc.robot.autonomous.visionAutos;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.autonomous.GenericAuto;
 import frc.robot.PIDModule;
 
@@ -14,6 +15,9 @@ public class PivotApproach2 extends GenericAuto {
     long currentTime, startTime;
     double drivePower;
 
+    double PivotHeading;
+    double correction;
+
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
 
     @Override
@@ -27,6 +31,8 @@ public class PivotApproach2 extends GenericAuto {
     public void run() {//if we get nothing... do nothing.
         //if we only get one vector, don't try to get a second vector
         //if we get two vectors, proceed
+
+
 
         currentTime = System.currentTimeMillis() - startTime;
         drivePower = a1 + (a2 * Math.exp( -((double) currentTime/lambda)));
@@ -70,7 +76,7 @@ public class PivotApproach2 extends GenericAuto {
                     }
                 }
 
-                if ( (currentTime < 2000) && (Math.abs(topXVal-midPoint) > margin)) {
+                if ( (currentTime < 8000) && (Math.abs(topXVal-midPoint) > margin)) {
                     if (topXVal - midPoint > margin) {
                         midCounter = 0;
                         robot.setDrivePower(drivePower, -drivePower);
@@ -81,7 +87,10 @@ public class PivotApproach2 extends GenericAuto {
                 } else {
                     ++midCounter;
                     robot.setDrivePower(0, 0);
-                    if ((midCounter>5) || (currentTime >= 2000)) {
+                    PivotHeading = robot.getHeadingDegrees();
+
+                    if ((midCounter>5) || (currentTime >= 8000)) {
+                        MOErioAuto.resetError();
                         autoStep++;
                     }
                 }
@@ -89,11 +98,8 @@ public class PivotApproach2 extends GenericAuto {
 
                 case 2:
                     robot.spearOut();
-
-                    //Is this right?
-                    robot.resetDriveEncoders();
-                    MOErioAuto.setHeading(robot.getHeadingDegrees());
-                    double correction = MOErioAuto.getCorrection();
+                    MOErioAuto.setHeading(robot.getHeadingDegrees()-PivotHeading);
+                    correction = MOErioAuto.getCorrection();
                     robot.setDrivePower((0.3) * (1 + correction), (0.3) * (1 - correction));
 
                     //robot.setDrivePower(0.3,0.3);
@@ -104,7 +110,10 @@ public class PivotApproach2 extends GenericAuto {
                     break;
 
                 case 3:
-                    robot.setDrivePower(0.2,0.2);
+                    MOErioAuto.setHeading(robot.getHeadingDegrees()-PivotHeading);
+                    correction = MOErioAuto.getCorrection();
+                    robot.setDrivePower((0.2) * (1 + correction), (0.2) * (1 - correction));
+                    //robot.setDrivePower(0.2,0.2);
                     if(System.currentTimeMillis() - 1000 > startTime){
                         autoStep++;
                     }
