@@ -24,7 +24,7 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double elevatorDeploy = 13.1;
     double elevatorFloor = -30/*-3.13*/;
-    double armOut = 20;
+    double armOut = 17;
 
     int topXVal;
     int numTimesNull = 0;
