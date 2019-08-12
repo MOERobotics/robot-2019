@@ -112,9 +112,9 @@ public class PivotApproach2 extends GenericAuto {
                 case 3:
                     MOErioAuto.setHeading(robot.getHeadingDegrees()-PivotHeading);
                     correction = MOErioAuto.getCorrection();
-                    robot.setDrivePower((0.2) * (1 + correction), (0.2) * (1 - correction));
+                    robot.setDrivePower((0.05) * (1 + correction), (0.05) * (1 - correction));
                     //robot.setDrivePower(0.2,0.2);
-                    if(System.currentTimeMillis() - 1000 > startTime){
+                    if(System.currentTimeMillis() - 250 > startTime){
                         autoStep++;
                     }
                     break;

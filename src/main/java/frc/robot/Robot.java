@@ -22,6 +22,11 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.vision.LidarReader;
 import frc.robot.vision.PiClient;
 
+/* For the limelight. */
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -87,6 +92,8 @@ public class Robot extends TimedRobot {
 
 	LidarReader Ihopethisworks = new LidarReader(Blinky);
 
+    NetworkTable table;
+
 	public void noPosition() {
 		pos = -1;
 		positionLock = false;
@@ -139,6 +146,10 @@ public class Robot extends TimedRobot {
 		  }
 		}
 		Ihopethisworks.set(Blinky, robotHardware);
+
+		try {
+		    table = NetworkTableInstance.getDefault().getTable("limelight");
+        } catch (Exception e) { }
 	}
 
 	@Override
@@ -228,6 +239,23 @@ public class Robot extends TimedRobot {
 
         SmartDashboard.putNumber("Vision_X:" , robotHardware.piXY[0]);
         SmartDashboard.putNumber("Vision_Y:" , robotHardware.piXY[1]);
+
+        //limelight
+        try {
+            NetworkTableEntry tx = table.getEntry("tx");
+            NetworkTableEntry ty = table.getEntry("ty");
+            NetworkTableEntry ta = table.getEntry("ta");
+
+            double limeX = tx.getDouble(0.0);
+            double limeY = ty.getDouble(0.0);
+            double limeArea = ta.getDouble(0.0);
+
+            SmartDashboard.putNumber("Limelight X", limeX);
+            SmartDashboard.putNumber("Limelight Y", limeY);
+            SmartDashboard.putNumber("Limelight Area", limeArea);
+        } catch (Exception e) {}
+
+
 	}
 
 	@Override
