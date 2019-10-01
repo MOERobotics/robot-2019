@@ -490,12 +490,30 @@ public class Robot extends TimedRobot {
                 if (switchBox.getRawButtonPressed(2)) {
                     positionLock = true;
                     pos = 0;
+                    if (cargo) {
+						cargoPos[pos].init();
+					}
+                    else {
+						hatchPos[pos].init();
+					}
                 } else if (switchBox.getRawButtonPressed(3)) {
                     positionLock = true;
                     pos = 1;
+					if (cargo) {
+						cargoPos[pos].init();
+					}
+					else {
+						hatchPos[pos].init();
+					}
                 } else if (switchBox.getRawButtonPressed(4)) {
                     positionLock = true;
                     pos = 2;
+					if (cargo) {
+						cargoPos[pos].init();
+					}
+					else {
+						hatchPos[pos].init();
+					}
                 }
             } else if (positionLock && pos != -1) {
                 if (cargo) cargoPos[pos].run();
@@ -503,10 +521,28 @@ public class Robot extends TimedRobot {
 
 				if (switchBox.getRawButtonPressed(2)) {
 					pos = 0;
+					if (cargo) {
+						cargoPos[pos].init();
+					}
+					else {
+						hatchPos[pos].init();
+					}
 				} else if (switchBox.getRawButtonPressed(3)) {
 					pos = 1;
+					if (cargo) {
+						cargoPos[pos].init();
+					}
+					else {
+						hatchPos[pos].init();
+					}
 				} else if (switchBox.getRawButtonPressed(4)) {
 					pos = 2;
+					if (cargo) {
+						cargoPos[pos].init();
+					}
+					else {
+						hatchPos[pos].init();
+					}
 				}
             }
 
