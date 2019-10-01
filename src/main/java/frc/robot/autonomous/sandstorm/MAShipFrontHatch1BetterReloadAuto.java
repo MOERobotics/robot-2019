@@ -4,6 +4,7 @@ package frc.robot.autonomous.sandstorm;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.PIDModule;
 import frc.robot.autonomous.GenericAuto;
+import frc.robot.autonomous.visionAutos.PivotApproach2;
 
 public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
     PIDModule MOErioAuto = new PIDModule(0.06, 0.001, 0);
@@ -17,12 +18,13 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
     int approachHeading = 8;
 
     double drivePower;
+    double pivotHeading;
 
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
     PIDModule armPID = new PIDModule(1.75e-2,3.0e-3,0);
     double elevatorDeploy = 13.1;
     double elevatorFloor = -30/*-3.13*/;
-    double armOut = 20;
+    double armOut = 17;
 
     int topXVal;
     int numTimesNull = 0;
@@ -164,6 +166,7 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
 
             //auto targeting
             case 4:
+
                 PIDElevator(elevatorDeploy, elevatorPID);
                 PIDArm(armOut, armPID);
 
@@ -194,7 +197,7 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                     }
                 }
 
-                if ( (currentTime < 2000) && (Math.abs(topXVal-midPoint) > margin)) {
+                if ( (currentTime < 8000) && (Math.abs(topXVal-midPoint) > margin)) {
                     if (topXVal - midPoint > margin) {
                         midCounter = 0;
                         robot.setDrivePower(drivePower, -drivePower);
@@ -205,7 +208,10 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 } else {
                     ++midCounter;
                     robot.setDrivePower(0, 0);
-                    if ((midCounter>5) || (currentTime >= 2000)) {
+                    pivotHeading = robot.getHeadingDegrees();
+
+                    if ((midCounter>5) || (currentTime >= 8000)) {
+                        MOErioAuto.resetError();
                         autoStep++;
                     }
                 }
@@ -226,21 +232,26 @@ public class MAShipFrontHatch1BetterReloadAuto extends GenericAuto  {
                 PIDArm(armOut, armPID);
                 PIDElevator(elevatorFloor + 3, elevatorPID);
                 robot.spearOut();
-                robot.setDrivePower(0.3,0.3);
-                if(robot.lidar[0] < 475){
+                MOErioAuto.setHeading(robot.getHeadingDegrees()-pivotHeading);
+                correction = MOErioAuto.getCorrection();
+                robot.setDrivePower((0.3) * (1 + correction), (0.3) * (1 - correction));
+
+                //robot.setDrivePower(0.3,0.3);
+                if(robot.lidar[0] < 500){
                     autoStep++;
                     startTime = System.currentTimeMillis();
                 }
-                break;
 
             //drive forward one second
             case 7:
                 PIDArm(armOut, armPID);
                 PIDElevator(elevatorFloor + 3, elevatorPID);
 
-                robot.setDrivePower(0.2,0.2);
+                MOErioAuto.setHeading(robot.getHeadingDegrees()-pivotHeading);
+                correction = MOErioAuto.getCorrection();
+                robot.setDrivePower((0.2) * (1 + correction), (0.2) * (1 - correction));
+                //robot.setDrivePower(0.2,0.2);
                 if(System.currentTimeMillis() - 1000 > startTime){
-                    startTime = System.currentTimeMillis();
                     autoStep++;
                 }
                 break;
