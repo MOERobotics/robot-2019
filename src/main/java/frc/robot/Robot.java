@@ -15,6 +15,7 @@ import frc.robot.autonomous.climb.AutoFlyingFullRetraction;
 import frc.robot.autonomous.presets.*;
 import frc.robot.autonomous.test.*;
 import frc.robot.autonomous.sandstorm.*;
+import frc.robot.autonomous.unused.PivotApproach;
 import frc.robot.autonomous.visionAutos.PivotApproach2;
 import frc.robot.autonomous.visionAutos.PivotBot2;
 import frc.robot.genericrobot.*;
@@ -225,7 +226,12 @@ public class Robot extends TimedRobot {
             SmartDashboard.putBoolean("Hab 2?", autoProgram.levelTwo);
             //autoProgram.printSmartDashboard();
 
-            SmartDashboard.putString("PixyInfo: ", robotHardware.pixy.toString());
+            SmartDashboard.putString("PixyInfoX: ", robotHardware.pixy.toStringX());
+            SmartDashboard.putString("PixyInfoY: ", robotHardware.pixy.toStringY());
+
+            SmartDashboard.putBoolean("Aligning", pixyAligning);
+            SmartDashboard.putBoolean("Approaching", pixyApproaching);
+
             SmartDashboard.putNumber("Lidar: ", robotHardware.lidar[0]);
         }
 
