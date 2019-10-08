@@ -336,6 +336,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                     robot.setDrivePower(0, 0);
                     startTime = System.currentTimeMillis();
                     autoStep++;
+                    autoStep = 16;
                 }
                 break;
 
