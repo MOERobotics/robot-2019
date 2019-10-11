@@ -18,7 +18,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
     double drivePower;
 
     //position and power variables
-    int approachHeading = 45;
+    int approachHeading = 50;
 
     //elevator and arm PID
     PIDModule elevatorPID = new PIDModule(0.1, 0.00, 0);
@@ -160,7 +160,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
             case 3:
                 PIDElevator(elevatorDeploy, elevatorPID);
 
-                MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading+10) * LeftSide);
+                MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading+5) * LeftSide);
                 correction = MOErioAuto.getCorrection();
                 robot.setDrivePower(0.6 * (1 + correction),
                         0.6 * (1 - correction));
@@ -183,7 +183,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 PIDArm(armOut, armPID);
 
                 if (robot.getDistanceLeftInches() < 46) {
-                    MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading+10) * LeftSide);
+                    MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading+5) * LeftSide);
                     correction = MOErioAuto.getCorrection();
                 } else if (robot.getDistanceLeftInches() >= 46) {
                     MOErioAuto.setHeading(robot.getHeadingDegrees() - (approachHeading-5) * LeftSide);
@@ -193,9 +193,9 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 robot.setDrivePower(0.5 * (1 + correction),
                         0.5 * (1 - correction));
 
-                if(robot.getDistanceLeftInches() > 92 || robot.lidar[0] < 768){ //86
+                if(robot.getDistanceLeftInches() > 92){ //86
+ //                   if(robot.getDistanceLeftInches() > 114 || robot.lidar[0] < 768){ //86
                     autoStep++;
-                    autoStep = 16;
                     elevatorPID.resetError();
                     startTime = System.currentTimeMillis();
                     robot.setDrivePower(0, 0);
@@ -234,7 +234,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                     }
                 }
 
-                if ( (currentTime < 2000) && (Math.abs(topXVal-midPoint) > margin)) {
+                if ( (currentTime < 8000) && (Math.abs(topXVal-midPoint) > margin)) {
                     if (topXVal - midPoint > margin) {
                         midCounter = 0;
                         robot.setDrivePower(drivePower, -drivePower);
@@ -245,7 +245,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 } else {
                     ++midCounter;
                     robot.setDrivePower(0, 0);
-                    if ((midCounter>5) || (currentTime >= 2000)) {
+                    if ((midCounter>5) || (currentTime >= 8000)) {
                         autoStep++;
                     }
                 }
@@ -294,10 +294,10 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 PIDElevator(elevatorFloor,elevatorPID);
                 PIDArm(armOut, armPID);
 
-                robot.spearIn();
                 robot.spearHook();
+                robot.spearIn();
                 robot.setDrivePower(-0.2,-0.2);
-                if(Math.abs(robot.getDistanceLeftInches()) > 1){
+                if(Math.abs(robot.getDistanceLeftInches()) > 3){
                     autoStep++;
                 }
                 //autoStep++;
@@ -370,7 +370,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                     }
                 }
 
-                if ( (currentTime < 2000) && (Math.abs(topXVal-midPoint) > margin)) {
+                if ( (currentTime < 8000) && (Math.abs(topXVal-midPoint) > margin)) {
                     if (topXVal - midPoint > margin) {
                         midCounter = 0;
                         robot.setDrivePower(drivePower, -drivePower);
@@ -381,7 +381,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 } else {
                     ++midCounter;
                     robot.setDrivePower(0, 0);
-                    if ((midCounter>5) || (currentTime >= 2000)) {
+                    if ((midCounter>5) || (currentTime >= 8000)) {
                         autoStep++;
                     }
                 }
@@ -406,7 +406,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
                 PIDArm(armOut, armPID);
 
                 robot.setDrivePower(0.2,0.2);
-                if(System.currentTimeMillis() - 1500 > startTime){
+                if(System.currentTimeMillis() - 500 > startTime){
                     autoStep++;
                     robot.stopDriving();
                 }
@@ -424,6 +424,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
             //fin.
             case 16:
+                robot.driveElevator(0);
                 robot.stopDriving();
                 break;
 
