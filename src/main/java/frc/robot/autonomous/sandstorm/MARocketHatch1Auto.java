@@ -195,6 +195,7 @@ public class MARocketHatch1Auto extends GenericAuto  {
 
                 if(robot.getDistanceLeftInches() > 92 || robot.lidar[0] < 768){ //86
                     autoStep++;
+                    autoStep = 16;
                     elevatorPID.resetError();
                     startTime = System.currentTimeMillis();
                     robot.setDrivePower(0, 0);
@@ -336,7 +337,6 @@ public class MARocketHatch1Auto extends GenericAuto  {
                     robot.setDrivePower(0, 0);
                     startTime = System.currentTimeMillis();
                     autoStep++;
-                    autoStep = 16;
                 }
                 break;
 
